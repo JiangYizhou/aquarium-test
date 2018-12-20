@@ -1,0 +1,15 @@
+[submodule "aquarium/thirdparty/stb"]
+	path = aquarium/thirdparty/stb
+	url = https://github.com/nothings/stb.git
+[submodule "aquarium/thirdparty/glfw"]
+	path = aquarium/thirdparty/glfw
+	url = https://github.com/glfw/glfw.git
+[submodule "aquarium/thirdparty/rapidjson"]
+	path = aquarium/thirdparty/rapidjson
+	url = https://github.com/Tencent/rapidjson.git
+[submodule "aquarium/thirdparty/angle"]
+	path = aquarium/thirdparty/angle
+	url = https://github.com/google/angle.git
+[submodule "aquarium/thirdparty/dawn"]
+	path = aquarium/thirdparty/dawn
+	url = https://dawn.googlesource.com/dawn
