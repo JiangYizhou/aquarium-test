@@ -325,9 +325,6 @@ dawn::RenderPipeline ContextDawn::createRenderPipeline(dawn::PipelineLayout pipe
         cBlendStates[i] = device.CreateBlendStateBuilder().GetResult();
     }
 
-    utils::ComboRenderPipelineDescriptor descriptor2(device);
-    utils::USleep(50);
-
     dawn::RenderPipelineDescriptor descriptor;
     descriptor.layout = pipelineLayout;
     descriptor.vertexStage = &cVertexStage;

@@ -22,7 +22,7 @@
 
 #include <iostream>
 
-#ifndef GL_GLEXT_PROTOTYPES
+#ifdef GL_GLEXT_PROTOTYPES
 #define GLFW_EXPOSE_NATIVE_WIN32
 #include <GLFW/glfw3native.h>
 #endif

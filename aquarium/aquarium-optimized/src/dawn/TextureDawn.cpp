@@ -52,7 +52,7 @@ void TextureDawn::loadTexture()
             dawn::Buffer stagingBuffer = context->createBufferFromData(pixelVec[i], mWidth * mHeight * 4, dawn::BufferUsageBit::TransferSrc);
             dawn::BufferCopyView bufferCopyView = context->createBufferCopyView(stagingBuffer, 0, 0, 0);
             dawn::TextureCopyView textureCopyView = context->createTextureCopyView(mTexture, 0, i, { 0, 0, 0 });
-            dawn::Extent3D copySize = { mWidth, mHeight, 1 };
+            dawn::Extent3D copySize = { static_cast<uint32_t>(mWidth), static_cast<uint32_t>(mHeight), 1 };
             dawn::CommandBuffer cmd = context->copyBufferToTexture(bufferCopyView, textureCopyView, copySize);
             context->submit(1, cmd);
         }
@@ -97,7 +97,7 @@ void TextureDawn::loadTexture()
         dawn::Buffer stagingBuffer = context->createBufferFromData(pixelVec[0], mWidth * mHeight * 4, dawn::BufferUsageBit::TransferSrc);
         dawn::BufferCopyView bufferCopyView = context->createBufferCopyView(stagingBuffer, 0, mWidth * 4, mHeight);
         dawn::TextureCopyView textureCopyView = context->createTextureCopyView(mTexture, 0, 0, { 0, 0, 0 });
-        dawn::Extent3D copySize = { mWidth, mHeight, 1 };
+        dawn::Extent3D copySize = { static_cast<uint32_t>(mWidth), static_cast<uint32_t>(mHeight), 1 };
         dawn::CommandBuffer cmd = context->copyBufferToTexture(bufferCopyView, textureCopyView, copySize);
 
         context->submit(1, cmd);
