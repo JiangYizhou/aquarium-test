@@ -49,9 +49,24 @@ Aquarium::Aquarium()
     mPath(""),
     factory(nullptr)
 {
-    g.then     = 0.0f;
-    g.mclock   = 0.0f;
+    g.then = 0.0f;
+    g.mclock = 0.0f;
     g.eyeClock = 0.0f;
+
+    lightUniforms.lightColor[0] = 1.0f;
+    lightUniforms.lightColor[1] = 1.0f;
+    lightUniforms.lightColor[2] = 1.0f;
+    lightUniforms.lightColor[3] = 1.0f;
+
+    lightUniforms.specular[0] = 1.0f;
+    lightUniforms.specular[1] = 1.0f;
+    lightUniforms.specular[2] = 1.0f;
+    lightUniforms.specular[3] = 1.0f;
+
+    fogUniforms.fogColor[0] = g_fogRed;
+    fogUniforms.fogColor[1] = g_fogGreen;
+    fogUniforms.fogColor[2] = g_fogBlue;
+    fogUniforms.fogColor[3] = 1.0f;
 }
 
 Aquarium::~Aquarium()
@@ -127,8 +142,6 @@ void Aquarium::init(int argc, char **argv)
         return;
     }
 
-    // TODO(yizhou) : update initial resource data
-    updateGlobalUniforms();
     // Init general buffer and binding groups for dawn backend.
     context->initGeneralResources(this);
 
