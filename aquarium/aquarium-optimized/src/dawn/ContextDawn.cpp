@@ -15,9 +15,6 @@
 #include <dawn/dawncpp.h>
 #include <dawn_native/DawnNative.h>
 #include "utils/BackendBinding.h"
-#include "utils/ComboRenderPipelineDescriptor.h"
-#include "utils/DawnHelpers.h"
-#include "utils/SystemUtils.h"
 #include "common/Constants.h"
 #include "shaderc/shaderc.h"
 
@@ -43,7 +40,7 @@ ContextDawn::~ContextDawn() {}
 bool ContextDawn::createContext()
 {
     // TODO(yizhou) : initilize dawn dynamic backend
-    utils::BackendType backendType = utils::BackendType::D3D12;
+    utils::BackendType backendType = utils::BackendType::Vulkan;
     utils::BackendBinding* binding = utils::CreateBinding(backendType);
     if (binding == nullptr) {
         return false;
@@ -431,9 +428,6 @@ void ContextDawn::initGeneralResources(Aquarium* aquarium)
         { 2, dawn::ShaderStageBit::Fragment, dawn::BindingType::UniformBuffer },
     });
 
-    lightWorldPositionBuffer = utils::CreateBufferFromData(device, &aquarium->lightWorldPositionUniform, sizeof(aquarium->lightWorldPositionUniform), dawn::BufferUsageBit::TransferDst | dawn::BufferUsageBit::Uniform);
-
-
     lightWorldPositionBuffer = createBufferFromData(&aquarium->lightWorldPositionUniform, sizeof(aquarium->lightWorldPositionUniform), dawn::BufferUsageBit::TransferDst | dawn::BufferUsageBit::Uniform);
     viewBuffer = createBufferFromData(&aquarium->viewUniforms, sizeof(aquarium->viewUniforms), dawn::BufferUsageBit::TransferDst | dawn::BufferUsageBit::Uniform);
     lightBuffer = createBufferFromData(&aquarium->lightUniforms, sizeof(aquarium->lightUniforms), dawn::BufferUsageBit::TransferDst | dawn::BufferUsageBit::Uniform);
@@ -465,6 +459,7 @@ void ContextDawn::initGeneralResources(Aquarium* aquarium)
 void ContextDawn::updateWorldlUniforms(Aquarium* aquarium)
 {
     setBufferData(viewBuffer, 0, sizeof(ViewUniforms), &aquarium->viewUniforms);
+    setBufferData(lightWorldPositionBuffer, 0, sizeof(LightWorldPositionUniform), &aquarium->lightWorldPositionUniform);
 }
 
 Buffer *ContextDawn::createBuffer(int numComponents, const std::vector<float> &buf, bool isIndex)

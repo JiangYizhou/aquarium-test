@@ -67,6 +67,10 @@ Aquarium::Aquarium()
     fogUniforms.fogColor[1] = g_fogGreen;
     fogUniforms.fogColor[2] = g_fogBlue;
     fogUniforms.fogColor[3] = 1.0f;
+
+    lightUniforms.ambient[0] = g_ambientRed;
+    lightUniforms.ambient[1] = g_ambientGreen;
+    lightUniforms.ambient[2] = g_ambientBlue;
 }
 
 Aquarium::~Aquarium()
@@ -468,10 +472,6 @@ void Aquarium::updateGlobalUniforms()
     g.target[0]      = static_cast<float>(sin(g.eyeClock + M_PI)) * g_targetRadius;
     g.target[1]      = g_targetHeight;
     g.target[2]      = static_cast<float>(cos(g.eyeClock + M_PI)) * g_targetRadius;
-
-    lightUniforms.ambient[0] = g_ambientRed;
-    lightUniforms.ambient[1] = g_ambientGreen;
-    lightUniforms.ambient[2] = g_ambientBlue;
 
     float nearPlane = 1;
     float farPlane  = 25000.0f;

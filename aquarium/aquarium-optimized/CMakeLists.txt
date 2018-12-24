@@ -32,7 +32,7 @@ project( aquarium )
 
 include_directories(${CMAKE_SOURCE_DIR}/../thirdparty/stb)
 include_directories(${CMAKE_SOURCE_DIR}/../thirdparty/glfw/include)
-
+include_directories(${CMAKE_SOURCE_DIR}/../thirdparty/glad/include)
 include_directories(${CMAKE_SOURCE_DIR}/../thirdparty/rapidjson/include)
   
 if(angle)
@@ -48,7 +48,6 @@ add_library(glad STATIC
   ${CMAKE_SOURCE_DIR}/../thirdparty/glad/include/glad/glad.h
   ${CMAKE_SOURCE_DIR}/../thirdparty/glad/include/KHR/khrplatform.h
 )
-set(GLAD_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/../thirdparty/glad/include)
 endif()
 
 if(dawn)
@@ -67,8 +66,6 @@ set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
 set(GLFW_BUILD_TESTS OFF CACHE BOOL "" FORCE)
 set(GLFW_INSTALL OFF CACHE BOOL "" FORCE)
 add_subdirectory(${CMAKE_SOURCE_DIR}/../thirdparty/glfw ${CMAKE_BINARY_DIR}/glfw)
-
-target_include_directories(glad SYSTEM PUBLIC ${GLAD_INCLUDE_DIR})
 
 include_directories(${CMAKE_SOURCE_DIR}/../thirdparty/rapidjson)
 
@@ -160,7 +157,6 @@ elseif(dawn AND WIN32)
     target_link_libraries(aquarium debug ${CMAKE_SOURCE_DIR}/../thirdparty/dawn/out/Debug/obj/dawn_common.lib optimized ${CMAKE_SOURCE_DIR}/../thirdparty/dawn/out/Release/obj/dawn_common.lib)
 	target_link_libraries(aquarium glad glfw)
 elseif(dawn AND LINUX)
-    target_link_libraries(aquarium debug ${CMAKE_SOURCE_DIR}/../thirdparty/dawn/out/Debug/libc++.so optimized ${CMAKE_SOURCE_DIR}/../thirdparty/dawn/out/Release/libc++.so)
     target_link_libraries(aquarium debug ${CMAKE_SOURCE_DIR}/../thirdparty/dawn/out/Debug/libdawn.so optimized ${CMAKE_SOURCE_DIR}/../thirdparty/dawn/out/Release/libdawn.so)
 	target_link_libraries(aquarium debug ${CMAKE_SOURCE_DIR}/../thirdparty/dawn/out/Debug/libdawn_native.so optimized ${CMAKE_SOURCE_DIR}/../thirdparty/dawn/out/Release/libdawn_native.so)
 	target_link_libraries(aquarium debug ${CMAKE_SOURCE_DIR}/../thirdparty/dawn/out/Debug/libshaderc.so optimized ${CMAKE_SOURCE_DIR}/../thirdparty/dawn/out/Release/libshaderc.so)

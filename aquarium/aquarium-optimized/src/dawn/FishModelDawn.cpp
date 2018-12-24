@@ -136,7 +136,7 @@ void FishModelDawn::draw() const
     uint32_t vertexBufferOffsets[1] = { 0 };
 
     dawn::RenderPassEncoder pass = contextDawn->renderPass;
-    pass.SetRenderPipeline(pipeline);
+    pass.SetPipeline(pipeline);
     pass.SetBindGroup(0, contextDawn->bindGroupGeneral);
     pass.SetBindGroup(1, contextDawn->bindGroupWorld);
     pass.SetBindGroup(2, bindGroupModel);

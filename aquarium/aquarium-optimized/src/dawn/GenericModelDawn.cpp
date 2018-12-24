@@ -163,7 +163,7 @@ void GenericModelDawn::draw() const
     dawn::CommandBufferBuilder builder = contextDawn->getDevice().CreateCommandBufferBuilder();
 
     dawn::RenderPassEncoder pass = builder.BeginRenderPass(renderPass);
-    pass.SetRenderPipeline(pipeline);
+    pass.SetPipeline(pipeline);
     //pass.SetBindGroup(0, contextDawn->bindGroupGeneral);
    // pass.SetBindGroup(1, contextDawn->bindGroupWorld);
    // pass.SetBindGroup(2, bindGroupModel);

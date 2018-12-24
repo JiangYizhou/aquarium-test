@@ -12,11 +12,13 @@
 TextureDawn::~TextureDawn() {
 
     DestoryImageData(pixelVec);
+    DestoryImageData(resizedVec);
 }
 
 TextureDawn::TextureDawn(ContextDawn * context, std::string name, std::string url)
     : context(context), mTextureDimension(dawn::TextureDimension::e2D), mTextureViewDimension(dawn::TextureViewDimension::e2D), mFormat(dawn::TextureFormat::R8G8B8A8Unorm), Texture(name, url)
 {
+    resizedVec.resize(1);
 }
 
 TextureDawn::TextureDawn(ContextDawn * context, std::string name, const std::vector<std::string>& urls)
@@ -27,11 +29,8 @@ TextureDawn::TextureDawn(ContextDawn * context, std::string name, const std::vec
 void TextureDawn::loadTexture()
 {
     dawn::SamplerDescriptor samplerDesc;
-
-    loadImage(mUrls, &pixelVec);
     const int kPadding = 256;
-    //int resizeWidth = 
-    //resizeImages(pixelVec, mWidth, mHeight, 0, pixelVec, )
+    loadImage(mUrls, &pixelVec);
 
     if (mTextureViewDimension == dawn::TextureViewDimension::Cube)
     {
@@ -50,7 +49,7 @@ void TextureDawn::loadTexture()
         for (unsigned int i = 0; i < 6; i++)
         {
             dawn::Buffer stagingBuffer = context->createBufferFromData(pixelVec[i], mWidth * mHeight * 4, dawn::BufferUsageBit::TransferSrc);
-            dawn::BufferCopyView bufferCopyView = context->createBufferCopyView(stagingBuffer, 0, 0, 0);
+            dawn::BufferCopyView bufferCopyView = context->createBufferCopyView(stagingBuffer, 0, mWidth, mHeight);
             dawn::TextureCopyView textureCopyView = context->createTextureCopyView(mTexture, 0, i, { 0, 0, 0 });
             dawn::Extent3D copySize = { static_cast<uint32_t>(mWidth), static_cast<uint32_t>(mHeight), 1 };
             dawn::CommandBuffer cmd = context->copyBufferToTexture(bufferCopyView, textureCopyView, copySize);
@@ -66,8 +65,7 @@ void TextureDawn::loadTexture()
         viewDescriptor.baseArrayLayer = 0;
         viewDescriptor.layerCount = 6;
 
-        //mTextureView = mTexture.CreateTextureView(&viewDescriptor);
-        mTextureView = mTexture.CreateDefaultTextureView();
+        mTextureView = mTexture.CreateTextureView(&viewDescriptor);
 
         samplerDesc.addressModeU = dawn::AddressMode::ClampToEdge;
         samplerDesc.addressModeV = dawn::AddressMode::ClampToEdge;
@@ -80,6 +78,17 @@ void TextureDawn::loadTexture()
     }
     else  // dawn::TextureViewDimension::e2D
     {
+        int resizedWidth;
+        if (mWidth % kPadding == 0)
+        {
+            resizedWidth = mWidth;
+        }
+        else
+        {
+            resizedWidth = (mWidth / 256 + 1) * 256;
+            resizeImages(pixelVec, mWidth, mHeight, 0, pixelVec, mWidth, mHeight, resizedWidth, 4);
+        }
+       
         dawn::TextureDescriptor descriptor;
         descriptor.dimension = mTextureDimension;
         descriptor.size.width = mWidth;
@@ -94,8 +103,8 @@ void TextureDawn::loadTexture()
         mTexture = context->createTexture(descriptor);
 
         // TODO(yizhou) : check the data size of pixels, jpeg image
-        dawn::Buffer stagingBuffer = context->createBufferFromData(pixelVec[0], mWidth * mHeight * 4, dawn::BufferUsageBit::TransferSrc);
-        dawn::BufferCopyView bufferCopyView = context->createBufferCopyView(stagingBuffer, 0, mWidth * 4, mHeight);
+        dawn::Buffer stagingBuffer = context->createBufferFromData(pixelVec[0], resizedWidth * mHeight * 4, dawn::BufferUsageBit::TransferSrc);
+        dawn::BufferCopyView bufferCopyView = context->createBufferCopyView(stagingBuffer, 0, resizedWidth * 4, mHeight);
         dawn::TextureCopyView textureCopyView = context->createTextureCopyView(mTexture, 0, 0, { 0, 0, 0 });
         dawn::Extent3D copySize = { static_cast<uint32_t>(mWidth), static_cast<uint32_t>(mHeight), 1 };
         dawn::CommandBuffer cmd = context->copyBufferToTexture(bufferCopyView, textureCopyView, copySize);
@@ -112,22 +121,17 @@ void TextureDawn::loadTexture()
         viewDescriptor.baseArrayLayer = 0;
         viewDescriptor.layerCount = 1;
 
-        //mTextureView = mTexture.CreateTextureView(&viewDescriptor);
-        mTextureView = mTexture.CreateDefaultTextureView();
+        mTextureView = mTexture.CreateTextureView(&viewDescriptor);
 
-        /*samplerDesc.addressModeU = dawn::AddressMode::ClampToEdge;
+        samplerDesc.addressModeU = dawn::AddressMode::ClampToEdge;
         samplerDesc.addressModeV = dawn::AddressMode::ClampToEdge;
-        samplerDesc.addressModeW = dawn::AddressMode::ClampToEdge;*/
-        samplerDesc.addressModeU = dawn::AddressMode::Repeat;
-        samplerDesc.addressModeV = dawn::AddressMode::Repeat;
-        samplerDesc.addressModeW = dawn::AddressMode::Repeat;
+        samplerDesc.addressModeW = dawn::AddressMode::ClampToEdge;
         samplerDesc.minFilter = dawn::FilterMode::Linear;
         samplerDesc.magFilter = dawn::FilterMode::Linear;
 
         if (isPowerOf2(mWidth) && isPowerOf2(mHeight))
         {
             // TODO(yizhou) : generateMipmap
-            //samplerDesc.mipmapFilter = dawn::FilterMode::Linear;
             samplerDesc.mipmapFilter = dawn::FilterMode::Linear;
         }
         else
