@@ -57,23 +57,11 @@ void GenericModelDawn::init()
     }
     else if (normalTexture && mName != MODELNAME::MODELGLOBEBASE)
     {
-        // TODO(yizou): Test. Cuttently,render only generic model, and set all set to 0 to workaround multisample
-        // bind group issue on d3d12.
-        /*groupLayoutModel = contextDawn->MakeBindGroupLayout({
+        groupLayoutModel = contextDawn->MakeBindGroupLayout({
             { 0, dawn::ShaderStageBit::Fragment, dawn::BindingType::UniformBuffer },
             { 1, dawn::ShaderStageBit::Fragment, dawn::BindingType::Sampler },
             { 2, dawn::ShaderStageBit::Fragment, dawn::BindingType::SampledTexture },
             { 3, dawn::ShaderStageBit::Fragment, dawn::BindingType::SampledTexture },
-        });*/
-        groupLayoutModel = contextDawn->MakeBindGroupLayout({
-            { 0, dawn::ShaderStageBit::Vertex, dawn::BindingType::UniformBuffer },
-            { 1, dawn::ShaderStageBit::Vertex, dawn::BindingType::UniformBuffer },
-            { 2, dawn::ShaderStageBit::Fragment, dawn::BindingType::UniformBuffer },
-            { 3, dawn::ShaderStageBit::Fragment, dawn::BindingType::UniformBuffer },
-            { 4, dawn::ShaderStageBit::Fragment, dawn::BindingType::Sampler },
-            { 5, dawn::ShaderStageBit::Fragment, dawn::BindingType::SampledTexture },
-            { 6, dawn::ShaderStageBit::Fragment, dawn::BindingType::SampledTexture },
-            { 7, dawn::ShaderStageBit::Fragment, dawn::BindingType::UniformBuffer },
         });
     } 
     else
@@ -85,13 +73,8 @@ void GenericModelDawn::init()
         });
     }
 
-    // TODO(yizou): Test. Cuttently,render only generic model, and set all set to 0 to workaround multisample
-    // bind group issue on d3d12.
-    /*pipelineLayout = contextDawn->MakeBasicPipelineLayout({ contextDawn->groupLayoutGeneral,
+    pipelineLayout = contextDawn->MakeBasicPipelineLayout({ contextDawn->groupLayoutGeneral,
         contextDawn->groupLayoutWorld,
-        groupLayoutModel,
-    });*/
-    pipelineLayout = contextDawn->MakeBasicPipelineLayout({
         groupLayoutModel,
     });
 
@@ -118,14 +101,10 @@ void GenericModelDawn::init()
         // TODO(yizou): Test. Cuttently,render only generic model, and set all set to 0 to workaround multisample
         // bind group issue on d3d12.
         bindGroupModel = contextDawn->makeBindGroup(groupLayoutModel, {
-            { 0, contextDawn->lightWorldPositionBuffer, 0, sizeof(LightWorldPositionUniform)},
-            { 1, contextDawn->viewBuffer, 0, sizeof(ViewUniforms)},
-            { 2, contextDawn->lightBuffer, 0, sizeof(LightUniforms)},
-            { 3, lightFactorBuffer, 0, sizeof(LightFactorUniforms) },
-            { 4, diffuseTexture->getSampler() },
-            { 5, diffuseTexture->getTextureView() },
-            { 6, normalTexture->getTextureView() },
-            { 7, contextDawn->fogBuffer, 0, sizeof(FogUniforms) },
+            { 0, lightFactorBuffer, 0, sizeof(LightFactorUniforms) },
+            { 1, diffuseTexture->getSampler() },
+            { 2, diffuseTexture->getTextureView() },
+            { 3, normalTexture->getTextureView() },
         });
     }
     else
@@ -164,10 +143,9 @@ void GenericModelDawn::draw() const
 
     dawn::RenderPassEncoder pass = builder.BeginRenderPass(renderPass);
     pass.SetPipeline(pipeline);
-    //pass.SetBindGroup(0, contextDawn->bindGroupGeneral);
-   // pass.SetBindGroup(1, contextDawn->bindGroupWorld);
-   // pass.SetBindGroup(2, bindGroupModel);
-    pass.SetBindGroup(0, bindGroupModel);
+    pass.SetBindGroup(0, contextDawn->bindGroupGeneral);
+    pass.SetBindGroup(1, contextDawn->bindGroupWorld);
+    pass.SetBindGroup(2, bindGroupModel);
     pass.SetVertexBuffers(0, 1, &positionBuffer->getBuffer(), vertexBufferOffsets);
     pass.SetVertexBuffers(1, 1, &normalBuffer->getBuffer(), vertexBufferOffsets);
     pass.SetVertexBuffers(2, 1, &texCoordBuffer->getBuffer(), vertexBufferOffsets);

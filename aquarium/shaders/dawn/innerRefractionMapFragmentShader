@@ -9,7 +9,7 @@ layout(location = 5) in vec3 v_surfaceToLight;
 layout(location = 6) in vec3 v_surfaceToView;
 layout(location = 0) out vec4 outColor;
 
-layout(std140, set = 0, binding = 1) uniform LightUniforms {
+layout(std140, set = 0, binding = 0) uniform LightUniforms {
     vec4 lightColor;
     vec4 specular;
     vec4 ambient;
@@ -28,7 +28,7 @@ layout(set = 2, binding = 4) uniform texture2D normalMap;
 layout(set = 2, binding = 5) uniform texture2D reflectionMap; // #reflection
 layout(set = 2, binding = 6) uniform textureCube skybox; // #reflecton
 
-layout(std140, set = 0, binding = 2) uniform Fogs
+layout(std140, set = 0, binding = 1) uniform Fogs
 {
     float fogPower;
 	float fogMult;

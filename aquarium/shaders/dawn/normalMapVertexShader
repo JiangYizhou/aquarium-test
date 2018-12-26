@@ -1,10 +1,10 @@
 #version 450
 
-layout(std140, set = 0, binding = 0) uniform LightWorldPositionUniform {
+layout(std140, set = 1, binding = 0) uniform LightWorldPositionUniform {
     vec3 lightWorldPos;
 } lightWorldPositionUniform;
 
-layout(std140, set = 0, binding = 1) uniform ViewUniforms {
+layout(std140, set = 1, binding = 1) uniform ViewUniforms {
 	mat4 viewProjection;
 	mat4 viewInverse;
     mat4 world;

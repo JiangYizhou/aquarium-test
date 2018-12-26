@@ -40,7 +40,7 @@ ContextDawn::~ContextDawn() {}
 bool ContextDawn::createContext()
 {
     // TODO(yizhou) : initilize dawn dynamic backend
-    utils::BackendType backendType = utils::BackendType::Vulkan;
+    utils::BackendType backendType = utils::BackendType::D3D12;
     utils::BackendBinding* binding = utils::CreateBinding(backendType);
     if (binding == nullptr) {
         return false;
@@ -423,32 +423,36 @@ void ContextDawn::initGeneralResources(Aquarium* aquarium)
 {
     // initilize general uniform buffers
     groupLayoutGeneral = MakeBindGroupLayout({
-        { 0, dawn::ShaderStageBit::Vertex, dawn::BindingType::UniformBuffer },
+        { 0, dawn::ShaderStageBit::Fragment, dawn::BindingType::UniformBuffer },
         { 1, dawn::ShaderStageBit::Fragment, dawn::BindingType::UniformBuffer },
-        { 2, dawn::ShaderStageBit::Fragment, dawn::BindingType::UniformBuffer },
     });
 
-    lightWorldPositionBuffer = createBufferFromData(&aquarium->lightWorldPositionUniform, sizeof(aquarium->lightWorldPositionUniform), dawn::BufferUsageBit::TransferDst | dawn::BufferUsageBit::Uniform);
-    viewBuffer = createBufferFromData(&aquarium->viewUniforms, sizeof(aquarium->viewUniforms), dawn::BufferUsageBit::TransferDst | dawn::BufferUsageBit::Uniform);
     lightBuffer = createBufferFromData(&aquarium->lightUniforms, sizeof(aquarium->lightUniforms), dawn::BufferUsageBit::TransferDst | dawn::BufferUsageBit::Uniform);
     fogBuffer = createBufferFromData(&aquarium->fogUniforms, sizeof(aquarium->fogUniforms), dawn::BufferUsageBit::TransferDst | dawn::BufferUsageBit::Uniform);
 
     bindGroupGeneral = makeBindGroup(groupLayoutGeneral, {
-        {0, lightWorldPositionBuffer, 0, sizeof(aquarium->lightWorldPositionUniform) },
-        {1, lightBuffer, 0, sizeof(aquarium->lightUniforms) },
-        {2, fogBuffer , 0, sizeof(aquarium->fogUniforms) }
+        { 0, lightBuffer, 0, sizeof(aquarium->lightUniforms) },
+        { 1, fogBuffer , 0, sizeof(aquarium->fogUniforms) }
     });
 
-    setBufferData(lightWorldPositionBuffer, 0, sizeof(LightWorldPositionUniform), &aquarium->lightWorldPositionUniform);
     setBufferData(lightBuffer, 0, sizeof(LightUniforms), &aquarium->lightUniforms);
     setBufferData(fogBuffer, 0, sizeof(FogUniforms), &aquarium->fogUniforms);
 
     // initilize world uniform buffers
-    groupLayoutWorld = MakeBindGroupLayout({ { 0, dawn::ShaderStageBit::Vertex, dawn::BindingType::UniformBuffer } });
+    groupLayoutWorld = MakeBindGroupLayout({ 
+        { 0, dawn::ShaderStageBit::Vertex, dawn::BindingType::UniformBuffer },
+        { 1, dawn::ShaderStageBit::Vertex, dawn::BindingType::UniformBuffer },
+    });
+
+    lightWorldPositionBuffer = createBufferFromData(&aquarium->lightWorldPositionUniform, sizeof(aquarium->lightWorldPositionUniform), dawn::BufferUsageBit::TransferDst | dawn::BufferUsageBit::Uniform);
+    viewBuffer = createBufferFromData(&aquarium->viewUniforms, sizeof(aquarium->viewUniforms), dawn::BufferUsageBit::TransferDst | dawn::BufferUsageBit::Uniform);
     
     bindGroupWorld = makeBindGroup(groupLayoutWorld, {
-        {0, viewBuffer, 0, sizeof(aquarium->viewUniforms) },
+        {0, lightWorldPositionBuffer, 0, sizeof(aquarium->lightWorldPositionUniform) },
+        {1, viewBuffer, 0, sizeof(aquarium->viewUniforms) },
     });
+
+    setBufferData(lightWorldPositionBuffer, 0, sizeof(LightWorldPositionUniform), &aquarium->lightWorldPositionUniform);
 
     depthStencilState = device.CreateDepthStencilStateBuilder()
         .SetDepthCompareFunction(dawn::CompareFunction::Less)
