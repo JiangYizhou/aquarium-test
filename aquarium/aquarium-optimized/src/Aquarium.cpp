@@ -441,7 +441,8 @@ void Aquarium::updateGlobalUniforms()
 {
     // Update our time
 #ifdef _WIN32
-    float now = GetTickCount64() / 1000.0f;
+    //float now = GetTickCount64() / 1000.0f;
+    float now = GetTickCount64() / 100.0f;
 #else
     float now = clock() / 1000000.0f;
 #endif
@@ -519,27 +520,28 @@ void Aquarium::render()
 
     drawBackground();
 
-    //drawFishes();
+    drawFishes();
 
-    //drawInner();
+    drawInner();
 
-    //drawSeaweed();
+    drawSeaweed();
 
-    //drawOutside();
+    drawOutside();
 }
 
 void Aquarium::drawBackground()
 {
     Model *model = mAquariumModels[MODELNAME::MODELRUINCOlOMN];
-    // TODO(yizhou) : Test. Draw only one object.
-    /*for (int i = MODELNAME::MODELRUINCOlOMN; i <= MODELNAME::MODELTREASURECHEST; ++i)
+    for (int i = MODELNAME::MODELRUINCOlOMN; i <= MODELNAME::MODELTREASURECHEST; ++i)
     {
-    model = mAquariumModels[i];
-    model->prepare(context);
-    updateWorldMatrixAndDraw(model);
-    }*/
-    model->prepare(context);
-    updateWorldMatrixAndDraw(model);
+        model = mAquariumModels[i];
+        //TODO(yizhou): Test 
+        if (model)
+        {
+            model->prepare(context);
+            updateWorldMatrixAndDraw(model);
+        }
+    }
 }
 
 void Aquarium::drawSeaweed()
@@ -559,12 +561,13 @@ void Aquarium::drawFishes()
     for (int i = MODELNAME::MODELSMALLFISHA; i <= MODELNAME::MODELBIGFISHB; ++i)
     {
         FishModel *model = static_cast<FishModel *>(mAquariumModels[i]);
-        model->prepare(context);
 
         const Fish &fishInfo = fishTable[i - MODELNAME::MODELSMALLFISHA];
         int numFish          = fishInfo.num;
         model->updateFishCommonUniforms(fishInfo.fishLength, fishInfo.fishBendAmount,
                                         fishInfo.fishWaveLength);
+        model->prepare(context);
+
         float fishBaseClock   = g.mclock * g_fishSpeed;
         float fishRadius      = fishInfo.radius;
         float fishRadiusRange = fishInfo.radiusRange;
@@ -630,17 +633,18 @@ void Aquarium::updateWorldProjections(const float *w)
     context->updateWorldlUniforms(this);
 }
 
-void Aquarium::updateWorldMatrixAndDraw(const Model *model)
+void Aquarium::updateWorldMatrixAndDraw(Model *model)
 {
     if (model->worldmatrices.size())
     {
-        // TODO(yizhou) : Test. Draw only one object.
-        /*for (auto &world : model->worldmatrixes)
+        for (auto &world : model->worldmatrices)
         {
-        updateWorldProjections(world.data());
-        model->draw();
-        }*/
-        updateWorldProjections(model->worldmatrices[0].data());
-        model->draw();
+            updateWorldProjections(world.data());
+            // Models of dawn keep viewUniforms for every model while opengl models use global
+            // viewUniforms.
+            // Update all viewUniforms on dawn backend.
+            model->updatePerInstanceUniforms(&viewUniforms);
+            model->draw();
+        }
     }
 }

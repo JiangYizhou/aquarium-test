@@ -28,6 +28,7 @@ class Buffer;
 
 enum MODELGROUP : short;
 enum MODELNAME : short;
+struct ViewUniforms;
 
 class Model
 {
@@ -37,8 +38,8 @@ class Model
         : mType(type), mName(name), mBlend(blend), mProgram(nullptr){};
     virtual ~Model();
     virtual void applyUniforms() const     = 0;
-    virtual void updatePerInstanceUniforms() const = 0;
-    virtual void draw() const = 0;
+    virtual void updatePerInstanceUniforms(ViewUniforms* viewUniforms) = 0;
+    virtual void draw() = 0;
 
     void applyPrograms() const;
     virtual void applyBuffers() const = 0;

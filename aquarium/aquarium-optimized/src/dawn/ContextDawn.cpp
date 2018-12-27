@@ -40,7 +40,7 @@ ContextDawn::~ContextDawn() {}
 bool ContextDawn::createContext()
 {
     // TODO(yizhou) : initilize dawn dynamic backend
-    utils::BackendType backendType = utils::BackendType::D3D12;
+    utils::BackendType backendType = utils::BackendType::Vulkan;
     utils::BackendBinding* binding = utils::CreateBinding(backendType);
     if (binding == nullptr) {
         return false;
@@ -63,8 +63,8 @@ bool ContextDawn::createContext()
     //mClientHeight = mode->height;
     // If we show the window bar on the top, max width and height will be 1916 x 1053.
     // Use a window mode currently
-    mClientWidth = 1024;
-    mClientHeight = 768;
+    mClientWidth  = 1916;
+    mClientHeight = 1053;
 
     mWindow = glfwCreateWindow(mClientWidth, mClientHeight, "Aquarium", NULL, NULL);
     if (mWindow == NULL)
@@ -441,15 +441,12 @@ void ContextDawn::initGeneralResources(Aquarium* aquarium)
     // initilize world uniform buffers
     groupLayoutWorld = MakeBindGroupLayout({ 
         { 0, dawn::ShaderStageBit::Vertex, dawn::BindingType::UniformBuffer },
-        { 1, dawn::ShaderStageBit::Vertex, dawn::BindingType::UniformBuffer },
     });
 
     lightWorldPositionBuffer = createBufferFromData(&aquarium->lightWorldPositionUniform, sizeof(aquarium->lightWorldPositionUniform), dawn::BufferUsageBit::TransferDst | dawn::BufferUsageBit::Uniform);
-    viewBuffer = createBufferFromData(&aquarium->viewUniforms, sizeof(aquarium->viewUniforms), dawn::BufferUsageBit::TransferDst | dawn::BufferUsageBit::Uniform);
     
     bindGroupWorld = makeBindGroup(groupLayoutWorld, {
         {0, lightWorldPositionBuffer, 0, sizeof(aquarium->lightWorldPositionUniform) },
-        {1, viewBuffer, 0, sizeof(aquarium->viewUniforms) },
     });
 
     setBufferData(lightWorldPositionBuffer, 0, sizeof(LightWorldPositionUniform), &aquarium->lightWorldPositionUniform);
@@ -462,7 +459,6 @@ void ContextDawn::initGeneralResources(Aquarium* aquarium)
 
 void ContextDawn::updateWorldlUniforms(Aquarium* aquarium)
 {
-    setBufferData(viewBuffer, 0, sizeof(ViewUniforms), &aquarium->viewUniforms);
     setBufferData(lightWorldPositionBuffer, 0, sizeof(LightWorldPositionUniform), &aquarium->lightWorldPositionUniform);
 }
 
@@ -530,11 +526,11 @@ void ContextDawn::KeyBoardQuit() {}
 // Submit commands of the frame
 void ContextDawn::DoFlush() {
 
-    //renderPass.EndPass();
-    //dawn::CommandBuffer cmd = commandBuilder.GetResult();
-    //queue.Submit(1, &cmd);
+    renderPass.EndPass();
+    dawn::CommandBuffer cmd = commandBuilder.GetResult();
+    queue.Submit(1, &cmd);
 
-    //swapchain.Present(backbuffer);
+    swapchain.Present(backbuffer);
     std::cout << "present" << std::endl;
 
     //glfwSwapBuffers(mWindow);
@@ -545,9 +541,9 @@ void ContextDawn::Terminate() {}
 
 // Update backbuffer and renderPassDescriptor
 void ContextDawn::resetState() {
-    //GetNextRenderPassDescriptor(device, swapchain, depthStencilView, &backbuffer, &renderPassDescriptor);
-    //commandBuilder = device.CreateCommandBufferBuilder();
-    //renderPass = commandBuilder.BeginRenderPass(renderPassDescriptor);
+    GetNextRenderPassDescriptor(&backbuffer, &renderPassDescriptor);
+    commandBuilder = device.CreateCommandBufferBuilder();
+    renderPass = commandBuilder.BeginRenderPass(renderPassDescriptor);
 }
 
 void ContextDawn::GetNextRenderPassDescriptor(

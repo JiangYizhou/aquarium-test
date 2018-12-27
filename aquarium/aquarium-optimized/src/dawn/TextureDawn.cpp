@@ -49,7 +49,7 @@ void TextureDawn::loadTexture()
         for (unsigned int i = 0; i < 6; i++)
         {
             dawn::Buffer stagingBuffer = context->createBufferFromData(pixelVec[i], mWidth * mHeight * 4, dawn::BufferUsageBit::TransferSrc);
-            dawn::BufferCopyView bufferCopyView = context->createBufferCopyView(stagingBuffer, 0, mWidth, mHeight);
+            dawn::BufferCopyView bufferCopyView = context->createBufferCopyView(stagingBuffer, 0, mWidth * 4, mHeight);
             dawn::TextureCopyView textureCopyView = context->createTextureCopyView(mTexture, 0, i, { 0, 0, 0 });
             dawn::Extent3D copySize = { static_cast<uint32_t>(mWidth), static_cast<uint32_t>(mHeight), 1 };
             dawn::CommandBuffer cmd = context->copyBufferToTexture(bufferCopyView, textureCopyView, copySize);
@@ -79,6 +79,7 @@ void TextureDawn::loadTexture()
     else  // dawn::TextureViewDimension::e2D
     {
         int resizedWidth;
+        bool resized = false;
         if (mWidth % kPadding == 0)
         {
             resizedWidth = mWidth;
@@ -86,12 +87,15 @@ void TextureDawn::loadTexture()
         else
         {
             resizedWidth = (mWidth / 256 + 1) * 256;
-            resizeImages(pixelVec, mWidth, mHeight, 0, pixelVec, mWidth, mHeight, resizedWidth, 4);
+            resizedVec[0] = (unsigned char *) malloc (resizedWidth * mHeight * 4 * sizeof(char)) ;
+            resizeImages(pixelVec[0], mWidth, mHeight, 0, resizedVec[0], resizedWidth, mHeight,
+                         0, 4);
+            resized = true;
         }
        
         dawn::TextureDescriptor descriptor;
         descriptor.dimension = mTextureDimension;
-        descriptor.size.width = mWidth;
+        descriptor.size.width  = resizedWidth;
         descriptor.size.height = mHeight;
         descriptor.size.depth = 1;
         descriptor.arraySize = 1;
@@ -103,10 +107,10 @@ void TextureDawn::loadTexture()
         mTexture = context->createTexture(descriptor);
 
         // TODO(yizhou) : check the data size of pixels, jpeg image
-        dawn::Buffer stagingBuffer = context->createBufferFromData(pixelVec[0], resizedWidth * mHeight * 4, dawn::BufferUsageBit::TransferSrc);
+        dawn::Buffer stagingBuffer = context->createBufferFromData(resized? resizedVec[0] : pixelVec[0], resizedWidth * mHeight * 4, dawn::BufferUsageBit::TransferSrc);
         dawn::BufferCopyView bufferCopyView = context->createBufferCopyView(stagingBuffer, 0, resizedWidth * 4, mHeight);
         dawn::TextureCopyView textureCopyView = context->createTextureCopyView(mTexture, 0, 0, { 0, 0, 0 });
-        dawn::Extent3D copySize = { static_cast<uint32_t>(mWidth), static_cast<uint32_t>(mHeight), 1 };
+        dawn::Extent3D copySize = { static_cast<uint32_t>(resizedWidth), static_cast<uint32_t>(mHeight), 1 };
         dawn::CommandBuffer cmd = context->copyBufferToTexture(bufferCopyView, textureCopyView, copySize);
 
         context->submit(1, cmd);

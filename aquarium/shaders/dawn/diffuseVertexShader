@@ -4,7 +4,7 @@ layout(std140, set = 1, binding = 0) uniform LightWorldPositionUniform {
      vec3 lightWorldPos;
 } lightWorldPositionUniform;
 
-layout(std140, set = 1, binding = 1) uniform WorldUniforms {
+layout(std140, set = 3, binding = 0) uniform WorldUniforms {
 	mat4 viewProjection;
 	mat4 viewInverse;
 	mat4 world;

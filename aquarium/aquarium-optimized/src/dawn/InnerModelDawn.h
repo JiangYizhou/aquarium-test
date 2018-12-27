@@ -18,8 +18,8 @@ class InnerModelDawn : public InnerModel
     void applyUniforms() const override;
     void applyTextures() const override;
     void applyBuffers() const override;
-    void draw() const override;
-    void updatePerInstanceUniforms() const override;
+    void draw() override;
+    void updatePerInstanceUniforms(ViewUniforms *viewUniforms) override;
 
     struct InnerUniforms
     {
@@ -27,6 +27,8 @@ class InnerModelDawn : public InnerModel
         float tankColorFudge;
         float refractionFudge;
     } innerUniforms;
+
+    ViewUniforms viewUniformPer;
 
     TextureDawn *diffuseTexture;
     TextureDawn *normalTexture;
@@ -47,11 +49,14 @@ private:
     dawn::RenderPipeline pipeline;
 
     dawn::BindGroupLayout groupLayoutModel;
+    dawn::BindGroupLayout groupLayoutPer;
     dawn::PipelineLayout pipelineLayout;
 
     dawn::BindGroup bindGroupModel;
+    dawn::BindGroup bindGroupPer;
 
     dawn::Buffer innerBuffer;
+    dawn::Buffer viewBuffer;
 
     const ContextDawn *contextDawn;
     ProgramDawn* programDawn;

@@ -61,11 +61,8 @@ void Texture::DestoryImageData(std::vector<uint8_t*>& pixelVec)
     }
 }
 
-void Texture::resizeImages(std::vector<uint8_t *>& input_pixels, int input_w, int input_h, int input_stride_in_bytes, std::vector<uint8_t *>& output_pixels, int output_w, int output_h, int output_stride_in_bytes, int num_channels)
+void Texture::resizeImages(uint8_t * input_pixels, int input_w, int input_h, int input_stride_in_bytes, uint8_t * output_pixels, int output_w, int output_h, int output_stride_in_bytes, int num_channels)
 {
-    for (size_t i = 0; i < input_pixels.size(); ++i)
-    {
-        stbir_resize_uint8(input_pixels[i], input_w, input_h, input_stride_in_bytes,
-            input_pixels[i], output_w, output_h, output_stride_in_bytes, num_channels);
-    }
+   stbir_resize_uint8(input_pixels, input_w, input_h, input_stride_in_bytes, output_pixels,
+                       output_w, output_h, output_stride_in_bytes, num_channels);
 }

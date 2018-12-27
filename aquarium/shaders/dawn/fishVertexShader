@@ -4,7 +4,7 @@ layout(std140, set = 1, binding = 0) uniform LightWorldPositionUniform {
     vec3 lightWorldPos;
 } lightWorldPositionUniform;
 
-layout(std140, set = 1, binding = 1) uniform ViewUniforms {
+layout(std140, set = 3, binding = 0) uniform ViewUniforms {
 	mat4 viewProjection;
 	mat4 viewInverse;
     mat4 world;
@@ -18,7 +18,7 @@ layout(std140, set = 2, binding = 0) uniform FishVertexUniforms {
     float fishBendAmount;
  } fishVertexUnifoms;
  
-layout(std140, set = 3, binding = 0) uniform FishPerUniforms {
+layout(std140, set = 3, binding = 1) uniform FishPerUniforms {
     vec3 worldPosition;
     vec3 nextPosition;
     float scale;

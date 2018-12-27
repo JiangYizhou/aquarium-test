@@ -158,6 +158,9 @@ class ContextDawn : public Context
         dawn::RenderPassDescriptor* info) const;
     dawn::SwapChain swapchain;
 
+    dawn::RenderPassDescriptor renderPassDescriptor;
+    dawn::CommandBufferBuilder commandBuilder;
+
   private:
     GLFWwindow *mWindow;
     dawn::Device device;
@@ -174,8 +177,6 @@ class ContextDawn : public Context
     dawn::Sampler sampler;
 
     dawn::Texture backbuffer;
-    dawn::RenderPassDescriptor renderPassDescriptor;
-    dawn::CommandBufferBuilder commandBuilder;
 };
 
 #endif

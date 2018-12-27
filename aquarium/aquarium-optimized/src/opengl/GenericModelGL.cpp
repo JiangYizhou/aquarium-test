@@ -106,9 +106,8 @@ void GenericModelGL::applyBuffers() const
     contextGL->setIndices(indicesBuffer);
 }
 
-void GenericModelGL::draw() const
+void GenericModelGL::draw()
 {
-    updatePerInstanceUniforms();
     contextGL->drawElements(indicesBuffer);
 }
 
@@ -127,7 +126,7 @@ void GenericModelGL::applyUniforms() const
     contextGL->setUniform(fogColorUniform.second, fogColorUniform.first, GL_FLOAT_VEC4);
 }
 
-void GenericModelGL::updatePerInstanceUniforms() const
+void GenericModelGL::updatePerInstanceUniforms(ViewUniforms *viewUniforms)
 {
     contextGL->setUniform(worldUniform.second, worldUniform.first, GL_FLOAT_MAT4);
     contextGL->setUniform(worldViewProjectionUniform.second, worldViewProjectionUniform.first,

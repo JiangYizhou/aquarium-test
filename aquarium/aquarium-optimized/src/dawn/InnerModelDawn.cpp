@@ -51,15 +51,23 @@ void InnerModelDawn::init()
        { 5, dawn::ShaderStageBit::Fragment, dawn::BindingType::SampledTexture },
        { 6, dawn::ShaderStageBit::Fragment, dawn::BindingType::SampledTexture },
     });
+
+    groupLayoutPer = contextDawn->MakeBindGroupLayout({
+        {0, dawn::ShaderStageBit::Vertex, dawn::BindingType::UniformBuffer},
+    });
     
     pipelineLayout = contextDawn->MakeBasicPipelineLayout({ contextDawn->groupLayoutGeneral,
         contextDawn->groupLayoutWorld,
         groupLayoutModel,
+        groupLayoutPer,
     });
 
     pipeline = contextDawn->createRenderPipeline(pipelineLayout, programDawn, inputState, mBlend);
 
     innerBuffer = contextDawn->createBufferFromData(&innerUniforms, sizeof(innerUniforms), dawn::BufferUsageBit::TransferDst | dawn::BufferUsageBit::Uniform);
+    viewBuffer = contextDawn->createBufferFromData(
+        &viewUniformPer, sizeof(ViewUniforms),
+        dawn::BufferUsageBit::TransferDst | dawn::BufferUsageBit::Uniform);
 
     std::initializer_list<dawn::Sampler> samplersInitializer = { reflectionTexture->getSampler(), skyboxTexture->getSampler() };
     std::initializer_list<dawn::TextureView> textureViewsInitializer = { diffuseTexture->getTextureView(),
@@ -74,7 +82,11 @@ void InnerModelDawn::init()
         { 5, reflectionTexture->getTextureView() },
         { 6, skyboxTexture->getTextureView() }
     });
- 
+
+    bindGroupPer = contextDawn->makeBindGroup(groupLayoutPer, {
+                                                       {0, viewBuffer, 0, sizeof(ViewUniforms)},
+                                                   });
+
     contextDawn->setBufferData(innerBuffer, 0, sizeof(InnerUniforms), &innerUniforms);
 }
 
@@ -90,7 +102,7 @@ void InnerModelDawn::applyBuffers() const
 {
 }
 
-void InnerModelDawn::draw() const
+void InnerModelDawn::draw()
 {
     uint32_t vertexBufferOffsets[1] = { 0 };
 
@@ -99,6 +111,7 @@ void InnerModelDawn::draw() const
     pass.SetBindGroup(0, contextDawn->bindGroupGeneral);
     pass.SetBindGroup(1, contextDawn->bindGroupWorld);
     pass.SetBindGroup(2, bindGroupModel);
+    pass.SetBindGroup(3, bindGroupPer);
     pass.SetVertexBuffers(0, 1, &positionBuffer->getBuffer(), vertexBufferOffsets);
     pass.SetVertexBuffers(1, 1, &normalBuffer->getBuffer(), vertexBufferOffsets);
     pass.SetVertexBuffers(2, 1, &texCoordBuffer->getBuffer(), vertexBufferOffsets);
@@ -108,6 +121,9 @@ void InnerModelDawn::draw() const
     pass.DrawIndexed(indicesBuffer->getTotalComponents(), 1, 0, 0, 0);
 }
 
-void InnerModelDawn::updatePerInstanceUniforms() const
+void InnerModelDawn::updatePerInstanceUniforms(ViewUniforms* viewUniforms)
 {
+    memcpy(&viewUniformPer, viewUniforms, sizeof(ViewUniforms));
+
+    contextDawn->setBufferData(viewBuffer, 0, sizeof(ViewUniforms), &viewUniformPer);
 }

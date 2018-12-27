@@ -103,10 +103,8 @@ void InnerModelGL::applyBuffers() const
     contextGL->setIndices(indicesBuffer);
 }
 
-void InnerModelGL::draw() const
+void InnerModelGL::draw()
 {
-    updatePerInstanceUniforms();
-
     contextGL->drawElements(indicesBuffer);
 }
 
@@ -123,7 +121,7 @@ void InnerModelGL::applyUniforms() const
     contextGL->setUniform(refractionFudgeUniform.second, &refractionFudgeUniform.first, GL_FLOAT);
 }
 
-void InnerModelGL::updatePerInstanceUniforms() const
+void InnerModelGL::updatePerInstanceUniforms(ViewUniforms* viewUniforms)
 {
     contextGL->setUniform(worldUniform.second, worldUniform.first, GL_FLOAT_MAT4);
     contextGL->setUniform(worldViewProjectionUniform.second, worldViewProjectionUniform.first,

@@ -98,7 +98,6 @@ enum FISHENUM : short
     MAX
 };
 
-/*
 const G_sceneInfo g_sceneInfo[] = {
     {"SmallFishA",
      MODELNAME::MODELSMALLFISHA,
@@ -172,10 +171,7 @@ const G_sceneInfo g_sceneInfo[] = {
      false,
      MODELGROUP::OUTSIDE},
     {"SupportBeams", MODELNAME::MODELSUPPORTBEAMS, {"", ""}, false, MODELGROUP::OUTSIDE},
-    {"TreasureChest", MODELNAME::MODELTREASURECHEST, {"", ""}, true, MODELGROUP::GENERIC}};
-    */
-const G_sceneInfo g_sceneInfo[] = {
-    { "RuinColumn", MODELNAME::MODELRUINCOlOMN,{ "", "" }, true, MODELGROUP::GENERIC },
+    {"TreasureChest", MODELNAME::MODELTREASURECHEST, {"", ""}, true, MODELGROUP::GENERIC}
 };
 
 const std::vector<std::string> g_skyBoxUrls = {
@@ -401,7 +397,7 @@ class Aquarium
     void setUpSkyBox(std::vector<std::string> *skyUrls);
     void calculateFishCount();
     float degToRad(float degrees);
-    void updateWorldMatrixAndDraw(const Model *model);
+    void updateWorldMatrixAndDraw(Model *model);
     void updateGlobalUniforms();
     void drawBackground();
     void drawFishes();

@@ -22,11 +22,11 @@ class GenericModelGL : public GenericModel
                    MODELNAME name,
                    bool blend);
     void applyUniforms() const override;
-    void updatePerInstanceUniforms() const override;
+    void updatePerInstanceUniforms(ViewUniforms *viewUniforms) override;
     void init() override;
     void applyTextures() const override;
     void applyBuffers() const override;
-    void draw() const override;
+    void draw() override;
 
     std::pair<float *, int> worldViewProjectionUniform;
     std::pair<float *, int> worldUniform;

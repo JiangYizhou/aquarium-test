@@ -21,7 +21,15 @@ class Texture
     Texture(std::string name, const std::string &url);
     std::string getName() { return mName; }
     virtual void loadTexture() = 0;
-    void resizeImages(std::vector<uint8_t *>& input_pixels, int input_w, int input_h, int input_stride_in_bytes, std::vector<uint8_t *>& output_pixels, int output_w, int output_h, int output_stride_in_bytes, int num_channels);
+    void resizeImages(uint8_t *input_pixels,
+                      int input_w,
+                      int input_h,
+                      int input_stride_in_bytes,
+                      uint8_t *output_pixels,
+                      int output_w,
+                      int output_h,
+                      int output_stride_in_bytes,
+                      int num_channels);
 
   protected:
     bool isPowerOf2(int);

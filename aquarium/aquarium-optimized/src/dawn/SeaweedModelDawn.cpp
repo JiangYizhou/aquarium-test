@@ -43,6 +43,7 @@ void SeaweedModelDawn::init()
 
     groupLayoutPer = contextDawn->MakeBindGroupLayout({
         { 0, dawn::ShaderStageBit::Vertex, dawn::BindingType::UniformBuffer},
+        { 1, dawn::ShaderStageBit::Vertex, dawn::BindingType::UniformBuffer},
     });
 
     pipelineLayout = contextDawn->MakeBasicPipelineLayout({ contextDawn->groupLayoutGeneral,
@@ -55,6 +56,9 @@ void SeaweedModelDawn::init()
 
     lightFactorBuffer = contextDawn->createBufferFromData(&lightFactorUniforms, sizeof(lightFactorUniforms), dawn::BufferUsageBit::TransferDst | dawn::BufferUsageBit::Uniform);
     timeBuffer = contextDawn->createBufferFromData(&seaweedPer, sizeof(seaweedPer), dawn::BufferUsageBit::TransferDst | dawn::BufferUsageBit::Uniform);
+    viewBuffer = contextDawn->createBufferFromData(
+        &viewUniformPer, sizeof(ViewUniforms),
+        dawn::BufferUsageBit::TransferDst | dawn::BufferUsageBit::Uniform);
 
     bindGroupModel = contextDawn->makeBindGroup(groupLayoutModel, {
         { 0, lightFactorBuffer, 0, sizeof(LightFactorUniforms) },
@@ -63,7 +67,8 @@ void SeaweedModelDawn::init()
     });
 
     bindGroupPer = contextDawn->makeBindGroup(groupLayoutPer, {
-        { 0, timeBuffer, 0, sizeof(SeaweedPer) },
+        { 0, viewBuffer, 0, sizeof(ViewUniforms)},
+        { 1, timeBuffer, 0, sizeof(SeaweedPer) },
     });
 
     contextDawn->setBufferData(lightFactorBuffer, 0, sizeof(lightFactorUniforms), &lightFactorUniforms);
@@ -81,7 +86,7 @@ void SeaweedModelDawn::applyBuffers() const
 {
 }
 
-void SeaweedModelDawn::draw() const
+void SeaweedModelDawn::draw()
 {
     uint32_t vertexBufferOffsets[1] = { 0 };
 
@@ -98,8 +103,11 @@ void SeaweedModelDawn::draw() const
     pass.DrawIndexed(indicesBuffer->getTotalComponents(), 1, 0, 0, 0);
 }
 
-void SeaweedModelDawn::updatePerInstanceUniforms() const
+void SeaweedModelDawn::updatePerInstanceUniforms(ViewUniforms *viewUniforms)
 {
+    memcpy(&viewUniformPer, viewUniforms, sizeof(ViewUniforms));
+
+    contextDawn->setBufferData(viewBuffer, 0, sizeof(ViewUniforms), &viewUniformPer);
     contextDawn->setBufferData(timeBuffer, 0, sizeof(seaweedPer), &seaweedPer);
 }
 

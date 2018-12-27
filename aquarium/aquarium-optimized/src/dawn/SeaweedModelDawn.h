@@ -18,9 +18,9 @@ class SeaweedModelDawn : public SeaweedModel
     void applyUniforms() const override;
     void applyTextures() const override;
     void applyBuffers() const override;
-    void draw() const override;
+    void draw() override;
 
-    void updatePerInstanceUniforms() const override;
+    void updatePerInstanceUniforms(ViewUniforms *viewUniforms) override;
 
 
     TextureDawn *diffuseTexture;
@@ -46,7 +46,9 @@ class SeaweedModelDawn : public SeaweedModel
         float time;
     } seaweedPer;
 
-private:
+    ViewUniforms viewUniformPer;
+
+  private:
     dawn::InputState inputState;
     dawn::RenderPipeline pipeline;
 
@@ -59,6 +61,7 @@ private:
 
     dawn::Buffer lightFactorBuffer;
     dawn::Buffer timeBuffer;
+    dawn::Buffer viewBuffer;
 
     const ContextDawn *contextDawn;
     ProgramDawn* programDawn;

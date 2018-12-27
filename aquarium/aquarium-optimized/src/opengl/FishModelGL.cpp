@@ -118,9 +118,9 @@ void FishModelGL::applyBuffers() const
     contextGL->setIndices(indicesBuffer);
 }
 
-void FishModelGL::draw() const
+void FishModelGL::draw()
 {
-    updatePerInstanceUniforms();
+    updatePerInstanceUniforms(nullptr);
     contextGL->drawElements(indicesBuffer);
 }
 
@@ -144,7 +144,7 @@ void FishModelGL::applyUniforms() const
     contextGL->setUniform(fishWaveLengthUniform.second, &fishWaveLengthUniform.first, GL_FLOAT);
 }
 
-void FishModelGL::updatePerInstanceUniforms() const
+void FishModelGL::updatePerInstanceUniforms(ViewUniforms *viewUniforms)
 {
     contextGL->setUniform(scaleUniform.second, &scaleUniform.first, GL_FLOAT);
     contextGL->setUniform(timeUniform.second, &timeUniform.first, GL_FLOAT);

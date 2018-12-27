@@ -39,6 +39,10 @@ void OutsideModelDawn::init()
         { 4, binormalBuffer->getDataSize(), dawn::InputStepMode::Vertex }
     });
 
+    groupLayoutPer = contextDawn->MakeBindGroupLayout({
+        {0, dawn::ShaderStageBit::Vertex, dawn::BindingType::UniformBuffer},
+    });
+
     // Outside models use diffuse shaders.
     groupLayoutModel = contextDawn->MakeBindGroupLayout({
         { 0, dawn::ShaderStageBit::Fragment, dawn::BindingType::UniformBuffer },
@@ -49,16 +53,24 @@ void OutsideModelDawn::init()
     pipelineLayout = contextDawn->MakeBasicPipelineLayout({ contextDawn->groupLayoutGeneral,
         contextDawn->groupLayoutWorld,
         groupLayoutModel,
+        groupLayoutPer,
     });
 
     pipeline = contextDawn->createRenderPipeline(pipelineLayout, programDawn, inputState, mBlend);
 
     lightFactorBuffer = contextDawn->createBufferFromData(&lightFactorUniforms, sizeof(lightFactorUniforms), dawn::BufferUsageBit::TransferDst | dawn::BufferUsageBit::Uniform);
+    viewBuffer = contextDawn->createBufferFromData(
+        &viewUniformPer, sizeof(ViewUniforms),
+        dawn::BufferUsageBit::TransferDst | dawn::BufferUsageBit::Uniform);
 
     bindGroupModel = contextDawn->makeBindGroup(groupLayoutModel, {
         { 0, lightFactorBuffer, 0, sizeof(LightFactorUniforms) },
         { 1, diffuseTexture->getSampler() },
         { 2, diffuseTexture->getTextureView() },
+    });
+
+    bindGroupPer = contextDawn->makeBindGroup(groupLayoutPer, {
+        {0, viewBuffer, 0, sizeof(ViewUniforms)},
     });
 
     contextDawn->setBufferData(lightFactorBuffer, 0, sizeof(LightFactorUniforms), &lightFactorUniforms);
@@ -76,7 +88,7 @@ void OutsideModelDawn::applyBuffers() const
 {
 }
 
-void OutsideModelDawn::draw() const
+void OutsideModelDawn::draw()
 {
     uint32_t vertexBufferOffsets[1] = { 0 };
 
@@ -85,6 +97,7 @@ void OutsideModelDawn::draw() const
     pass.SetBindGroup(0, contextDawn->bindGroupGeneral);
     pass.SetBindGroup(1, contextDawn->bindGroupWorld);
     pass.SetBindGroup(2, bindGroupModel);
+    pass.SetBindGroup(3, bindGroupPer);
     pass.SetVertexBuffers(0, 1, &positionBuffer->getBuffer(), vertexBufferOffsets);
     pass.SetVertexBuffers(1, 1, &normalBuffer->getBuffer(), vertexBufferOffsets);
     pass.SetVertexBuffers(2, 1, &texCoordBuffer->getBuffer(), vertexBufferOffsets);
@@ -97,6 +110,8 @@ void OutsideModelDawn::draw() const
     pass.DrawIndexed(indicesBuffer->getTotalComponents(), 1, 0, 0, 0);
 }
 
-void OutsideModelDawn::updatePerInstanceUniforms() const
-{
+void OutsideModelDawn::updatePerInstanceUniforms(ViewUniforms *viewUniforms) {
+    memcpy(&viewUniformPer, viewUniforms, sizeof(ViewUniforms));
+
+    contextDawn->setBufferData(viewBuffer, 0, sizeof(ViewUniforms), &viewUniformPer);
 }
