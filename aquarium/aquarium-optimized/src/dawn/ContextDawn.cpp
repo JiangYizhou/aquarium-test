@@ -41,7 +41,7 @@ ContextDawn::~ContextDawn() {}
 bool ContextDawn::createContext()
 {
     // TODO(yizhou) : initilize dawn dynamic backend
-    utils::BackendType backendType = utils::BackendType::D3D12;
+    utils::BackendType backendType = utils::BackendType::Vulkan;
     utils::BackendBinding* binding = utils::CreateBinding(backendType);
     if (binding == nullptr) {
         return false;

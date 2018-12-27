@@ -138,7 +138,6 @@ class ContextDawn : public Context
     dawn::Device getDevice() const { return device; }
 
     dawn::Buffer lightWorldPositionBuffer;
-    dawn::Buffer viewBuffer;
     dawn::Buffer lightBuffer;
     dawn::Buffer fogBuffer;
 

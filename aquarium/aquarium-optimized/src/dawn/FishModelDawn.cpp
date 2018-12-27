@@ -89,13 +89,13 @@ void FishModelDawn::init()
     pipeline = contextDawn->createRenderPipeline(pipelineLayout, programDawn, inputState, mBlend);
 
     fishVertexBuffer = contextDawn->createBufferFromData(
-        &fishVertexUniforms, sizeof(fishVertexUniforms),
+        &fishVertexUniforms, sizeof(FishVertexUniforms),
         dawn::BufferUsageBit::TransferDst | dawn::BufferUsageBit::Uniform);
     lightFactorBuffer = contextDawn->createBufferFromData(
-        &lightFactorUniforms, sizeof(lightFactorUniforms),
+        &lightFactorUniforms, sizeof(LightFactorUniforms),
         dawn::BufferUsageBit::TransferDst | dawn::BufferUsageBit::Uniform);
     fishPerBuffer = contextDawn->createBuffer(
-        sizeof(fishPerUniforms), dawn::BufferUsageBit::TransferDst | dawn::BufferUsageBit::Uniform);
+        sizeof(FishPerUniforms), dawn::BufferUsageBit::TransferDst | dawn::BufferUsageBit::Uniform);
     viewBuffer = contextDawn->createBufferFromData(
         &viewUniformPer, sizeof(ViewUniforms),
         dawn::BufferUsageBit::TransferDst | dawn::BufferUsageBit::Uniform);

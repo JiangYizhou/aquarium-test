@@ -20,7 +20,9 @@ layout(std140, set = 2, binding = 0) uniform FishVertexUniforms {
  
 layout(std140, set = 3, binding = 1) uniform FishPerUniforms {
     vec3 worldPosition;
+	float padding1;
     vec3 nextPosition;
+	float padding2;
     float scale;
     float time;
 } fishPerUniform;

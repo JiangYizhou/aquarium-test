@@ -71,6 +71,7 @@ Aquarium::Aquarium()
     lightUniforms.ambient[0] = g_ambientRed;
     lightUniforms.ambient[1] = g_ambientGreen;
     lightUniforms.ambient[2] = g_ambientBlue;
+    lightUniforms.ambient[3] = 1.0f;
 }
 
 Aquarium::~Aquarium()
@@ -535,12 +536,8 @@ void Aquarium::drawBackground()
     for (int i = MODELNAME::MODELRUINCOlOMN; i <= MODELNAME::MODELTREASURECHEST; ++i)
     {
         model = mAquariumModels[i];
-        //TODO(yizhou): Test 
-        if (model)
-        {
-            model->prepare(context);
-            updateWorldMatrixAndDraw(model);
-        }
+        model->prepare(context);
+        updateWorldMatrixAndDraw(model);
     }
 }
 
@@ -603,6 +600,7 @@ void Aquarium::drawFishes()
                 cos(zClock - 0.04f) * zRadius, scale,
                 fmod((g.mclock + ii * g_tailOffsetMult) * fishTailSpeed * speed,
                      static_cast<float>(M_PI) * 2));
+            model->updatePerInstanceUniforms(&viewUniforms);
             model->draw();
         }
     }

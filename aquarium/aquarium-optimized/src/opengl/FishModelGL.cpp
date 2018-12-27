@@ -120,7 +120,6 @@ void FishModelGL::applyBuffers() const
 
 void FishModelGL::draw()
 {
-    updatePerInstanceUniforms(nullptr);
     contextGL->drawElements(indicesBuffer);
 }
 
