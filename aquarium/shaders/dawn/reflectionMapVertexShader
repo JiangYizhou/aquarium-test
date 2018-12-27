@@ -32,5 +32,6 @@ void main() {
   v_surfaceToView = (viewUniforms.viewInverse[3] - (viewUniforms.world * position)).xyz;
   v_binormal = (viewUniforms.worldInverseTranspose * vec4(binormal, 0)).xyz;
   v_tangent = (viewUniforms.worldInverseTranspose * vec4(tangent, 0)).xyz;
+  v_position.y = -v_position.y;
   gl_Position = v_position;
 }

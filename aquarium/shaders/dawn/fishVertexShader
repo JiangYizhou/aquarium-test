@@ -72,5 +72,6 @@ void main() {
   v_surfaceToView = (viewUniforms.viewInverse[3] - (world * position)).xyz;
   v_binormal = (worldInverseTranspose * vec4(binormal, 0)).xyz;  // #normalMap
   v_tangent = (worldInverseTranspose * vec4(tangent, 0)).xyz;  // #normalMap
+  v_position.y = -v_position.y;
   gl_Position = v_position;
 }

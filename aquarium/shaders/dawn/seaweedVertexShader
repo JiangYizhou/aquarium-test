@@ -46,5 +46,6 @@ void main() {
   v_normal = (newWorld * vec4(normal, 0)).xyz;
   v_surfaceToLight = lightWorldPositionUniform.lightWorldPos - (viewUniforms.world * position).xyz;
   v_surfaceToView = (viewUniforms.viewInverse[3] - (viewUniforms.world * position)).xyz;
+  v_position.y = -v_position.y;
   gl_Position = v_position;
 }
