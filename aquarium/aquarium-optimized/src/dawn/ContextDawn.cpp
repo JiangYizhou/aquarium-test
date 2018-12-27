@@ -27,6 +27,7 @@
 #include "OutsideModelDawn.h"
 #include "SeaweedModelDawn.h"
 
+#include <array>
 #include <cstring>
 
 void PrintDeviceError(const char* message, dawn::CallbackUserdata) {
@@ -93,17 +94,6 @@ bool ContextDawn::createContext()
         dawn::TextureUsageBit::OutputAttachment, mClientWidth, mClientHeight);
 
     depthStencilView = createDepthStencilView();
-
-    dawn::BlendDescriptor blendDescriptor;
-    blendDescriptor.operation = dawn::BlendOperation::Add;
-    blendDescriptor.srcFactor = dawn::BlendFactor::SrcAlpha;
-    blendDescriptor.dstFactor = dawn::BlendFactor::OneMinusSrcAlpha;
-
-    blendState = device.CreateBlendStateBuilder()
-        .SetBlendEnabled(true)
-        .SetColorBlend(&blendDescriptor)
-        .SetAlphaBlend(&blendDescriptor)
-        .GetResult();
 
     return true;
 }
@@ -304,7 +294,7 @@ dawn::RenderPipeline ContextDawn::createRenderPipeline(dawn::PipelineLayout pipe
 
     dawn::AttachmentDescriptor cColorAttachments[kMaxColorAttachments];
     dawn::AttachmentDescriptor cDepthStencilAttachment;
-    dawn::BlendState cBlendStates[kMaxColorAttachments];
+    std::array<dawn::BlendStateDescriptor, kMaxColorAttachments> cBlendStates;
 
     dawn::AttachmentsStateDescriptor cAttachmentsState;
     cAttachmentsState.numColorAttachments = 1;
@@ -318,8 +308,21 @@ dawn::RenderPipeline ContextDawn::createRenderPipeline(dawn::PipelineLayout pipe
 
     cDepthStencilAttachment.format = dawn::TextureFormat::D32FloatS8Uint;
 
-    for (uint32_t i = 0; i < kMaxColorAttachments; ++i) {
-        cBlendStates[i] = device.CreateBlendStateBuilder().GetResult();
+    dawn::BlendDescriptor blendDescriptor;
+    blendDescriptor.operation = dawn::BlendOperation::Add;
+    blendDescriptor.srcFactor = dawn::BlendFactor::SrcAlpha;
+    blendDescriptor.dstFactor = dawn::BlendFactor::OneMinusSrcAlpha;
+
+    dawn::BlendStateDescriptor blendStateDescriptor;
+    blendStateDescriptor.nextInChain    = nullptr;
+    blendStateDescriptor.blendEnabled   = enableBlend ? true :false;
+    blendStateDescriptor.alphaBlend     = blendDescriptor;
+    blendStateDescriptor.colorBlend     = blendDescriptor;
+    blendStateDescriptor.colorWriteMask = dawn::ColorWriteMask::All;
+
+    for (uint32_t i = 0; i < kMaxColorAttachments; ++i)
+    {
+        cBlendStates[i] = blendStateDescriptor;
     }
 
     dawn::RenderPipelineDescriptor descriptor;
@@ -333,11 +336,7 @@ dawn::RenderPipeline ContextDawn::createRenderPipeline(dawn::PipelineLayout pipe
     descriptor.indexFormat = dawn::IndexFormat::Uint16;
     descriptor.sampleCount = 1;
     descriptor.numBlendStates = 1;
-    descriptor.blendStates = cBlendStates;
-
-    if (enableBlend) {
-        cBlendStates[0] = blendState;
-    }
+    descriptor.blendStates       = &cBlendStates[0];
 
     dawn::RenderPipeline pipeline = device.CreateRenderPipeline(&descriptor);
     return pipeline;

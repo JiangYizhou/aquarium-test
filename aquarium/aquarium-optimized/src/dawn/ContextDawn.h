@@ -151,7 +151,6 @@ class ContextDawn : public Context
     dawn::RenderPassEncoder renderPass;
 
     dawn::DepthStencilState depthStencilState;
-    dawn::BlendState blendState;
     
     void GetNextRenderPassDescriptor(
         dawn::Texture* backbuffer,
