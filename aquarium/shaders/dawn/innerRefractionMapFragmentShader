@@ -16,9 +16,9 @@ layout(std140, set = 0, binding = 0) uniform LightUniforms {
 } lightUniforms;
 
 layout(std140, set = 2, binding = 0) uniform InnerUniforms{
-	float refractionFudge;
 	float eta;
 	float tankColorFudge;
+	float refractionFudge;
 	float padding;
 } innerUniforms;
 
