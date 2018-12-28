@@ -147,8 +147,6 @@ class ContextDawn : public Context
     dawn::BindGroupLayout groupLayoutWorld;
     dawn::BindGroup bindGroupWorld;
 
-    dawn::RenderPassEncoder renderPass;
-
     dawn::DepthStencilState depthStencilState;
     
     void GetNextRenderPassDescriptor(
@@ -157,7 +155,6 @@ class ContextDawn : public Context
     dawn::SwapChain swapchain;
 
     dawn::RenderPassDescriptor renderPassDescriptor;
-    dawn::CommandBufferBuilder commandBuilder;
 
   private:
     GLFWwindow *mWindow;

@@ -48,5 +48,5 @@ void main() {
                 lightUniforms.specular * litR.z * lightFactorUniforms.specularFactor)).rgb,
       diffuseColor.a);
   outColor = mix(outColor, vec4(fogs.fogColor.rgb, diffuseColor.a),
-		clamp(pow((v_position.z / v_position.w), fogs.fogPower) * fogs.fogMult - fogs.fogOffset,0.0,1.0));
+		clamp(pow((v_position.z / v_position.w), 0) * 0 - 0,0.0,1.0));
 }

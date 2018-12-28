@@ -68,10 +68,14 @@ Aquarium::Aquarium()
     fogUniforms.fogColor[2] = g_fogBlue;
     fogUniforms.fogColor[3] = 1.0f;
 
+    fogUniforms.fogPower    = g_fogPower;
+    fogUniforms.fogMult     = g_fogMult;
+    fogUniforms.fogOffset   = g_fogOffset;
+
     lightUniforms.ambient[0] = g_ambientRed;
     lightUniforms.ambient[1] = g_ambientGreen;
     lightUniforms.ambient[2] = g_ambientBlue;
-    lightUniforms.ambient[3] = 1.0f;
+    lightUniforms.ambient[3] = 0.0f;
 }
 
 Aquarium::~Aquarium()
@@ -173,7 +177,7 @@ void Aquarium::display()
 void Aquarium::updateUrls()
 {
     // Get path of current build.
-    char temp[100]; 
+    char temp[200]; 
     #if defined(WIN32) || defined(_WIN32) || defined(__WIN32)
     GetModuleFileName(NULL, temp, MAX_PATH);
     mPath = std::string(temp);
@@ -442,8 +446,7 @@ void Aquarium::updateGlobalUniforms()
 {
     // Update our time
 #ifdef _WIN32
-    //float now = GetTickCount64() / 1000.0f;
-    float now = GetTickCount64() / 100.0f;
+    float now = GetTickCount64() / 1000.0f;
 #else
     float now = clock() / 1000000.0f;
 #endif

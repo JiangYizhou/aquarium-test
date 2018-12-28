@@ -2,6 +2,7 @@
 
 layout(std140, set = 1, binding = 0) uniform LightWorldPositionUniform {
     vec3 lightWorldPos;
+	float padding;
 } lightWorldPositionUniform;
 
 layout(std140, set = 3, binding = 0) uniform ViewUniforms {

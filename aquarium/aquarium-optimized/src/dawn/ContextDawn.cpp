@@ -64,8 +64,8 @@ bool ContextDawn::createContext()
     //mClientHeight = mode->height;
     // If we show the window bar on the top, max width and height will be 1916 x 1053.
     // Use a window mode currently
-    mClientWidth  = 1916;
-    mClientHeight = 1053;
+    mClientWidth  = 1024;
+    mClientHeight = 768;
 
     mWindow = glfwCreateWindow(mClientWidth, mClientHeight, "Aquarium", NULL, NULL);
     if (mWindow == NULL)
@@ -525,9 +525,9 @@ void ContextDawn::KeyBoardQuit() {}
 // Submit commands of the frame
 void ContextDawn::DoFlush() {
 
-    renderPass.EndPass();
-    dawn::CommandBuffer cmd = commandBuilder.GetResult();
-    queue.Submit(1, &cmd);
+    //renderPass.EndPass();
+    //dawn::CommandBuffer cmd = commandBuilder.GetResult();
+    //queue.Submit(1, &cmd);
 
     swapchain.Present(backbuffer);
     std::cout << "present" << std::endl;
@@ -541,8 +541,6 @@ void ContextDawn::Terminate() {}
 // Update backbuffer and renderPassDescriptor
 void ContextDawn::resetState() {
     GetNextRenderPassDescriptor(&backbuffer, &renderPassDescriptor);
-    commandBuilder = device.CreateCommandBufferBuilder();
-    renderPass = commandBuilder.BeginRenderPass(renderPassDescriptor);
 }
 
 void ContextDawn::GetNextRenderPassDescriptor(
@@ -568,10 +566,22 @@ void ContextDawn::GetNextRenderPassDescriptor(
     depthStencilAttachment.depthStoreOp = dawn::StoreOp::Store;
     depthStencilAttachment.stencilStoreOp = dawn::StoreOp::Store;
 
-    *info = device.CreateRenderPassDescriptorBuilder()
+    dawn::RenderPassDescriptor descriptorClear = device.CreateRenderPassDescriptorBuilder()
         .SetColorAttachments(1, &colorAttachment)
         .SetDepthStencilAttachment(&depthStencilAttachment)
         .GetResult();
+
+    dawn::CommandBufferBuilder commandBuilder = device.CreateCommandBufferBuilder();
+    dawn::RenderPassEncoder renderPass        = commandBuilder.BeginRenderPass(descriptorClear);
+    renderPass.EndPass();
+    queue.Submit(1, &commandBuilder.GetResult());
+
+    colorAttachment.loadOp = dawn::LoadOp::Load;
+    depthStencilAttachment.depthLoadOp = dawn::LoadOp::Load;
+    *info = device.CreateRenderPassDescriptorBuilder()
+         .SetColorAttachments(1, &colorAttachment)
+         .SetDepthStencilAttachment(&depthStencilAttachment)
+         .GetResult();
 }
 
 void ContextDawn::enableBlend(bool flag) const {}

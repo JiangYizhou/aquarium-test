@@ -131,8 +131,6 @@ void GenericModelDawn::init()
     }
     else if (normalTexture && mName != MODELNAME::MODELGLOBEBASE)
     {
-        // TODO(yizou): Test. Cuttently,render only generic model, and set all set to 0 to
-        // workaround multisample bind group issue on d3d12.
         bindGroupModel = contextDawn->makeBindGroup(
             groupLayoutModel, {
                                   {0, lightFactorBuffer, 0, sizeof(LightFactorUniforms)},
@@ -170,14 +168,10 @@ void GenericModelDawn::draw()
 {
     uint32_t vertexBufferOffsets[1] = {0};
 
-    /*dawn::Texture backbuffer;
-    dawn::RenderPassDescriptor renderPass;
-    contextDawn->GetNextRenderPassDescriptor(&backbuffer, &renderPass);
-    */
-
-    // dawn::CommandBufferBuilder builder = contextDawn->getDevice().CreateCommandBufferBuilder();
-    // dawn::RenderPassEncoder pass = builder.BeginRenderPass(contextDawn->renderPassDescriptor);
-    dawn::RenderPassEncoder pass = contextDawn->renderPass;
+    dawn::CommandBufferBuilder commandBufferBuilder =
+    contextDawn->getDevice().CreateCommandBufferBuilder();
+    dawn::RenderPassEncoder pass =
+    commandBufferBuilder.BeginRenderPass(contextDawn->renderPassDescriptor);
     pass.SetPipeline(pipeline);
     pass.SetBindGroup(0, contextDawn->bindGroupGeneral);
     pass.SetBindGroup(1, contextDawn->bindGroupWorld);
@@ -194,6 +188,9 @@ void GenericModelDawn::draw()
     }
     pass.SetIndexBuffer(indicesBuffer->getBuffer(), 0);
     pass.DrawIndexed(indicesBuffer->getTotalComponents(), 1, 0, 0, 0);
+
+    pass.EndPass();
+    contextDawn->submit(1, commandBufferBuilder.GetResult());
 }
 
 void GenericModelDawn::updatePerInstanceUniforms(ViewUniforms *viewUniforms)

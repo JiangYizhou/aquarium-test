@@ -19,6 +19,7 @@ layout(std140, set = 2, binding = 0) uniform InnerUniforms{
 	float refractionFudge;
 	float eta;
 	float tankColorFudge;
+	float padding;
 } innerUniforms;
 
 layout(set = 2, binding = 1) uniform sampler samplerTex2D;
@@ -33,6 +34,7 @@ layout(std140, set = 0, binding = 1) uniform Fogs
     float fogPower;
 	float fogMult;
 	float fogOffset;
+	float padding;
 	vec4 fogColor;
 } fogs;
 

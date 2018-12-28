@@ -26,6 +26,7 @@ class InnerModelDawn : public InnerModel
         float eta;
         float tankColorFudge;
         float refractionFudge;
+        float padding;
     } innerUniforms;
 
     ViewUniforms viewUniformPer;

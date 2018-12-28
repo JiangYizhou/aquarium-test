@@ -64,7 +64,8 @@ bool ContextGL::createContext()
     const GLFWvidmode *mode = glfwGetVideoMode(pMonitor);
     mClientWidth            = mode->width;
     mClientHeight           = mode->height;
-
+    mClientWidth = 1024;
+    mClientHeight           = 768;
     mWindow = glfwCreateWindow(mClientWidth, mClientHeight, "Aquarium", NULL, NULL);
     if (mWindow == NULL)
     {

@@ -106,7 +106,10 @@ void InnerModelDawn::draw()
 {
     uint32_t vertexBufferOffsets[1] = { 0 };
 
-    dawn::RenderPassEncoder pass = contextDawn->renderPass;
+    dawn::CommandBufferBuilder commandBufferBuilder =
+    contextDawn->getDevice().CreateCommandBufferBuilder();
+    dawn::RenderPassEncoder pass =
+    commandBufferBuilder.BeginRenderPass(contextDawn->renderPassDescriptor);
     pass.SetPipeline(pipeline);
     pass.SetBindGroup(0, contextDawn->bindGroupGeneral);
     pass.SetBindGroup(1, contextDawn->bindGroupWorld);
@@ -119,6 +122,9 @@ void InnerModelDawn::draw()
     pass.SetVertexBuffers(4, 1, &binormalBuffer->getBuffer(), vertexBufferOffsets);
     pass.SetIndexBuffer(indicesBuffer->getBuffer(), 0);
     pass.DrawIndexed(indicesBuffer->getTotalComponents(), 1, 0, 0, 0);
+
+    pass.EndPass();
+    contextDawn->submit(1, commandBufferBuilder.GetResult());
 }
 
 void InnerModelDawn::updatePerInstanceUniforms(ViewUniforms* viewUniforms)
