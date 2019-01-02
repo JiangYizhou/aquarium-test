@@ -17,12 +17,12 @@
 #include "stb_image.h"
 #include "stb_image_resize.h"
 
-Texture::Texture(std::string name, const std::string &url)
+Texture::Texture(std::string name, const std::string &url, bool flip)
     : mUrls(NULL),
     mWidth(0),
     mHeight(0),
     mName(name),
-    mFlip(true)
+    mFlip(flip)
 {
     std::string urlpath = url;
     mUrls.push_back(urlpath);

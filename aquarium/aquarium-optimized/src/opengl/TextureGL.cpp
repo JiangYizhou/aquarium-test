@@ -14,14 +14,14 @@ TextureGL::TextureGL(ContextGL *context, std::string name, std::string url)
     : mTarget(GL_TEXTURE_2D),
     mFormat(GL_RGBA),
     context(context),
-    Texture(name, url)
+    Texture(name, url, true)
 {
     context->generateTexture(&mTextureId);
 }
 
 // initializs cube map
 TextureGL::TextureGL(ContextGL *context, std::string name, const std::vector<std::string> &urls)
-    : context(context), mTarget(GL_TEXTURE_CUBE_MAP), mFormat(GL_RGBA), Texture(name, urls)
+    : context(context), mTarget(GL_TEXTURE_CUBE_MAP), mFormat(GL_RGBA), Texture(name, urls, false)
 {
     ASSERT(urls.size() == 6);
     context->generateTexture(&mTextureId);

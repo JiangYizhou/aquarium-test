@@ -17,8 +17,8 @@ class Texture
   public:
     virtual ~Texture(){};
     Texture() {}
-    Texture(std::string name, const std::vector<std::string> &urls) : mName(name), mUrls(urls) {}
-    Texture(std::string name, const std::string &url);
+    Texture(std::string name, const std::vector<std::string> &urls, bool flip) : mName(name), mUrls(urls), mFlip(flip) {}
+    Texture(std::string name, const std::string &url, bool flip);
     std::string getName() { return mName; }
     virtual void loadTexture() = 0;
     void resizeImages(uint8_t *input_pixels,

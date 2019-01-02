@@ -16,13 +16,13 @@ TextureDawn::~TextureDawn() {
 }
 
 TextureDawn::TextureDawn(ContextDawn * context, std::string name, std::string url)
-    : context(context), mTextureDimension(dawn::TextureDimension::e2D), mTextureViewDimension(dawn::TextureViewDimension::e2D), mFormat(dawn::TextureFormat::R8G8B8A8Unorm), Texture(name, url)
+    : context(context), mTextureDimension(dawn::TextureDimension::e2D), mTextureViewDimension(dawn::TextureViewDimension::e2D), mFormat(dawn::TextureFormat::R8G8B8A8Unorm), Texture(name, url, true)
 {
     resizedVec.resize(1);
 }
 
 TextureDawn::TextureDawn(ContextDawn * context, std::string name, const std::vector<std::string>& urls)
-    : context(context), mTextureDimension(dawn::TextureDimension::e2D), mTextureViewDimension(dawn::TextureViewDimension::Cube), mFormat(dawn::TextureFormat::R8G8B8A8Unorm), Texture(name, urls)
+    : context(context), mTextureDimension(dawn::TextureDimension::e2D), mTextureViewDimension(dawn::TextureViewDimension::Cube), mFormat(dawn::TextureFormat::R8G8B8A8Unorm), Texture(name, urls, false)
 {
 }
 
