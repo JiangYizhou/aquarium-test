@@ -574,7 +574,8 @@ void ContextDawn::GetNextRenderPassDescriptor(
     dawn::CommandBufferBuilder commandBuilder = device.CreateCommandBufferBuilder();
     dawn::RenderPassEncoder renderPass        = commandBuilder.BeginRenderPass(descriptorClear);
     renderPass.EndPass();
-    queue.Submit(1, &commandBuilder.GetResult());
+    dawn::CommandBuffer command = commandBuilder.GetResult();
+    queue.Submit(1, &command);
 
     colorAttachment.loadOp = dawn::LoadOp::Load;
     depthStencilAttachment.depthLoadOp = dawn::LoadOp::Load;
