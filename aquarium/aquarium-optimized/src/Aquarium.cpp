@@ -139,11 +139,11 @@ void Aquarium::init(int argc, char **argv)
 
     if (mBackendpath == "opengl")
     {
+        #ifndef EGL_EGL_PROTOTYPES
         mShaderVersion = "450";
-    }
-    else if (mBackendpath == "angle")
-    {
+        #else
         mShaderVersion = "100";
+        #endif
     }
 
     if (!context->createContext())

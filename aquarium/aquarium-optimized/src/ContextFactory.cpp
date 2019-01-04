@@ -5,7 +5,9 @@
 //
 #include "ContextFactory.h"
 #include "opengl/ContextGL.h"
+#ifndef EGL_EGL_PROTOTYPES
 #include "dawn/ContextDawn.h"
+#endif
 
 ContextFactory::ContextFactory()
     :context(nullptr)
@@ -24,7 +26,9 @@ Context *ContextFactory::createContext(std::string str)
     }
     else if (str == "dawn")
     {
-        context = new ContextDawn();
+    #ifndef EGL_EGL_PROTOTYPES
+       context = new ContextDawn();
+    #endif
     }
 
     return context;

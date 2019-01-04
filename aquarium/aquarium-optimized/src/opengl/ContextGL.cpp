@@ -22,7 +22,7 @@
 
 #include <iostream>
 
-#ifdef GL_GLEXT_PROTOTYPES
+#ifdef EGL_EGL_PROTOTYPES
 #define GLFW_EXPOSE_NATIVE_WIN32
 #include <GLFW/glfw3native.h>
 #endif
@@ -64,8 +64,7 @@ bool ContextGL::createContext()
     const GLFWvidmode *mode = glfwGetVideoMode(pMonitor);
     mClientWidth            = mode->width;
     mClientHeight           = mode->height;
-    mClientWidth = 1024;
-    mClientHeight           = 768;
+
     mWindow = glfwCreateWindow(mClientWidth, mClientHeight, "Aquarium", NULL, NULL);
     if (mWindow == NULL)
     {
@@ -74,7 +73,7 @@ bool ContextGL::createContext()
         return false;
     }
 
-#ifndef GL_GLEXT_PROTOTYPES 
+#ifndef GL_GLES_PROTOTYPES 
     glfwWindowHint(GLFW_DECORATED, GL_FALSE);
     glfwMakeContextCurrent(mWindow);
 #else
@@ -84,10 +83,8 @@ bool ContextGL::createContext()
     //display_attribs.push_back(EGL_PLATFORM_ANGLE_TYPE_OPENGL_ANGLE);
     display_attribs.push_back(EGL_PLATFORM_ANGLE_TYPE_D3D11_ANGLE);
     display_attribs.push_back(EGL_PLATFORM_ANGLE_MAX_VERSION_MAJOR_ANGLE);
-    //display_attribs.push_back(3);
     display_attribs.push_back(-1);
     display_attribs.push_back(EGL_PLATFORM_ANGLE_MAX_VERSION_MINOR_ANGLE);
-    //display_attribs.push_back(0);
     display_attribs.push_back(-1);
     display_attribs.push_back(EGL_PLATFORM_ANGLE_DEVICE_TYPE_ANGLE);
     display_attribs.push_back(EGL_PLATFORM_ANGLE_DEVICE_TYPE_HARDWARE_ANGLE);
@@ -186,7 +183,7 @@ bool ContextGL::createContext()
     // Set the window full screen
     // glfwSetWindowPos(window, 0, 0);
 
-#ifndef GL_GLEXT_PROTOTYPES
+#ifndef EGL_EGL_PROTOTYPES
     if (!gladLoadGL())
     {
         std::cout << "Something went wrong!" << std::endl;
@@ -469,7 +466,7 @@ void ContextGL::resetState()
 
 void ContextGL::setUniform(int index, const float *v, int type) const
 {
-    ASSERT(index != -1);
+    //ASSERT(index != -1);
     switch (type)
     {
         case GL_FLOAT:

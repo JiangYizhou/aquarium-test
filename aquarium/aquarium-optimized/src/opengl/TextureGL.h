@@ -12,7 +12,17 @@
 #include <string>
 #include <unordered_map>
 #include <vector>
+#ifdef EGL_EGL_PROTOTYPES
+#include <angle_gl.h>
+#include <memory>
+#include "EGL/egl.h"
+#include "EGL/eglext.h"
+#include "EGL/eglext_angle.h"
+#include "EGL/eglplatform.h"
+#include "EGLWindow.h"
+#else
 #include "glad/glad.h"
+#endif
 
 #include "../Texture.h"
 #include "ContextGL.h"

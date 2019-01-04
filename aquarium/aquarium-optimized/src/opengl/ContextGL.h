@@ -15,7 +15,7 @@
 #include "BufferGL.h"
 #include "TextureGL.h"
 
-#ifdef GL_GLEXT_PROTOTYPES
+#ifdef EGL_EGL_PROTOTYPES
 #include <angle_gl.h>
 #include "EGL/egl.h"
 #include "EGL/eglext.h"
@@ -23,7 +23,6 @@
 #include "EGL/eglext_angle.h"
 #include <memory>
 #include "EGLWindow.h"
-//#include "OSWindow.h"
 #else
 #include "glad/glad.h"
 #endif
@@ -93,7 +92,7 @@ class ContextGL : public Context
     void generateMipmap(unsigned int target);
 
   private:
-#ifndef GL_GLEXT_PROTOTYPES
+#ifndef EGL_EGL_PROTOTYPES
       GLFWwindow *mWindow;
 #else
       EGLBoolean FindEGLConfig(EGLDisplay dpy, const EGLint *attrib_list, EGLConfig *config);
