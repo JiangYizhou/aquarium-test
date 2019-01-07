@@ -21,11 +21,11 @@ class Texture
     Texture(std::string name, const std::string &url, bool flip);
     std::string getName() { return mName; }
     virtual void loadTexture() = 0;
-    void resizeImages(uint8_t *input_pixels,
+    void generateMipmap(uint8_t *input_pixels,
                       int input_w,
                       int input_h,
                       int input_stride_in_bytes,
-                      uint8_t *output_pixels,
+                      std::vector<uint8_t *> &output_pixels,
                       int output_w,
                       int output_h,
                       int output_stride_in_bytes,
@@ -35,6 +35,11 @@ class Texture
     bool isPowerOf2(int);
     bool loadImage(const std::vector<std::string> &urls, std::vector<uint8_t *>* pixels);
     void DestoryImageData(std::vector<uint8_t *>& pixelVec);
+    void copyPaddingBuffer(unsigned char *dst,
+                           unsigned char *src,
+                           int width,
+                           int height,
+                           int kPadding);
 
     std::vector<std::string> mUrls;
     int mWidth;

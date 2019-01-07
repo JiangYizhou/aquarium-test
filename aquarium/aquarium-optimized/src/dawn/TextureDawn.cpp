@@ -18,7 +18,6 @@ TextureDawn::~TextureDawn() {
 TextureDawn::TextureDawn(ContextDawn * context, std::string name, std::string url)
     : context(context), mTextureDimension(dawn::TextureDimension::e2D), mTextureViewDimension(dawn::TextureViewDimension::e2D), mFormat(dawn::TextureFormat::R8G8B8A8Unorm), Texture(name, url, true)
 {
-    resizedVec.resize(1);
 }
 
 TextureDawn::TextureDawn(ContextDawn * context, std::string name, const std::vector<std::string>& urls)
@@ -79,7 +78,6 @@ void TextureDawn::loadTexture()
     else  // dawn::TextureViewDimension::e2D
     {
         int resizedWidth;
-        bool resized = false;
         if (mWidth % kPadding == 0)
         {
             resizedWidth = mWidth;
@@ -87,12 +85,9 @@ void TextureDawn::loadTexture()
         else
         {
             resizedWidth = (mWidth / 256 + 1) * 256;
-            resizedVec[0] = (unsigned char *) malloc (resizedWidth * mHeight * 4 * sizeof(char)) ;
-            resizeImages(pixelVec[0], mWidth, mHeight, 0, resizedVec[0], resizedWidth, mHeight,
-                         0, 4);
-            resized = true;
         }
-       
+        generateMipmap(pixelVec[0], mWidth, mHeight, 0, resizedVec, resizedWidth, mHeight, 0, 4);
+
         dawn::TextureDescriptor descriptor;
         descriptor.dimension = mTextureDimension;
         descriptor.size.width  = resizedWidth;
@@ -101,27 +96,35 @@ void TextureDawn::loadTexture()
         descriptor.arraySize = 1;
         descriptor.sampleCount = 1;
         descriptor.format = mFormat;
-        // static_cast<uint32_t>(std::floor(std::log2(std::max(mWidth, mHeight)))) + 1
-        descriptor.levelCount = 1;
+        descriptor.levelCount =
+            static_cast<uint32_t>(std::floor(std::log2(std::max(mWidth, mHeight)))) + 1;
         descriptor.usage = dawn::TextureUsageBit::TransferDst | dawn::TextureUsageBit::Sampled;
         mTexture = context->createTexture(descriptor);
 
-        // TODO(yizhou) : check the data size of pixels, jpeg image
-        dawn::Buffer stagingBuffer = context->createBufferFromData(resized? resizedVec[0] : pixelVec[0], resizedWidth * mHeight * 4, dawn::BufferUsageBit::TransferSrc);
-        dawn::BufferCopyView bufferCopyView = context->createBufferCopyView(stagingBuffer, 0, resizedWidth * 4, mHeight);
-        dawn::TextureCopyView textureCopyView = context->createTextureCopyView(mTexture, 0, 0, { 0, 0, 0 });
-        dawn::Extent3D copySize = { static_cast<uint32_t>(resizedWidth), static_cast<uint32_t>(mHeight), 1 };
-        dawn::CommandBuffer cmd = context->copyBufferToTexture(bufferCopyView, textureCopyView, copySize);
+        for (int i = 0; i < descriptor.levelCount; ++i)
+        {
+            int height                 = mHeight >> i;
+            int width                  = resizedWidth >> i;
+            if (width ==0 || height == 0)
+                break;
+            dawn::Buffer stagingBuffer = context->createBufferFromData(resizedVec[i], resizedWidth * height * 4, dawn::BufferUsageBit::TransferSrc);
+            dawn::BufferCopyView bufferCopyView = context->createBufferCopyView(stagingBuffer, 0, resizedWidth * 4, height);
+            dawn::TextureCopyView textureCopyView = context->createTextureCopyView(mTexture, i, 0, { 0, 0, 0 });
+            dawn::Extent3D copySize = {static_cast<uint32_t>(width),
+                                       static_cast<uint32_t>(height),
+                                       1};
+            dawn::CommandBuffer cmd = context->copyBufferToTexture(bufferCopyView, textureCopyView, copySize);
 
-        context->submit(1, cmd);
+            context->submit(1, cmd);
+        }
 
         dawn::TextureViewDescriptor viewDescriptor;
         viewDescriptor.nextInChain = nullptr;
         viewDescriptor.dimension = dawn::TextureViewDimension::e2D;
         viewDescriptor.format = mFormat;
         viewDescriptor.baseMipLevel = 0;
-        // static_cast<uint32_t>(std::floor(std::log2(std::max(mWidth, mHeight)))) + 1
-        viewDescriptor.levelCount = 1;
+        viewDescriptor.levelCount =
+            static_cast<uint32_t>(std::floor(std::log2(std::max(mWidth, mHeight)))) + 1;
         viewDescriptor.baseArrayLayer = 0;
         viewDescriptor.layerCount = 1;
 
@@ -135,7 +138,6 @@ void TextureDawn::loadTexture()
 
         if (isPowerOf2(mWidth) && isPowerOf2(mHeight))
         {
-            // TODO(yizhou) : generateMipmap
             samplerDesc.mipmapFilter = dawn::FilterMode::Linear;
         }
         else
@@ -146,6 +148,6 @@ void TextureDawn::loadTexture()
         mSampler = context->createSampler(samplerDesc);
     }
 
-    // TODO(yizhou): check if the pxiel destory should delay or fence
+    // TODO(yizhou): check if the pixel destory should delay or fence
 }
 

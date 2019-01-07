@@ -7,8 +7,10 @@
 
 #include "Texture.h"
 
+#include <algorithm>
 #include <iostream>
 #include <stdio.h>
+#include<string.h>
 
 #include "ASSERT.h"
 
@@ -61,8 +63,48 @@ void Texture::DestoryImageData(std::vector<uint8_t*>& pixelVec)
     }
 }
 
-void Texture::resizeImages(uint8_t * input_pixels, int input_w, int input_h, int input_stride_in_bytes, uint8_t * output_pixels, int output_w, int output_h, int output_stride_in_bytes, int num_channels)
+void Texture::copyPaddingBuffer(unsigned char *dst, unsigned char *src, int width, int height, int kPadding)
 {
-   stbir_resize_uint8(input_pixels, input_w, input_h, input_stride_in_bytes, output_pixels,
-                       output_w, output_h, output_stride_in_bytes, num_channels);
+    unsigned char *s = src;
+    unsigned char *d = dst;
+    for(int i = 0; i < height; ++i)
+    {
+        memcpy(d, s, width * 4);
+        s += width * 4;
+        d += kPadding * 4;
+    }
+}
+
+void Texture::generateMipmap(uint8_t *input_pixels,
+                           int input_w,
+                           int input_h,
+                           int input_stride_in_bytes,
+                           std::vector<uint8_t *> &output_pixels,
+                           int output_w,
+                           int output_h,
+                           int output_stride_in_bytes,
+                           int num_channels)
+{
+    int mipmapLevel =
+        static_cast<uint32_t>(std::floor(std::log2(std::max(output_w, output_h)))) + 1;
+    output_pixels.resize(mipmapLevel);
+    int height      = output_h;
+    int width  = output_w;
+    uint8_t *pixels = (unsigned char *)malloc(output_w * height * 4 * sizeof(char));
+
+    for (int i = 0; i < mipmapLevel; ++i)
+    {
+        output_pixels[i] = (unsigned char *)malloc(output_w * height * 4 * sizeof(char));
+        stbir_resize_uint8(input_pixels, input_w, input_h, input_stride_in_bytes, pixels, width,
+                           height, output_stride_in_bytes, num_channels);
+        copyPaddingBuffer(output_pixels[i], pixels, width, height, output_w);
+
+        height >>= 1;
+        width >>= 1;
+        if (height == 0)
+        {
+            height = 1;
+        }
+    }
+    free(pixels);
 }
