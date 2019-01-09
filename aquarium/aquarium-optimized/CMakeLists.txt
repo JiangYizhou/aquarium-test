@@ -9,7 +9,7 @@ set(CMAKE_BUILD_TYPE Release)
 
 OPTION(_NDEBUG "skip ASSERT of the project" OFF)
 if(_NDEBUG)
-  ADD_DEFINITIONS(-D_NDEBUG)
+  ADD_DEFINITIONS(-DNDEBUG)
 endif(_NDEBUG)
 
 OPTION(angle "create angle context" OFF)

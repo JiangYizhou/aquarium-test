@@ -8,7 +8,7 @@
 #ifndef ASSERT_H
 #define ASSERT_H 1
 
-#ifndef _NDEBUG
+#ifndef NDEBUG
 #define ASSERT(expression)                                                                \
     {                                                                                     \
         if (!(expression))                                                                \
@@ -19,10 +19,10 @@
         }                                                                                 \
     }
 #else
-#define ASSERT(expression) expression
+#define ASSERT(expression) NULL
 #endif
 
-#ifndef _NDEBUG
+#ifndef NDEBUG
 #define SWALLOW_ERROR(expression)                                                         \
     {                                                                                     \
         if (!(expression))                                                                \

@@ -8,7 +8,7 @@
 #define ASSERT_H 1
 
 //TODO(yizhou) : replace this ASSERT by the code template of ANGLE or Chromium
-#ifndef _NDEBUG
+#ifndef NDEBUG
 #define	ASSERT(expression)				{	\
 		if (!(expression))				{	\
 			printf("Assertion(%s) failed: file \"%s\", line %d\n", \
@@ -17,10 +17,10 @@
 		}									\
 	}
 #else
-#define ASSERT(expression) expression
+#define ASSERT(expression) NULL;
 #endif
 
-#ifndef _NDEBUG
+#ifndef NDEBUG
 #define	SWALLOW_ERROR(expression)				{	\
 		if (!(expression))				{	\
 			printf("Assertion(%s) failed: file \"%s\", line %d\n", \

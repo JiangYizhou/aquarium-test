@@ -177,7 +177,7 @@ void FishModelDawn::draw()
 
 void FishModelDawn::updatePerInstanceUniforms(ViewUniforms *viewUniforms)
 {
-    std::memcpy(&viewUniformPer, viewUniforms, sizeof(ViewUniforms));
+   memcpy(&viewUniformPer, viewUniforms, sizeof(ViewUniforms));
 
     contextDawn->setBufferData(viewBuffer, 0, sizeof(ViewUniforms), &viewUniformPer);
     contextDawn->setBufferData(fishPerBuffer, 0, sizeof(FishPerUniforms), &fishPerUniforms);
