@@ -19,7 +19,7 @@ InnerModelGL::InnerModelGL(const ContextGL *context,
 
     worldUniform.first = aquarium->viewUniforms.world;
     worldViewProjectionUniform.first = aquarium->viewUniforms.worldViewProjection;
-    worldInverseTransposeUniform.first = aquarium->viewUniforms.worldInverseTraspose;
+    worldInverseTransposeUniform.first = aquarium->viewUniforms.worldInverseTranspose;
 
     etaUniform.first = 1.0f;
     tankColorFudgeUniform.first = 0.796f;

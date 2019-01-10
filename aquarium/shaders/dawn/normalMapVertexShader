@@ -4,13 +4,18 @@ layout(std140, set = 1, binding = 0) uniform LightWorldPositionUniform {
     vec3 lightWorldPos;
 } lightWorldPositionUniform;
 
-layout(std140, set = 3, binding = 0) uniform ViewUniforms {
-	mat4 viewProjection;
-	mat4 viewInverse;
+struct ViewUniforms
+{
+    mat4 viewProjection;
+    mat4 viewInverse;
     mat4 world;
-	mat4 worldInverseTranspose;
+    mat4 worldInverseTranspose;
     mat4 worldViewProjection;
-} viewUniforms;
+};
+
+layout(std140, set = 3, binding = 0) uniform WorldUniforms {
+    ViewUniforms views[20];
+} worldUniforms;
 
 layout(location = 0) in vec4 position;
 layout(location = 1) in vec3 normal;
@@ -26,12 +31,12 @@ layout(location = 5) out vec3 v_surfaceToLight;
 layout(location = 6) out vec3 v_surfaceToView;
 void main() {
   v_texCoord = texCoord;
-  v_position = (viewUniforms.worldViewProjection * position);
-  v_normal = (viewUniforms.worldInverseTranspose * vec4(normal, 0)).xyz;
-  v_surfaceToLight = lightWorldPositionUniform.lightWorldPos - (viewUniforms.world * position).xyz;
-  v_surfaceToView = (viewUniforms.viewInverse[3] - (viewUniforms.world * position)).xyz;
-  v_binormal = (viewUniforms.worldInverseTranspose * vec4(binormal, 0)).xyz;  // #normalMap
-  v_tangent = (viewUniforms.worldInverseTranspose * vec4(tangent, 0)).xyz;  // #normalMap
+  v_position = (worldUniforms.views[gl_InstanceIndex].worldViewProjection * position);
+  v_normal = (worldUniforms.views[gl_InstanceIndex].worldInverseTranspose * vec4(normal, 0)).xyz;
+  v_surfaceToLight = lightWorldPositionUniform.lightWorldPos - (worldUniforms.views[gl_InstanceIndex].world * position).xyz;
+  v_surfaceToView = (worldUniforms.views[gl_InstanceIndex].viewInverse[3] - (worldUniforms.views[gl_InstanceIndex].world * position)).xyz;
+  v_binormal = (worldUniforms.views[gl_InstanceIndex].worldInverseTranspose * vec4(binormal, 0)).xyz;  // #normalMap
+  v_tangent = (worldUniforms.views[gl_InstanceIndex].worldInverseTranspose * vec4(tangent, 0)).xyz;  // #normalMap
   v_position.y = -v_position.y;
   gl_Position = v_position;
 }

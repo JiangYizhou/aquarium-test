@@ -23,7 +23,7 @@ OutsideModelGL::OutsideModelGL(const ContextGL *context,
     ambientUniform.first = aquarium->lightUniforms.ambient;
     worldUniform.first = aquarium->viewUniforms.world;
     worldViewProjectionUniform.first = aquarium->viewUniforms.worldViewProjection;
-    worldInverseTransposeUniform.first = aquarium->viewUniforms.worldInverseTraspose;
+    worldInverseTransposeUniform.first = aquarium->viewUniforms.worldInverseTranspose;
     fogPowerUniform.first = 0;
     fogMultUniform.first = 0;
     fogOffsetUniform.first = 0;

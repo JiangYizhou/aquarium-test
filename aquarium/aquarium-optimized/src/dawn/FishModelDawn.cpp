@@ -154,10 +154,7 @@ void FishModelDawn::draw()
 {
     uint32_t vertexBufferOffsets[1] = {0};
 
-    dawn::CommandBufferBuilder commandBufferBuilder =
-        contextDawn->getDevice().CreateCommandBufferBuilder();
-    dawn::RenderPassEncoder pass =
-        commandBufferBuilder.BeginRenderPass(contextDawn->renderPassDescriptor);
+    dawn::RenderPassEncoder pass = contextDawn->pass;
     pass.SetPipeline(pipeline);
     pass.SetBindGroup(0, contextDawn->bindGroupGeneral);
     pass.SetBindGroup(1, contextDawn->bindGroupWorld);
@@ -170,14 +167,11 @@ void FishModelDawn::draw()
     pass.SetVertexBuffers(4, 1, &binormalBuffer->getBuffer(), vertexBufferOffsets);
     pass.SetIndexBuffer(indicesBuffer->getBuffer(), 0);
     pass.DrawIndexed(indicesBuffer->getTotalComponents(), 1, 0, 0, 0);
-
-    pass.EndPass();
-    contextDawn->submit(1, commandBufferBuilder.GetResult());
 }
 
 void FishModelDawn::updatePerInstanceUniforms(ViewUniforms *viewUniforms)
 {
-   memcpy(&viewUniformPer, viewUniforms, sizeof(ViewUniforms));
+    memcpy(&viewUniformPer, viewUniforms, sizeof(ViewUniforms));
 
     contextDawn->setBufferData(viewBuffer, 0, sizeof(ViewUniforms), &viewUniformPer);
     contextDawn->setBufferData(fishPerBuffer, 0, sizeof(FishPerUniforms), &fishPerUniforms);

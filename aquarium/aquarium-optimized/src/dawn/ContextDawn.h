@@ -154,6 +154,9 @@ class ContextDawn : public Context
 
     dawn::RenderPassDescriptor renderPassDescriptor;
 
+    dawn::RenderPassEncoder pass;
+    dawn::CommandBufferBuilder commandBufferBuilder;
+
   private:
     GLFWwindow *mWindow;
     dawn::Device device;

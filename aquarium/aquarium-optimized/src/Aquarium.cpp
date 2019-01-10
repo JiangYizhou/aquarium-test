@@ -261,7 +261,11 @@ void Aquarium::loadPlacement()
         }
 
         MODELNAME modelname = mModelEnumMap[name.GetString()];
-        mAquariumModels[modelname]->worldmatrices.push_back(matrix);
+        // MODELFIRST means the model is not found in the Map
+        if (modelname != MODELNAME::MODELFIRST)
+        {
+            mAquariumModels[modelname]->worldmatrices.push_back(matrix);
+        }
     }
 }
 
@@ -446,7 +450,7 @@ void Aquarium::updateGlobalUniforms()
 {
     // Update our time
 #ifdef _WIN32
-    float now = GetTickCount64() / 1000.0f;
+    float now = GetTickCount64() / 100.0f;
 #else
     float now = clock() / 1000000.0f;
 #endif
@@ -524,13 +528,13 @@ void Aquarium::render()
 
     drawBackground();
 
-    drawFishes();
+    //drawFishes();
 
-    drawInner();
+    //drawInner();
 
-    drawSeaweed();
+    //drawSeaweed();
 
-    drawOutside();
+    //drawOutside();
 }
 
 void Aquarium::drawBackground()
@@ -628,7 +632,7 @@ void Aquarium::updateWorldProjections(const float *w)
     memcpy(viewUniforms.world, w, 16 * sizeof(float));
     matrix::mulMatrixMatrix4(viewUniforms.worldViewProjection, viewUniforms.world, viewUniforms.viewProjection);
     matrix::inverse4(g.worldInverse, viewUniforms.world);
-    matrix::transpose4(viewUniforms.worldInverseTraspose, g.worldInverse);
+    matrix::transpose4(viewUniforms.worldInverseTranspose, g.worldInverse);
 
     // update world uniforms for dawn backend
     context->updateWorldlUniforms(this);
@@ -645,7 +649,7 @@ void Aquarium::updateWorldMatrixAndDraw(Model *model)
             // viewUniforms.
             // Update all viewUniforms on dawn backend.
             model->updatePerInstanceUniforms(&viewUniforms);
-            model->draw();
         }
-    }
+    }    
+    model->draw();
 }

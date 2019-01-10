@@ -44,7 +44,11 @@ public:
         float specularFactor;
     } lightFactorUniforms;
 
-    ViewUniforms viewUniformPer;
+    struct ViewUniformPer
+    {
+        ViewUniforms viewuniforms[20];
+    };
+    ViewUniformPer viewUniformPer;
 
 private:
     dawn::InputState inputState;
@@ -62,6 +66,8 @@ private:
 
     const ContextDawn *contextDawn;
     ProgramDawn* programDawn;
+
+    int instance;
 };
 
 #endif

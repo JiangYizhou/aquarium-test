@@ -33,13 +33,14 @@ const std::string slash = "/";
 #include "math.h"
 #endif
 
-constexpr char * repoFolder     = "aquarium-optimized";
-constexpr char * sourceFolder   = "src";
-constexpr char * shaderFolder   = "shaders";
-constexpr char * resourceFolder = "assets";
+constexpr char *repoFolder     = "aquarium-optimized";
+constexpr char *sourceFolder   = "src";
+constexpr char *shaderFolder   = "shaders";
+constexpr char *resourceFolder = "assets";
 
 enum MODELNAME : short
 {
+    MODELFIRST,
     MODELRUINCOlOMN,
     MODELARCH,
     MODELROCKA,
@@ -82,9 +83,9 @@ enum MODELGROUP : short
 
 struct G_sceneInfo
 {
-    const char * namestr;
+    const char *namestr;
     MODELNAME name;
-    const char * program[2];
+    const char *program[2];
     bool fog;
     MODELGROUP type;
     bool blend;
@@ -174,13 +175,18 @@ const G_sceneInfo g_sceneInfo[] = {
     {"TreasureChest", MODELNAME::MODELTREASURECHEST, {"", ""}, true, MODELGROUP::GENERIC}
 };
 
+/*
+const G_sceneInfo g_sceneInfo[] = {
+    {"RuinColumn", MODELNAME::MODELRUINCOlOMN, {"", ""}, true, MODELGROUP::GENERIC},
+};*/
+
 const std::vector<std::string> g_skyBoxUrls = {
     "GlobeOuter_EM_positive_x.jpg", "GlobeOuter_EM_negative_x.jpg", "GlobeOuter_EM_positive_y.jpg",
     "GlobeOuter_EM_negative_y.jpg", "GlobeOuter_EM_positive_z.jpg", "GlobeOuter_EM_negative_z.jpg"};
 
 struct Fish
 {
-    const char * name;
+    const char *name;
     MODELNAME modelName;
     FISHENUM type;
     float speed;
@@ -319,40 +325,44 @@ struct Global
     float skyViewProjectionInverse[16];
     float eyePosition[3];
     float target[3];
-    float up[3] = { 0, 1, 0 };
+    float up[3] = {0, 1, 0};
     float v3t0[3];
     float v3t1[3];
     float m4t0[16];
     float m4t1[16];
     float m4t2[16];
     float m4t3[16];
-    float colorMult[4] = { 1, 1, 1, 1 };
-    //float fogColor[4] = {g_fogRed, g_fogGreen, g_fogBlue, 1.0f};
+    float colorMult[4] = {1, 1, 1, 1};
+    // float fogColor[4] = {g_fogRed, g_fogGreen, g_fogBlue, 1.0f};
     float then;
     float mclock;
     float eyeClock;
 };
 
-struct LightWorldPositionUniform {
+struct LightWorldPositionUniform
+{
     float lightWorldPos[3];
     float padding;
 };
 
-struct ViewUniforms {
+struct ViewUniforms
+{
     float viewProjection[16];
     float viewInverse[16];
     float world[16];
-    float worldInverseTraspose[16];
+    float worldInverseTranspose[16];
     float worldViewProjection[16];
 };
 
-struct LightUniforms {
+struct LightUniforms
+{
     float lightColor[4];
     float specular[4];
     float ambient[4];
 };
 
-struct FogUniforms {
+struct FogUniforms
+{
     float fogPower;
     float fogMult;
     float fogOffset;

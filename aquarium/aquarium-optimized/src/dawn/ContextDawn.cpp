@@ -525,7 +525,10 @@ bool ContextDawn::compileProgram(unsigned int programId, const string & VertexSh
     return false;
 }
 
-void ContextDawn::setWindowTitle(const std::string &text) {}
+void ContextDawn::setWindowTitle(const std::string &text)
+{
+    glfwSetWindowTitle(mWindow, text.c_str());
+}
 
 bool ContextDawn::ShouldQuit() { return false; }
 
@@ -534,12 +537,12 @@ void ContextDawn::KeyBoardQuit() {}
 // Submit commands of the frame
 void ContextDawn::DoFlush() {
 
-    //renderPass.EndPass();
-    //dawn::CommandBuffer cmd = commandBuilder.GetResult();
-    //queue.Submit(1, &cmd);
+    pass.EndPass();
+    dawn::CommandBuffer cmd = commandBufferBuilder.GetResult();
+    queue.Submit(1, &cmd);
 
     swapchain.Present(backbuffer);
-    std::cout << "present" << std::endl;
+
 
     //glfwSwapBuffers(mWindow);
     glfwPollEvents();
@@ -550,6 +553,9 @@ void ContextDawn::Terminate() {}
 // Update backbuffer and renderPassDescriptor
 void ContextDawn::resetState() {
     GetNextRenderPassDescriptor(&backbuffer, &renderPassDescriptor);
+    commandBufferBuilder =
+        device.CreateCommandBufferBuilder();
+    pass = commandBufferBuilder.BeginRenderPass(renderPassDescriptor);
 }
 
 void ContextDawn::GetNextRenderPassDescriptor(
@@ -580,14 +586,14 @@ void ContextDawn::GetNextRenderPassDescriptor(
         .SetDepthStencilAttachment(&depthStencilAttachment)
         .GetResult();
 
-    dawn::CommandBufferBuilder commandBuilder = device.CreateCommandBufferBuilder();
+    /*dawn::CommandBufferBuilder commandBuilder = device.CreateCommandBufferBuilder();
     dawn::RenderPassEncoder renderPass        = commandBuilder.BeginRenderPass(descriptorClear);
     renderPass.EndPass();
     dawn::CommandBuffer command = commandBuilder.GetResult();
     queue.Submit(1, &command);
 
     colorAttachment.loadOp = dawn::LoadOp::Load;
-    depthStencilAttachment.depthLoadOp = dawn::LoadOp::Load;
+    depthStencilAttachment.depthLoadOp = dawn::LoadOp::Load;*/
     *info = device.CreateRenderPassDescriptorBuilder()
          .SetColorAttachments(1, &colorAttachment)
          .SetDepthStencilAttachment(&depthStencilAttachment)

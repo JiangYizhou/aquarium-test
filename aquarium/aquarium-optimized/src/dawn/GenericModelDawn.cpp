@@ -7,7 +7,7 @@ GenericModelDawn::GenericModelDawn(const Context *context,
                                    MODELGROUP type,
                                    MODELNAME name,
                                    bool blend)
-    : GenericModel(type, name, blend)
+    : GenericModel(type, name, blend), instance(0)
 {
     contextDawn = static_cast<const ContextDawn *>(context);
 
@@ -52,16 +52,21 @@ void GenericModelDawn::init()
     }
     else
     {
+        // // TODO(yizhou): Work around bug on d3d. Input Slot lost
         inputState = contextDawn->createInputState(
             {
                 {0, 0, dawn::VertexFormat::FloatR32G32B32, 0},
                 {1, 1, dawn::VertexFormat::FloatR32G32B32, 0},
                 {2, 2, dawn::VertexFormat::FloatR32G32, 0},
+                {3, 3, dawn::VertexFormat::FloatR32G32B32, 0},
+                {4, 4, dawn::VertexFormat::FloatR32G32B32, 0},
             },
             {
                 {0, positionBuffer->getDataSize(), dawn::InputStepMode::Vertex},
                 {1, normalBuffer->getDataSize(), dawn::InputStepMode::Vertex},
                 {2, texCoordBuffer->getDataSize(), dawn::InputStepMode::Vertex},
+                {3, tangentBuffer->getDataSize(), dawn::InputStepMode::Vertex},
+                {4, binormalBuffer->getDataSize(), dawn::InputStepMode::Vertex},
             });
     }
 
@@ -112,7 +117,7 @@ void GenericModelDawn::init()
         &lightFactorUniforms, sizeof(lightFactorUniforms),
         dawn::BufferUsageBit::TransferDst | dawn::BufferUsageBit::Uniform);
     viewBuffer = contextDawn->createBufferFromData(
-        &viewUniformPer, sizeof(ViewUniforms),
+        &viewUniformPer, sizeof(ViewUniformPer),
         dawn::BufferUsageBit::TransferDst | dawn::BufferUsageBit::Uniform);
 
     // Generic models use reflection, normal or diffuse shaders, of which grouplayouts are
@@ -151,7 +156,7 @@ void GenericModelDawn::init()
 
     bindGroupPer =
         contextDawn->makeBindGroup(groupLayoutPer, {
-                                                       {0, viewBuffer, 0, sizeof(ViewUniforms)},
+                                                       {0, viewBuffer, 0, sizeof(ViewUniformPer)},
                                                    });
 
     contextDawn->setBufferData(lightFactorBuffer, 0, sizeof(LightFactorUniforms),
@@ -166,12 +171,10 @@ void GenericModelDawn::applyBuffers() const {}
 
 void GenericModelDawn::draw()
 {
+    contextDawn->setBufferData(viewBuffer, 0, sizeof(ViewUniformPer), &viewUniformPer);
     uint32_t vertexBufferOffsets[1] = {0};
 
-    dawn::CommandBufferBuilder commandBufferBuilder =
-    contextDawn->getDevice().CreateCommandBufferBuilder();
-    dawn::RenderPassEncoder pass =
-    commandBufferBuilder.BeginRenderPass(contextDawn->renderPassDescriptor);
+    dawn::RenderPassEncoder pass = contextDawn->pass;
     pass.SetPipeline(pipeline);
     pass.SetBindGroup(0, contextDawn->bindGroupGeneral);
     pass.SetBindGroup(1, contextDawn->bindGroupWorld);
@@ -187,15 +190,13 @@ void GenericModelDawn::draw()
         pass.SetVertexBuffers(4, 1, &binormalBuffer->getBuffer(), vertexBufferOffsets);
     }
     pass.SetIndexBuffer(indicesBuffer->getBuffer(), 0);
-    pass.DrawIndexed(indicesBuffer->getTotalComponents(), 1, 0, 0, 0);
-
-    pass.EndPass();
-    contextDawn->submit(1, commandBufferBuilder.GetResult());
+    pass.DrawIndexed(indicesBuffer->getTotalComponents(), instance, 0, 0, 0);
+    instance = 0;
 }
 
 void GenericModelDawn::updatePerInstanceUniforms(ViewUniforms *viewUniforms)
 {
-    memcpy(&viewUniformPer, viewUniforms, sizeof(ViewUniforms));
-
-    contextDawn->setBufferData(viewBuffer, 0, sizeof(ViewUniforms), &viewUniformPer);
+    viewUniformPer.viewuniforms[instance] = *viewUniforms;
+    //memcpy(viewUniformPer.viewuniforms + sizeof(ViewUniforms) * instance, viewUniforms, sizeof(ViewUniforms));
+    instance++;
 }

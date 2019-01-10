@@ -90,10 +90,7 @@ void SeaweedModelDawn::draw()
 {
     uint32_t vertexBufferOffsets[1] = { 0 };
 
-    dawn::CommandBufferBuilder commandBufferBuilder =
-    contextDawn->getDevice().CreateCommandBufferBuilder();
-    dawn::RenderPassEncoder pass =
-    commandBufferBuilder.BeginRenderPass(contextDawn->renderPassDescriptor);
+    dawn::RenderPassEncoder pass = contextDawn->pass;
     pass.SetPipeline(pipeline);
     pass.SetBindGroup(0, contextDawn->bindGroupGeneral);
     pass.SetBindGroup(1, contextDawn->bindGroupWorld);
@@ -104,9 +101,6 @@ void SeaweedModelDawn::draw()
     pass.SetVertexBuffers(2, 1, &texCoordBuffer->getBuffer(), vertexBufferOffsets);
     pass.SetIndexBuffer(indicesBuffer->getBuffer(), 0);
     pass.DrawIndexed(indicesBuffer->getTotalComponents(), 1, 0, 0, 0);
-
-    pass.EndPass();
-    contextDawn->submit(1, commandBufferBuilder.GetResult());
 }
 
 void SeaweedModelDawn::updatePerInstanceUniforms(ViewUniforms *viewUniforms)

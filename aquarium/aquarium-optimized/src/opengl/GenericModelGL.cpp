@@ -23,7 +23,7 @@ GenericModelGL::GenericModelGL(const ContextGL *context,
     ambientUniform.first = aquarium->lightUniforms.ambient;
     worldUniform.first = aquarium->viewUniforms.world;
     worldViewProjectionUniform.first = aquarium->viewUniforms.worldViewProjection;
-    worldInverseTransposeUniform.first = aquarium->viewUniforms.worldInverseTraspose;
+    worldInverseTransposeUniform.first = aquarium->viewUniforms.worldInverseTranspose;
     fogPowerUniform.first = g_fogPower;
     fogMultUniform.first = g_fogMult;
     fogOffsetUniform.first = g_fogOffset;
