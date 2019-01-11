@@ -528,13 +528,13 @@ void Aquarium::render()
 
     drawBackground();
 
-    //drawFishes();
+    drawFishes();
 
-    //drawInner();
+    drawInner();
 
-    //drawSeaweed();
+    drawSeaweed();
 
-    //drawOutside();
+    drawOutside();
 }
 
 void Aquarium::drawBackground()
@@ -608,6 +608,14 @@ void Aquarium::drawFishes()
                 fmod((g.mclock + ii * g_tailOffsetMult) * fishTailSpeed * speed,
                      static_cast<float>(M_PI) * 2));
             model->updatePerInstanceUniforms(&viewUniforms);
+            if (mBackendpath=="opengl" || mBackendpath == "angle")
+            {
+                model->draw();
+            }
+        }
+        // TODO(yizhou): If backend is dawn, draw only once for every type of fish by drawInstance. If backend is opengl or angle, draw for exery fish.
+        if (mBackendpath == "dawn")
+        {
             model->draw();
         }
     }

@@ -8,14 +8,15 @@ FishModelDawn::FishModelDawn(const Context *context,
                              MODELGROUP type,
                              MODELNAME name,
                              bool blend)
-    : FishModel(type, name, blend)
+    : FishModel(type, name, blend), instance(0)
 {
     contextDawn = static_cast<const ContextDawn *>(context);
 
     lightFactorUniforms.shininess      = 5.0f;
     lightFactorUniforms.specularFactor = 0.3f;
 
-    fishPerUniforms.scale = 1;
+    // TODO(yizhou): scale not init
+    //fishPerUniforms.scale = 1;
 }
 
 void FishModelDawn::init()
@@ -95,7 +96,7 @@ void FishModelDawn::init()
         &lightFactorUniforms, sizeof(LightFactorUniforms),
         dawn::BufferUsageBit::TransferDst | dawn::BufferUsageBit::Uniform);
     fishPerBuffer = contextDawn->createBuffer(
-        sizeof(FishPerUniforms), dawn::BufferUsageBit::TransferDst | dawn::BufferUsageBit::Uniform);
+        sizeof(FishUniforms), dawn::BufferUsageBit::TransferDst | dawn::BufferUsageBit::Uniform);
     viewBuffer = contextDawn->createBufferFromData(
         &viewUniformPer, sizeof(ViewUniforms),
         dawn::BufferUsageBit::TransferDst | dawn::BufferUsageBit::Uniform);
@@ -127,7 +128,7 @@ void FishModelDawn::init()
     bindGroupPer = contextDawn->makeBindGroup(groupLayoutPer,
                                               {
                                                   {0, viewBuffer, 0, sizeof(ViewUniforms)},
-                                                  {1, fishPerBuffer, 0, sizeof(FishPerUniforms)},
+                                                  {1, fishPerBuffer, 0, sizeof(FishUniforms)},
                                               });
 
     contextDawn->setBufferData(lightFactorBuffer, 0, sizeof(LightFactorUniforms),
@@ -153,6 +154,8 @@ void FishModelDawn::applyBuffers() const
 void FishModelDawn::draw()
 {
     uint32_t vertexBufferOffsets[1] = {0};
+    contextDawn->setBufferData(viewBuffer, 0, sizeof(ViewUniforms), &viewUniformPer);
+    contextDawn->setBufferData(fishPerBuffer, 0, sizeof(FishUniforms), &fishUniforms);
 
     dawn::RenderPassEncoder pass = contextDawn->pass;
     pass.SetPipeline(pipeline);
@@ -166,15 +169,14 @@ void FishModelDawn::draw()
     pass.SetVertexBuffers(3, 1, &tangentBuffer->getBuffer(), vertexBufferOffsets);
     pass.SetVertexBuffers(4, 1, &binormalBuffer->getBuffer(), vertexBufferOffsets);
     pass.SetIndexBuffer(indicesBuffer->getBuffer(), 0);
-    pass.DrawIndexed(indicesBuffer->getTotalComponents(), 1, 0, 0, 0);
+    pass.DrawIndexed(indicesBuffer->getTotalComponents(), instance, 0, 0, 0);
+
+    instance = 0;
 }
 
 void FishModelDawn::updatePerInstanceUniforms(ViewUniforms *viewUniforms)
 {
     memcpy(&viewUniformPer, viewUniforms, sizeof(ViewUniforms));
-
-    contextDawn->setBufferData(viewBuffer, 0, sizeof(ViewUniforms), &viewUniformPer);
-    contextDawn->setBufferData(fishPerBuffer, 0, sizeof(FishPerUniforms), &fishPerUniforms);
 }
 
 void FishModelDawn::updateFishCommonUniforms(float fishLength,
@@ -195,12 +197,14 @@ void FishModelDawn::updateFishPerUniforms(float x,
                                           float scale,
                                           float time)
 {
-    fishPerUniforms.worldPosition[0] = x;
-    fishPerUniforms.worldPosition[1] = y;
-    fishPerUniforms.worldPosition[2] = z;
-    fishPerUniforms.nextPosition[0]  = nextX;
-    fishPerUniforms.nextPosition[1]  = nextY;
-    fishPerUniforms.nextPosition[2]  = nextZ;
-    fishPerUniforms.scale            = scale;
-    fishPerUniforms.time             = time;
+    fishUniforms.fishPerUniforms[instance].worldPosition[0] = x;
+    fishUniforms.fishPerUniforms[instance].worldPosition[1] = y;
+    fishUniforms.fishPerUniforms[instance].worldPosition[2] = z;
+    fishUniforms.fishPerUniforms[instance].nextPosition[0] = nextX;
+    fishUniforms.fishPerUniforms[instance].nextPosition[1] = nextY;
+    fishUniforms.fishPerUniforms[instance].nextPosition[2] = nextZ;
+    fishUniforms.fishPerUniforms[instance].scale           = scale;
+    fishUniforms.fishPerUniforms[instance].time            = time;
+
+    instance++;
 }

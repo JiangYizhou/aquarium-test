@@ -14,7 +14,11 @@
 class FishModelDawn : public FishModel
 {
   public:
-    FishModelDawn(const Context* context, Aquarium* aquarium, MODELGROUP type, MODELNAME name, bool blend);
+    FishModelDawn(const Context *context,
+                  Aquarium *aquarium,
+                  MODELGROUP type,
+                  MODELNAME name,
+                  bool blend);
 
     void init() override;
     void applyUniforms() const override;
@@ -24,16 +28,16 @@ class FishModelDawn : public FishModel
 
     void updatePerInstanceUniforms(ViewUniforms *viewUniforms) override;
     void updateFishCommonUniforms(float fishLength,
-        float fishBendAmount,
-        float fishWaveLength) override;
+                                  float fishBendAmount,
+                                  float fishWaveLength) override;
     void updateFishPerUniforms(float x,
-        float y,
-        float z,
-        float nextX,
-        float nextY,
-        float nextZ,
-        float scale,
-        float time) override;
+                               float y,
+                               float z,
+                               float nextX,
+                               float nextY,
+                               float nextZ,
+                               float scale,
+                               float time) override;
 
     struct FishVertexUniforms
     {
@@ -51,12 +55,15 @@ class FishModelDawn : public FishModel
     struct FishPerUniforms
     {
         float worldPosition[3];
-        float padding1;
-        float nextPosition[3];
-        float padding2;
         float scale;
+        float nextPosition[3];
         float time;
-    } fishPerUniforms;
+    };
+
+    struct FishUniforms
+    {
+        FishPerUniforms fishPerUniforms[2000];
+    }fishUniforms;
 
     ViewUniforms viewUniformPer;
 
@@ -73,8 +80,7 @@ class FishModelDawn : public FishModel
 
     BufferDawn *indicesBuffer;
 
-   
-private:
+  private:
     dawn::InputState inputState;
     dawn::RenderPipeline pipeline;
 
@@ -84,14 +90,16 @@ private:
 
     dawn::BindGroup bindGroupModel;
     dawn::BindGroup bindGroupPer;
-    
+
     dawn::Buffer fishVertexBuffer;
     dawn::Buffer fishPerBuffer;
     dawn::Buffer lightFactorBuffer;
     dawn::Buffer viewBuffer;
 
-    ProgramDawn* programDawn;
-    const ContextDawn* contextDawn;
+    int instance;
+
+    ProgramDawn *programDawn;
+    const ContextDawn *contextDawn;
 };
 
 #endif
