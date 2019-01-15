@@ -16,7 +16,7 @@ FishModelDawn::FishModelDawn(const Context *context,
     lightFactorUniforms.specularFactor = 0.3f;
 
     // TODO(yizhou): scale not init
-    //fishPerUniforms.scale = 1;
+    // fishPerUniforms.scale = 1;
 }
 
 void FishModelDawn::init()
@@ -35,6 +35,9 @@ void FishModelDawn::init()
     binormalBuffer = static_cast<BufferDawn *>(bufferMap["binormal"]);
     indicesBuffer  = static_cast<BufferDawn *>(bufferMap["indices"]);
 
+    fishPersBuffer = contextDawn->createBuffer(
+        sizeof(FishPer) * 100000, dawn::BufferUsageBit::Vertex | dawn::BufferUsageBit::TransferDst);
+
     inputState = contextDawn->createInputState(
         {
             {0, 0, dawn::VertexFormat::FloatR32G32B32, 0},
@@ -42,12 +45,18 @@ void FishModelDawn::init()
             {2, 2, dawn::VertexFormat::FloatR32G32, 0},
             {3, 3, dawn::VertexFormat::FloatR32G32B32, 0},
             {4, 4, dawn::VertexFormat::FloatR32G32B32, 0},
+            {5, 5, dawn::VertexFormat::FloatR32G32B32, offsetof(FishPer, worldPosition)},
+            {6, 5, dawn::VertexFormat::FloatR32, offsetof(FishPer, scale)},
+            {7, 5, dawn::VertexFormat::FloatR32G32B32, offsetof(FishPer, nextPosition)},
+            {8, 5, dawn::VertexFormat::FloatR32, offsetof(FishPer, time)},
         },
         {{0, positionBuffer->getDataSize(), dawn::InputStepMode::Vertex},
          {1, normalBuffer->getDataSize(), dawn::InputStepMode::Vertex},
          {2, texCoordBuffer->getDataSize(), dawn::InputStepMode::Vertex},
          {3, tangentBuffer->getDataSize(), dawn::InputStepMode::Vertex},
-         {4, binormalBuffer->getDataSize(), dawn::InputStepMode::Vertex}});
+         {4, binormalBuffer->getDataSize(), dawn::InputStepMode::Vertex},
+         {5, sizeof(FishPer), dawn::InputStepMode::Instance},
+        });
 
     // TODO(yizhou) : Check if the layout works for normal map fragment shader
     // becasue the shader doesn't contains reflaction map and skybox
@@ -77,7 +86,6 @@ void FishModelDawn::init()
 
     groupLayoutPer = contextDawn->MakeBindGroupLayout({
         {0, dawn::ShaderStageBit::Vertex, dawn::BindingType::UniformBuffer},
-        {1, dawn::ShaderStageBit::Vertex, dawn::BindingType::UniformBuffer},
     });
 
     pipelineLayout = contextDawn->MakeBasicPipelineLayout({
@@ -95,8 +103,6 @@ void FishModelDawn::init()
     lightFactorBuffer = contextDawn->createBufferFromData(
         &lightFactorUniforms, sizeof(LightFactorUniforms),
         dawn::BufferUsageBit::TransferDst | dawn::BufferUsageBit::Uniform);
-    fishPerBuffer = contextDawn->createBuffer(
-        sizeof(FishUniforms), dawn::BufferUsageBit::TransferDst | dawn::BufferUsageBit::Uniform);
     viewBuffer = contextDawn->createBufferFromData(
         &viewUniformPer, sizeof(ViewUniforms),
         dawn::BufferUsageBit::TransferDst | dawn::BufferUsageBit::Uniform);
@@ -125,11 +131,10 @@ void FishModelDawn::init()
                                {4, normalTexture->getTextureView()}});
     }
 
-    bindGroupPer = contextDawn->makeBindGroup(groupLayoutPer,
-                                              {
-                                                  {0, viewBuffer, 0, sizeof(ViewUniforms)},
-                                                  {1, fishPerBuffer, 0, sizeof(FishUniforms)},
-                                              });
+    bindGroupPer =
+        contextDawn->makeBindGroup(groupLayoutPer, {
+                                                       {0, viewBuffer, 0, sizeof(ViewUniforms)},
+                                                   });
 
     contextDawn->setBufferData(lightFactorBuffer, 0, sizeof(LightFactorUniforms),
                                &lightFactorUniforms);
@@ -138,7 +143,8 @@ void FishModelDawn::init()
 void FishModelDawn::applyUniforms() const
 {
     contextDawn->setBufferData(fishVertexBuffer, 0, sizeof(FishVertexUniforms),
-                               &fishVertexUniforms);
+                               &fishVertexUniforms);   
+    contextDawn->setBufferData(viewBuffer, 0, sizeof(ViewUniforms), &viewUniformPer);
 }
 
 void FishModelDawn::applyTextures() const
@@ -154,8 +160,8 @@ void FishModelDawn::applyBuffers() const
 void FishModelDawn::draw()
 {
     uint32_t vertexBufferOffsets[1] = {0};
-    contextDawn->setBufferData(viewBuffer, 0, sizeof(ViewUniforms), &viewUniformPer);
-    contextDawn->setBufferData(fishPerBuffer, 0, sizeof(FishUniforms), &fishUniforms);
+
+    contextDawn->setBufferData(fishPersBuffer, 0, sizeof(FishPer) * 100000, fishPers);
 
     dawn::RenderPassEncoder pass = contextDawn->pass;
     pass.SetPipeline(pipeline);
@@ -168,6 +174,7 @@ void FishModelDawn::draw()
     pass.SetVertexBuffers(2, 1, &texCoordBuffer->getBuffer(), vertexBufferOffsets);
     pass.SetVertexBuffers(3, 1, &tangentBuffer->getBuffer(), vertexBufferOffsets);
     pass.SetVertexBuffers(4, 1, &binormalBuffer->getBuffer(), vertexBufferOffsets);
+    pass.SetVertexBuffers(5, 1, &fishPersBuffer, vertexBufferOffsets);
     pass.SetIndexBuffer(indicesBuffer->getBuffer(), 0);
     pass.DrawIndexed(indicesBuffer->getTotalComponents(), instance, 0, 0, 0);
 
@@ -197,14 +204,14 @@ void FishModelDawn::updateFishPerUniforms(float x,
                                           float scale,
                                           float time)
 {
-    fishUniforms.fishPerUniforms[instance].worldPosition[0] = x;
-    fishUniforms.fishPerUniforms[instance].worldPosition[1] = y;
-    fishUniforms.fishPerUniforms[instance].worldPosition[2] = z;
-    fishUniforms.fishPerUniforms[instance].nextPosition[0] = nextX;
-    fishUniforms.fishPerUniforms[instance].nextPosition[1] = nextY;
-    fishUniforms.fishPerUniforms[instance].nextPosition[2] = nextZ;
-    fishUniforms.fishPerUniforms[instance].scale           = scale;
-    fishUniforms.fishPerUniforms[instance].time            = time;
+    fishPers[instance].worldPosition[0]                     = x;
+    fishPers[instance].worldPosition[1]                     = y;
+    fishPers[instance].worldPosition[2]                     = z;
+    fishPers[instance].nextPosition[0]                      = nextX;
+    fishPers[instance].nextPosition[1]                      = nextY;
+    fishPers[instance].nextPosition[2]                      = nextZ;
+    fishPers[instance].scale                                = scale;
+    fishPers[instance].time                                 = time;
 
     instance++;
 }

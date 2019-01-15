@@ -450,7 +450,7 @@ void Aquarium::updateGlobalUniforms()
 {
     // Update our time
 #ifdef _WIN32
-    float now = GetTickCount64() / 100.0f;
+    float now = GetTickCount64() / 1000.0f;
 #else
     float now = clock() / 1000000.0f;
 #endif
@@ -466,8 +466,7 @@ void Aquarium::updateGlobalUniforms()
     g.then = now;
 
     fpsTimer.update(elapsedTime);
-    std::cout << "FPS: " << fpsTimer.getAverageFPS()
-              << " InstantFPS: " << fpsTimer.getInstantaneousFPS() << std::endl;
+
     std::string text =
         "Aquarium FPS: " + to_string(static_cast<unsigned int>(fpsTimer.getAverageFPS()));
     context->setWindowTitle(text);

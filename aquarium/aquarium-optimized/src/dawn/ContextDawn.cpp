@@ -60,12 +60,12 @@ bool ContextDawn::createContext()
 
     GLFWmonitor *pMonitor = glfwGetPrimaryMonitor();
     const GLFWvidmode *mode = glfwGetVideoMode(pMonitor);
-    //mClientWidth = mode->width;
-    //mClientHeight = mode->height;
+    mClientWidth = mode->width;
+    mClientHeight = mode->height;
     // If we show the window bar on the top, max width and height will be 1916 x 1053.
     // Use a window mode currently
-    mClientWidth  = 1024;
-    mClientHeight = 768;
+    //mClientWidth  = 1024;
+    //mClientHeight = 768;
 
     mWindow = glfwCreateWindow(mClientWidth, mClientHeight, "Aquarium", NULL, NULL);
     if (mWindow == NULL)
@@ -268,12 +268,23 @@ dawn::InputState ContextDawn::createInputState(std::initializer_list<Attribute> 
 {
     dawn::InputStateBuilder inputStateBuilder = device.CreateInputStateBuilder();
 
-    const Input* input = inputInitilizer.begin();
+    /*const Input* input = inputInitilizer.begin();
     const Attribute* attribute = attributeInitilizer.begin();
     for (; input != inputInitilizer.end(); ++input, ++attribute)
     {
         inputStateBuilder.SetAttribute(attribute->shaderLocation, attribute->bindingSlot, attribute->format, attribute->offset);
         inputStateBuilder.SetInput(input->bindingSlot, input->stride, input->stepMode);
+    }*/
+
+    for (auto& attribute : attributeInitilizer)
+    {
+        inputStateBuilder.SetAttribute(attribute.shaderLocation, attribute.bindingSlot,
+                                       attribute.format, attribute.offset);
+    }
+
+    for (auto &input : inputInitilizer)
+    {
+        inputStateBuilder.SetInput(input.bindingSlot, input.stride, input.stepMode);
     }
 
     return inputStateBuilder.GetResult();

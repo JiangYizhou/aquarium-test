@@ -52,18 +52,13 @@ class FishModelDawn : public FishModel
         float specularFactor;
     } lightFactorUniforms;
 
-    struct FishPerUniforms
+    struct FishPer
     {
         float worldPosition[3];
         float scale;
         float nextPosition[3];
         float time;
-    };
-
-    struct FishUniforms
-    {
-        FishPerUniforms fishPerUniforms[2000];
-    }fishUniforms;
+    }fishPers[100000];
 
     ViewUniforms viewUniformPer;
 
@@ -92,9 +87,10 @@ class FishModelDawn : public FishModel
     dawn::BindGroup bindGroupPer;
 
     dawn::Buffer fishVertexBuffer;
-    dawn::Buffer fishPerBuffer;
     dawn::Buffer lightFactorBuffer;
     dawn::Buffer viewBuffer;
+
+    dawn::Buffer fishPersBuffer;
 
     int instance;
 

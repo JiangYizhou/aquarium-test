@@ -18,23 +18,15 @@ layout(std140, set = 2, binding = 0) uniform FishVertexUniforms {
     float fishBendAmount;
  } fishVertexUnifoms;
  
-struct FishPerUniforms
-{
-    vec3 worldPosition;
-    float scale;
-    vec3 nextPosition;
-    float time;
- };
- 
-layout(std140, set = 3, binding = 1) uniform FishUniforms {
-	FishPerUniforms fishPerUniforms[2000];
-} fishUniforms;
-
 layout(location = 0) in vec4 position;
 layout(location = 1) in vec3 normal;
 layout(location = 2) in vec2 texCoord;
 layout(location = 3) in vec3 tangent;  // #normalMap
 layout(location = 4) in vec3 binormal;  // #normalMap
+layout(location = 5) in vec3 worldPosition;
+layout(location = 6) in float scale;
+layout(location = 7) in vec3 nextPosition;
+layout(location = 8) in float time;
 layout(location = 0) out vec4 v_position;
 layout(location = 1) out vec2 v_texCoord;
 layout(location = 2) out vec3 v_tangent;  // #normalMap
@@ -43,18 +35,18 @@ layout(location = 4) out vec3 v_normal;
 layout(location = 5) out vec3 v_surfaceToLight;
 layout(location = 6) out vec3 v_surfaceToView;
 void main() {
-  vec3 vz = normalize(fishUniforms.fishPerUniforms[gl_InstanceIndex].worldPosition - fishUniforms.fishPerUniforms[gl_InstanceIndex].nextPosition);
+  vec3 vz = normalize(worldPosition - nextPosition);
   vec3 vx = normalize(cross(vec3(0,1,0), vz));
   vec3 vy = cross(vz, vx);
   mat4 orientMat = mat4(
     vec4(vx, 0),
     vec4(vy, 0),
     vec4(vz, 0),
-    vec4(fishUniforms.fishPerUniforms[gl_InstanceIndex].worldPosition, 1));
+    vec4(worldPosition, 1));
   mat4 scaleMat = mat4(
-    vec4(fishUniforms.fishPerUniforms[gl_InstanceIndex].scale, 0, 0, 0),
-    vec4(0, fishUniforms.fishPerUniforms[gl_InstanceIndex].scale, 0, 0),
-    vec4(0, 0, fishUniforms.fishPerUniforms[gl_InstanceIndex].scale, 0),
+    vec4(scale, 0, 0, 0),
+    vec4(0, scale, 0, 0),
+    vec4(0, 0, scale, 0),
     vec4(0, 0, 0, 1));
   mat4 world = orientMat * scaleMat;
   mat4 worldViewProjection = viewUniforms.viewProjection * world;
@@ -65,7 +57,7 @@ void main() {
   float mult = position.z > 0.0 ?
       (position.z / fishVertexUnifoms.fishLength) :
       (-position.z / fishVertexUnifoms.fishLength * 2.0);
-  float s = sin(fishUniforms.fishPerUniforms[gl_InstanceIndex].time + mult * fishVertexUnifoms.fishWaveLength);
+  float s = sin(time + mult * fishVertexUnifoms.fishWaveLength);
   float a = sign(s);
   float offset = pow(mult, 2.0) * s * fishVertexUnifoms.fishBendAmount;
   v_position = (
