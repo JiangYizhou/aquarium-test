@@ -41,7 +41,7 @@ ContextDawn::~ContextDawn() {}
 bool ContextDawn::createContext()
 {
     // TODO(yizhou) : initilize dawn dynamic backend
-    utils::BackendType backendType = utils::BackendType::D3D12;
+    utils::BackendType backendType = utils::BackendType::Vulkan;
     utils::BackendBinding* binding = utils::CreateBinding(backendType);
     if (binding == nullptr) {
         return false;
@@ -66,6 +66,8 @@ bool ContextDawn::createContext()
     // Use a window mode currently
     //mClientWidth  = 1024;
     //mClientHeight = 768;
+    // Minus the height of title bar
+    mClientHeight = 1060;
 
     mWindow = glfwCreateWindow(mClientWidth, mClientHeight, "Aquarium", NULL, NULL);
     if (mWindow == NULL)
