@@ -325,13 +325,27 @@ dawn::RenderPipeline ContextDawn::createRenderPipeline(dawn::PipelineLayout pipe
         cBlendStates[i] = blendStateDescriptor;
     }
 
+    dawn::StencilStateFaceDescriptor stencilFace;
+    stencilFace.compare       = dawn::CompareFunction::Always;
+    stencilFace.stencilFailOp = dawn::StencilOperation::Keep;
+    stencilFace.depthFailOp   = dawn::StencilOperation::Keep;
+    stencilFace.passOp        = dawn::StencilOperation::Keep;
+
+    dawn::DepthStencilStateDescriptor depthStencilDescriptor;
+    depthStencilDescriptor.depthWriteEnabled = true;
+    depthStencilDescriptor.depthCompare      = dawn::CompareFunction::Less;
+    depthStencilDescriptor.back              = stencilFace;
+    depthStencilDescriptor.front             = stencilFace;
+    depthStencilDescriptor.stencilReadMask   = 0xff;
+    depthStencilDescriptor.stencilWriteMask  = 0xff;
+
     dawn::RenderPipelineDescriptor descriptor;
     descriptor.layout = pipelineLayout;
     descriptor.vertexStage = &cVertexStage;
     descriptor.fragmentStage = &cFragmentStage;
     descriptor.attachmentsState = &cAttachmentsState;
     descriptor.inputState = inputState;
-    descriptor.depthStencilState = depthStencilState;
+    descriptor.depthStencilState = &depthStencilDescriptor;
     descriptor.primitiveTopology = dawn::PrimitiveTopology::TriangleList;
     descriptor.indexFormat = dawn::IndexFormat::Uint16;
     descriptor.sampleCount = 1;
@@ -449,11 +463,6 @@ void ContextDawn::initGeneralResources(Aquarium* aquarium)
     });
 
     setBufferData(lightWorldPositionBuffer, 0, sizeof(LightWorldPositionUniform), &aquarium->lightWorldPositionUniform);
-
-    depthStencilState = device.CreateDepthStencilStateBuilder()
-        .SetDepthCompareFunction(dawn::CompareFunction::Less)
-        .SetDepthWriteEnabled(true)
-        .GetResult();
 }
 
 void ContextDawn::updateWorldlUniforms(Aquarium* aquarium)

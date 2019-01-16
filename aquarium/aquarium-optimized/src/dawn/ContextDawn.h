@@ -146,8 +146,6 @@ class ContextDawn : public Context
 
     dawn::BindGroupLayout groupLayoutWorld;
     dawn::BindGroup bindGroupWorld;
-
-    dawn::DepthStencilState depthStencilState;
     
     void GetNextRenderPassDescriptor(
         dawn::Texture* backbuffer,

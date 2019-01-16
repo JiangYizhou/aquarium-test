@@ -72,6 +72,10 @@ void TextureDawn::loadTexture()
         samplerDesc.minFilter = dawn::FilterMode::Linear;
         samplerDesc.magFilter = dawn::FilterMode::Linear;
         samplerDesc.mipmapFilter = dawn::FilterMode::Nearest;
+        samplerDesc.lodMinClamp  = 0.0f;
+        samplerDesc.lodMaxClamp  = 1000.0f;
+        samplerDesc.compareFunction = dawn::CompareFunction::Never;
+        samplerDesc.borderColor     = dawn::BorderColor::TransparentBlack;
 
         mSampler = context->createSampler(samplerDesc);
     }
@@ -135,6 +139,10 @@ void TextureDawn::loadTexture()
         samplerDesc.addressModeW = dawn::AddressMode::ClampToEdge;
         samplerDesc.minFilter = dawn::FilterMode::Linear;
         samplerDesc.magFilter = dawn::FilterMode::Linear;
+        samplerDesc.lodMinClamp  = 0.0f;
+        samplerDesc.lodMaxClamp  = 1000.0f;
+        samplerDesc.compareFunction = dawn::CompareFunction::Never;
+        samplerDesc.borderColor     = dawn::BorderColor::TransparentBlack;
 
         if (isPowerOf2(mWidth) && isPowerOf2(mHeight))
         {
