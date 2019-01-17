@@ -29,9 +29,19 @@ Native Aquarium is a native implementation of [WebGL Aquarium](https://github.co
     <td>Y</td>
   </tr>
   <tr align=left>
-    <td>*</td>
+    <td>Linux</td>
     <td>Dawn</td>
-    <td>WIP</td>
+    <td>Y</td>
+  </tr>
+  <tr align=left>
+    <td>macOS</td>
+    <td>Dawn</td>
+    <td>Y</td>
+  </tr>
+  <tr align=left>
+    <td>Windows</td>
+    <td>Dawn</td>
+    <td>Y</td>
   </tr>
   <tr align=left>
     <td>*</td>
@@ -143,7 +153,7 @@ make
 # Run
 ```sh
 # "--num-fish": specifies how many fishes will be rendered
-# "--backend" : specifies running a certain backend, 'opengl', 'dawn'
+# "--backend" : specifies running a certain backend, 'opengl', 'dawn_d3d12', 'dawn_vulkan', 'dawn_metal', 'dawn_opengl'
 # running angle dynamic backend is on todo list. Currently go through angle path by option 'opengl' if angle is linked into the project
 
 
@@ -151,9 +161,13 @@ make
 run it in Visual Studio
 or
 aquarium.exe --num-fish 10000 --backend opengl
-aquarium.exe --num-fish 10000 --backend dawn
+aquarium.exe --num-fish 10000 --backend dawn_d3d12
 
-# run on Linux and macOS
+# run on Linux
 ./aquarium  --num-fish 10000 --backend opengl
-./aquarium.exe --num-fish 10000 --backend dawn
+./aquarium.exe --num-fish 10000 --backend dawn_vulkan
+
+# run on macOS
+./aquarium  --num-fish 10000 --backend opengl
+./aquarium.exe --num-fish 10000 --backend dawn_metal
 ```
