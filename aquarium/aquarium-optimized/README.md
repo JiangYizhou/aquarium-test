@@ -83,6 +83,7 @@ cd aquarium-optimized
 git submodule init && git submodule update
 
 #build dawn
+#If you want to enable opengl backend of dawn, please add DAWN_ENABLE_BACKEND_OPENGL to args.gn
 cd thirdparty/dawn
 cp scripts/standalone.gclient .gclient
 gclient sync
@@ -97,6 +98,7 @@ ninja -C out/Release CppHelloTriangle
 mkdir build && cd build
 
 # build on Windows
+# Change Runtime Library in project properties to MT if dawn libs can't be linked
 cmake -G "Visual Studio 15 2017 Win64" .. -Dangle=false -Ddawn=true
 open build/Aquarium.sln using visual studio, set Aquarium as StartUp project and build
 copy libdawn.dll, libdawn_native.dll, libdawn_wire.dll, libshaderc.dll to folder build

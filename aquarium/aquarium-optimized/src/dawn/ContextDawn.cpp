@@ -38,10 +38,26 @@ ContextDawn::ContextDawn() {}
 
 ContextDawn::~ContextDawn() {}
 
-bool ContextDawn::createContext()
+bool ContextDawn::createContext(std::string backend)
 {
-    // TODO(yizhou) : initilize dawn dynamic backend
-    utils::BackendType backendType = utils::BackendType::Vulkan;
+    utils::BackendType backendType = utils::BackendType::Null;
+    if (backend == "dawn_d3d12")
+    {
+        backendType = utils::BackendType::D3D12;
+    }
+    else if (backend == "dawn_vulkan")
+    {
+        backendType = utils::BackendType::Vulkan;
+    }
+    else if (backend == "dawn_metal")
+    {
+        backendType = utils::BackendType::Metal;
+    }
+    else if (backend == "dawn_opengl")
+    {
+        backendType = utils::BackendType::OpenGL;
+    }
+
     utils::BackendBinding* binding = utils::CreateBinding(backendType);
     if (binding == nullptr) {
         return false;

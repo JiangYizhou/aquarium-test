@@ -394,6 +394,7 @@ class Aquarium
     FPSTimer fpsTimer;  // object to measure frames per second;
     int mFishCount;
     std::string mBackendpath;
+    std::string mBackendFullpath;
     std::string mShaderVersion;
     std::string mPath;
     ContextFactory *factory;

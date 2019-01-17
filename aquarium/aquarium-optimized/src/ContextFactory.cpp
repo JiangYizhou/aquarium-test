@@ -20,15 +20,13 @@ ContextFactory::~ContextFactory()
 
 Context *ContextFactory::createContext(std::string str)
 {
-    if (str == "opengl")
+    if (str == "opengl" || str == "angle")
     {
         context = new ContextGL();
     }
     else if (str == "dawn")
     {
-    #ifndef EGL_EGL_PROTOTYPES
        context = new ContextDawn();
-    #endif
     }
 
     return context;

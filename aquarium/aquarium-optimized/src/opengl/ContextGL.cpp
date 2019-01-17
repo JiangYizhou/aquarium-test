@@ -33,7 +33,7 @@ ContextGL::ContextGL()
 
 ContextGL::~ContextGL() {}
 
-bool ContextGL::createContext()
+bool ContextGL::createContext(std::string backend)
 {
     // initialise GLFW
     if (!glfwInit())

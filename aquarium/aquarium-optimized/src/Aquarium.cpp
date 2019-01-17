@@ -123,7 +123,14 @@ void Aquarium::init(int argc, char **argv)
         }
         else if (cmd == "--backend")
         {
-            mBackendpath = argv[i++ + 1];
+            mBackendFullpath = argv[i++ + 1];
+            if (mBackendFullpath.find("dawn") != std::string::npos)
+            {
+                mBackendpath = "dawn";
+            } else
+            {
+                mBackendpath = mBackendFullpath;
+            }
             context      = factory->createContext(mBackendpath);
         }
         else
@@ -134,7 +141,7 @@ void Aquarium::init(int argc, char **argv)
     if (context == nullptr)
     {
         mBackendpath = "opengl";
-        context      = factory->createContext(mBackendpath);
+        context      = factory->createContext(mBackendFullpath);
     }
 
     if (mBackendpath == "opengl")
@@ -146,7 +153,7 @@ void Aquarium::init(int argc, char **argv)
         #endif
     }
 
-    if (!context->createContext())
+    if (!context->createContext(mBackendFullpath))
     {
         return;
     }

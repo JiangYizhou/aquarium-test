@@ -36,7 +36,7 @@ class ContextGL : public Context
   public:
     ContextGL();
     ~ContextGL();
-    bool createContext() override;
+    bool createContext(std::string backend) override;
     void setWindowTitle(const std::string &text) override;
     bool ShouldQuit() override;
     void KeyBoardQuit() override;
