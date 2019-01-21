@@ -3,9 +3,10 @@
 #include "SeaweedModelDawn.h"
 
 SeaweedModelDawn::SeaweedModelDawn(const Context* context, Aquarium* aquarium, MODELGROUP type, MODELNAME name, bool blend)
-    : SeaweedModel(type, name, blend)
+    : SeaweedModel(type, name, blend), instance(0)
 {
     contextDawn = static_cast<const ContextDawn*>(context);
+    mAquarium   = aquarium;
 
     lightFactorUniforms.shininess = 50.0f;
     lightFactorUniforms.specularFactor = 1.0f;
@@ -57,7 +58,7 @@ void SeaweedModelDawn::init()
     lightFactorBuffer = contextDawn->createBufferFromData(&lightFactorUniforms, sizeof(lightFactorUniforms), dawn::BufferUsageBit::TransferDst | dawn::BufferUsageBit::Uniform);
     timeBuffer = contextDawn->createBufferFromData(&seaweedPer, sizeof(seaweedPer), dawn::BufferUsageBit::TransferDst | dawn::BufferUsageBit::Uniform);
     viewBuffer = contextDawn->createBufferFromData(
-        &viewUniformPer, sizeof(ViewUniforms),
+        &viewUniformPer, sizeof(ViewUniformPer),
         dawn::BufferUsageBit::TransferDst | dawn::BufferUsageBit::Uniform);
 
     bindGroupModel = contextDawn->makeBindGroup(groupLayoutModel, {
@@ -67,7 +68,7 @@ void SeaweedModelDawn::init()
     });
 
     bindGroupPer = contextDawn->makeBindGroup(groupLayoutPer, {
-        { 0, viewBuffer, 0, sizeof(ViewUniforms)},
+        { 0, viewBuffer, 0, sizeof(ViewUniformPer)},
         { 1, timeBuffer, 0, sizeof(SeaweedPer) },
     });
 
@@ -88,6 +89,8 @@ void SeaweedModelDawn::applyBuffers() const
 
 void SeaweedModelDawn::draw()
 {
+    contextDawn->setBufferData(viewBuffer, 0, sizeof(ViewUniformPer), &viewUniformPer);
+    contextDawn->setBufferData(timeBuffer, 0, sizeof(SeaweedPer), &seaweedPer);
     uint32_t vertexBufferOffsets[1] = { 0 };
 
     dawn::RenderPassEncoder pass = contextDawn->pass;
@@ -100,19 +103,19 @@ void SeaweedModelDawn::draw()
     pass.SetVertexBuffers(1, 1, &normalBuffer->getBuffer(), vertexBufferOffsets);
     pass.SetVertexBuffers(2, 1, &texCoordBuffer->getBuffer(), vertexBufferOffsets);
     pass.SetIndexBuffer(indicesBuffer->getBuffer(), 0);
-    pass.DrawIndexed(indicesBuffer->getTotalComponents(), 1, 0, 0, 0);
+    pass.DrawIndexed(indicesBuffer->getTotalComponents(), instance, 0, 0, 0);
+    instance = 0;
 }
 
 void SeaweedModelDawn::updatePerInstanceUniforms(ViewUniforms *viewUniforms)
 {
-    memcpy(&viewUniformPer, viewUniforms, sizeof(ViewUniforms));
+    viewUniformPer.viewuniforms[instance] = *viewUniforms;
+    seaweedPer.time[instance]             = mAquarium->g.mclock + instance;
 
-    contextDawn->setBufferData(viewBuffer, 0, sizeof(ViewUniforms), &viewUniformPer);
-    contextDawn->setBufferData(timeBuffer, 0, sizeof(seaweedPer), &seaweedPer);
+    instance++;
 }
 
 void SeaweedModelDawn::updateSeaweedModelTime(float time)
 {
-    seaweedPer.time = time;
 }
 

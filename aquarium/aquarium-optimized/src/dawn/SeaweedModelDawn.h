@@ -43,10 +43,14 @@ class SeaweedModelDawn : public SeaweedModel
 
     struct SeaweedPer
     {
-        float time;
+        float time[20];
     } seaweedPer;
 
-    ViewUniforms viewUniformPer;
+    struct ViewUniformPer
+    {
+        ViewUniforms viewuniforms[20];
+    };
+    ViewUniformPer viewUniformPer;
 
   private:
     dawn::InputState inputState;
@@ -65,6 +69,9 @@ class SeaweedModelDawn : public SeaweedModel
 
     const ContextDawn *contextDawn;
     ProgramDawn* programDawn;
+    Aquarium * mAquarium;
+
+    int instance;
 };
 
 #endif // !SEAWEEDMODEL_H

@@ -382,10 +382,10 @@ class Aquarium
     ViewUniforms viewUniforms;
     LightUniforms lightUniforms;
     FogUniforms fogUniforms;
+    Global g;
 
   private:
     void render();
-    Global g;
     unordered_map<std::string, MODELNAME> mModelEnumMap;
     std::unordered_map<std::string, Texture *> mTextureMap;
     std::unordered_map<std::string, Program *> mProgramMap;

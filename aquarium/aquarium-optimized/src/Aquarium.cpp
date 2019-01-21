@@ -556,12 +556,12 @@ void Aquarium::drawBackground()
 
 void Aquarium::drawSeaweed()
 {
-    int ii              = 0;
     SeaweedModel *model = static_cast<SeaweedModel *>(mAquariumModels[MODELNAME::MODELSEAWEEDA]);
-    model->prepare(context);
     for (int i = MODELNAME::MODELSEAWEEDA; i <= MODELNAME::MODELSEAWEEDB; ++i)
     {
-        model->updateSeaweedModelTime(g.mclock + ii++);
+        //model->updateSeaweedModelTime(g.mclock);
+        model = static_cast<SeaweedModel *>(mAquariumModels[i]);
+        model->prepare(context);
         updateWorldMatrixAndDraw(model);
     }
 }
