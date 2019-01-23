@@ -466,7 +466,7 @@ void ContextGL::resetState()
 
 void ContextGL::setUniform(int index, const float *v, int type) const
 {
-    //ASSERT(index != -1);
+    ASSERT(index != -1);
     switch (type)
     {
         case GL_FLOAT:

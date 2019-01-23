@@ -46,7 +46,9 @@ enum MODELNAME : short
     MODELROCKA,
     MODELROCKB,
     MODELROCKC,
-    MODELSUNKNSHIP,
+    MODELSUNKNSHIPBOXES,
+    MODELSUNKNSHIPDECK,
+    MODELSUNKNSHIPHULL,
     MODELFLOORCENTER,
     MODELFLOORBASE_BAKED,
     MODELSUNKNSUB,
@@ -152,7 +154,9 @@ const G_sceneInfo g_sceneInfo[] = {
     {"RuinColumn", MODELNAME::MODELRUINCOlOMN, {"", ""}, true, MODELGROUP::GENERIC},
     {"Stone", MODELNAME::MODELSTONE, {"", ""}, true, MODELGROUP::GENERIC},
     {"Stones", MODELNAME::MODELSTONES, {"", ""}, true, MODELGROUP::GENERIC},
-    {"SunknShip", MODELNAME::MODELSUNKNSHIP, {"", ""}, true, MODELGROUP::GENERIC},
+    {"SunknShipBoxes", MODELNAME::MODELSUNKNSHIPBOXES, {"", ""}, true, MODELGROUP::GENERIC},
+    {"SunknShipDeck", MODELNAME::MODELSUNKNSHIPDECK, {"", ""}, true, MODELGROUP::GENERIC},
+    {"SunknShipHull", MODELNAME::MODELSUNKNSHIPHULL, {"", ""}, true, MODELGROUP::GENERIC},
     {"SunknSub", MODELNAME::MODELSUNKNSUB, {"", ""}, true, MODELGROUP::GENERIC},
     {"SeaweedA",
      MODELNAME::MODELSEAWEEDA,
@@ -177,8 +181,11 @@ const G_sceneInfo g_sceneInfo[] = {
 
 /*
 const G_sceneInfo g_sceneInfo[] = {
-    {"RuinColumn", MODELNAME::MODELRUINCOlOMN, {"", ""}, true, MODELGROUP::GENERIC},
-};*/
+    {"SunknShipBoxes", MODELNAME::MODELSUNKNSHIPBOXES, {"", ""}, true, MODELGROUP::GENERIC},
+    {"SunknShipDeck", MODELNAME::MODELSUNKNSHIPDECK, {"", ""}, true, MODELGROUP::GENERIC},
+    {"SunknShipHull", MODELNAME::MODELSUNKNSHIPHULL, {"", ""}, true, MODELGROUP::GENERIC},
+};
+*/
 
 const std::vector<std::string> g_skyBoxUrls = {
     "GlobeOuter_EM_positive_x.jpg", "GlobeOuter_EM_negative_x.jpg", "GlobeOuter_EM_positive_y.jpg",

@@ -669,6 +669,7 @@ void Aquarium::updateWorldMatrixAndDraw(Model *model)
             }
         }
     }
+
     // TODO(yizhou): If backend is dawn, draw only once for every model. If
     // backend is opengl or angle, draw for exery instance.
     if (mBackendpath == "dawn" || mBackendpath == "angle")
