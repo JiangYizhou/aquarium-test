@@ -663,7 +663,16 @@ void Aquarium::updateWorldMatrixAndDraw(Model *model)
             // viewUniforms.
             // Update all viewUniforms on dawn backend.
             model->updatePerInstanceUniforms(&viewUniforms);
+            if (mBackendpath == "opengl")
+            {
+                model->draw();
+            }
         }
-    }    
-    model->draw();
+    }
+    // TODO(yizhou): If backend is dawn, draw only once for every model. If
+    // backend is opengl or angle, draw for exery instance.
+    if (mBackendpath == "dawn" || mBackendpath == "angle")
+    {
+        model->draw();
+    }
 }
