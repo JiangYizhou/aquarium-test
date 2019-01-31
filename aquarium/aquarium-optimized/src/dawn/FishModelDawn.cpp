@@ -36,7 +36,7 @@ void FishModelDawn::init()
     indicesBuffer  = static_cast<BufferDawn *>(bufferMap["indices"]);
 
     fishPersBuffer = contextDawn->createBuffer(
-        sizeof(FishPer) * 10000, dawn::BufferUsageBit::Vertex | dawn::BufferUsageBit::TransferDst);
+        sizeof(FishPer) * 100000, dawn::BufferUsageBit::Vertex | dawn::BufferUsageBit::TransferDst);
 
     inputState = contextDawn->createInputState(
         {
@@ -161,7 +161,7 @@ void FishModelDawn::draw()
 {
     uint32_t vertexBufferOffsets[1] = {0};
 
-    contextDawn->setBufferData(fishPersBuffer, 0, sizeof(FishPer) * 10000, fishPers);
+    contextDawn->setBufferData(fishPersBuffer, 0, sizeof(FishPer) * 100000, fishPers);
 
     dawn::RenderPassEncoder pass = contextDawn->pass;
     pass.SetPipeline(pipeline);

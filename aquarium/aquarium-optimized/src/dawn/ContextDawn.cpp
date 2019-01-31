@@ -16,7 +16,7 @@
 #include <dawn_native/DawnNative.h>
 #include "utils/BackendBinding.h"
 #include "common/Constants.h"
-#include "shaderc/shaderc.h"
+#include <shaderc/shaderc.hpp>
 
 #include "BufferDawn.h"
 #include "TextureDawn.h"
@@ -286,14 +286,6 @@ dawn::InputState ContextDawn::createInputState(std::initializer_list<Attribute> 
 {
     dawn::InputStateBuilder inputStateBuilder = device.CreateInputStateBuilder();
 
-    /*const Input* input = inputInitilizer.begin();
-    const Attribute* attribute = attributeInitilizer.begin();
-    for (; input != inputInitilizer.end(); ++input, ++attribute)
-    {
-        inputStateBuilder.SetAttribute(attribute->shaderLocation, attribute->bindingSlot, attribute->format, attribute->offset);
-        inputStateBuilder.SetInput(input->bindingSlot, input->stride, input->stepMode);
-    }*/
-
     for (auto& attribute : attributeInitilizer)
     {
         inputStateBuilder.SetAttribute(attribute.shaderLocation, attribute.bindingSlot,
@@ -321,18 +313,20 @@ dawn::RenderPipeline ContextDawn::createRenderPipeline(dawn::PipelineLayout pipe
     cFragmentStage.entryPoint = "main";
     cFragmentStage.module = fsModule;
 
-    dawn::AttachmentDescriptor cColorAttachments[kMaxColorAttachments];
+    std::array<dawn::AttachmentDescriptor *, kMaxColorAttachments> cColorAttachments;
+    dawn::AttachmentDescriptor colorAttachments[kMaxColorAttachments];
     dawn::AttachmentDescriptor cDepthStencilAttachment;
     std::array<dawn::BlendStateDescriptor, kMaxColorAttachments> cBlendStates;
 
     dawn::AttachmentsStateDescriptor cAttachmentsState;
     cAttachmentsState.numColorAttachments = 1;
-    cAttachmentsState.colorAttachments = cColorAttachments;
+    cAttachmentsState.colorAttachments = &cColorAttachments[0];
     cAttachmentsState.depthStencilAttachment = &cDepthStencilAttachment;
     cAttachmentsState.hasDepthStencilAttachment = true;
 
     for (uint32_t i = 0; i < kMaxColorAttachments; ++i) {
-        cColorAttachments[i].format = preferredSwapChainFormat;
+        colorAttachments[i].format = preferredSwapChainFormat;
+        cColorAttachments[i]        = &colorAttachments[i];
     }
 
     cDepthStencilAttachment.format = dawn::TextureFormat::D32FloatS8Uint;
@@ -356,15 +350,15 @@ dawn::RenderPipeline ContextDawn::createRenderPipeline(dawn::PipelineLayout pipe
 
     dawn::StencilStateFaceDescriptor stencilFace;
     stencilFace.compare       = dawn::CompareFunction::Always;
-    stencilFace.stencilFailOp = dawn::StencilOperation::Keep;
+    stencilFace.failOp = dawn::StencilOperation::Keep;
     stencilFace.depthFailOp   = dawn::StencilOperation::Keep;
     stencilFace.passOp        = dawn::StencilOperation::Keep;
 
     dawn::DepthStencilStateDescriptor depthStencilDescriptor;
     depthStencilDescriptor.depthWriteEnabled = true;
     depthStencilDescriptor.depthCompare      = dawn::CompareFunction::Less;
-    depthStencilDescriptor.back              = stencilFace;
-    depthStencilDescriptor.front             = stencilFace;
+    depthStencilDescriptor.stencilBack              = stencilFace;
+    depthStencilDescriptor.stencilFront             = stencilFace;
     depthStencilDescriptor.stencilReadMask   = 0xff;
     depthStencilDescriptor.stencilWriteMask  = 0xff;
 

@@ -50,6 +50,7 @@ endif()
 
 if(dawn)
     include_directories(${CMAKE_SOURCE_DIR}/../thirdparty/dawn/third_party/shaderc/libshaderc/include)
+    include_directories(${CMAKE_SOURCE_DIR}/../thirdparty/dawn/third_party/shaderc/libshaderc_util/include)
     include_directories(${CMAKE_SOURCE_DIR}/../thirdparty/dawn/src)
 	include_directories(${CMAKE_SOURCE_DIR}/../thirdparty/dawn/src/include)
 	include_directories(${CMAKE_SOURCE_DIR}/../thirdparty/dawn/thirdparty)

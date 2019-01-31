@@ -58,7 +58,7 @@ class FishModelDawn : public FishModel
         float scale;
         float nextPosition[3];
         float time;
-    }fishPers[10000];
+    }fishPers[100000];
 
     ViewUniforms viewUniformPer;
 
