@@ -34,7 +34,7 @@ void PrintDeviceError(const char* message, dawn::CallbackUserdata) {
     std::cout << "Device error: " << message << std::endl;
 }
 
-ContextDawn::ContextDawn() {}
+ContextDawn::ContextDawn() : mWindow(nullptr) {}
 
 ContextDawn::~ContextDawn() {}
 
@@ -553,9 +553,14 @@ void ContextDawn::setWindowTitle(const std::string &text)
     glfwSetWindowTitle(mWindow, text.c_str());
 }
 
-bool ContextDawn::ShouldQuit() { return false; }
+bool ContextDawn::ShouldQuit() {
+    return glfwWindowShouldClose(mWindow);
+}
 
-void ContextDawn::KeyBoardQuit() {}
+void ContextDawn::KeyBoardQuit() {
+    if (glfwGetKey(mWindow, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+        glfwSetWindowShouldClose(mWindow, GL_TRUE);
+}
 
 // Submit commands of the frame
 void ContextDawn::DoFlush() {
@@ -566,12 +571,12 @@ void ContextDawn::DoFlush() {
 
     swapchain.Present(backbuffer);
 
-
-    //glfwSwapBuffers(mWindow);
     glfwPollEvents();
 }
 
-void ContextDawn::Terminate() {}
+void ContextDawn::Terminate() {
+    glfwTerminate();
+}
 
 // Update backbuffer and renderPassDescriptor
 void ContextDawn::resetState() {
@@ -609,14 +614,6 @@ void ContextDawn::GetNextRenderPassDescriptor(
         .SetDepthStencilAttachment(&depthStencilAttachment)
         .GetResult();
 
-    /*dawn::CommandBufferBuilder commandBuilder = device.CreateCommandBufferBuilder();
-    dawn::RenderPassEncoder renderPass        = commandBuilder.BeginRenderPass(descriptorClear);
-    renderPass.EndPass();
-    dawn::CommandBuffer command = commandBuilder.GetResult();
-    queue.Submit(1, &command);
-
-    colorAttachment.loadOp = dawn::LoadOp::Load;
-    depthStencilAttachment.depthLoadOp = dawn::LoadOp::Load;*/
     *info = device.CreateRenderPassDescriptorBuilder()
          .SetColorAttachments(1, &colorAttachment)
          .SetDepthStencilAttachment(&depthStencilAttachment)

@@ -166,12 +166,6 @@ class ContextDawn : public Context
     dawn::BindGroup bindGroup;
     dawn::Queue queue;
     dawn::TextureFormat preferredSwapChainFormat;
-
-    dawn::Buffer indexBuffer;
-    dawn::Buffer vertexBuffer;
-    dawn::Texture texture;
-    dawn::Sampler sampler;
-
     dawn::Texture backbuffer;
 };
 
