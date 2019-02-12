@@ -40,22 +40,22 @@ ContextDawn::~ContextDawn() {}
 
 bool ContextDawn::createContext(std::string backend)
 {
-    utils::BackendType backendType = utils::BackendType::Null;
+    dawn_native::BackendType backendType = dawn_native::BackendType::Null;
     if (backend == "dawn_d3d12")
     {
-        backendType = utils::BackendType::D3D12;
+        backendType = dawn_native::BackendType::D3D12;
     }
     else if (backend == "dawn_vulkan")
     {
-        backendType = utils::BackendType::Vulkan;
+        backendType = dawn_native::BackendType::Vulkan;
     }
     else if (backend == "dawn_metal")
     {
-        backendType = utils::BackendType::Metal;
+        backendType = dawn_native::BackendType::Metal;
     }
     else if (backend == "dawn_opengl")
     {
-        backendType = utils::BackendType::OpenGL;
+        backendType = dawn_native::BackendType::OpenGL;
     }
 
     utils::BackendBinding* binding = utils::CreateBinding(backendType);
@@ -333,12 +333,18 @@ dawn::RenderPipeline ContextDawn::createRenderPipeline(dawn::PipelineLayout pipe
 
     dawn::BlendDescriptor blendDescriptor;
     blendDescriptor.operation = dawn::BlendOperation::Add;
-    blendDescriptor.srcFactor = dawn::BlendFactor::SrcAlpha;
-    blendDescriptor.dstFactor = dawn::BlendFactor::OneMinusSrcAlpha;
+    if (enableBlend)
+    {
+        blendDescriptor.srcFactor = dawn::BlendFactor::SrcAlpha;
+        blendDescriptor.dstFactor = dawn::BlendFactor::OneMinusSrcAlpha;
+    } else
+    {
+        blendDescriptor.srcFactor = dawn::BlendFactor::One;
+        blendDescriptor.dstFactor = dawn::BlendFactor::Zero;
+    }
 
     dawn::BlendStateDescriptor blendStateDescriptor;
     blendStateDescriptor.nextInChain    = nullptr;
-    blendStateDescriptor.blendEnabled   = enableBlend ? true :false;
     blendStateDescriptor.alphaBlend     = blendDescriptor;
     blendStateDescriptor.colorBlend     = blendDescriptor;
     blendStateDescriptor.colorWriteMask = dawn::ColorWriteMask::All;
