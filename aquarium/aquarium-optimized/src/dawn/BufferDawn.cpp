@@ -1,3 +1,8 @@
+//
+// Copyright (c) 2019 The WebGLNativePorts Project Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+//
 // BufferDawn.cpp: Implements the index or vertex buffers wrappers and resource bindings of dawn.
 
 #include "BufferDawn.h"

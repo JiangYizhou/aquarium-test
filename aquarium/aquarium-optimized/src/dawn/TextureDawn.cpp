@@ -1,3 +1,8 @@
+//
+// Copyright (c) 2019 The WebGLNativePorts Project Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+//
 // TextureDawn.cpp: Wrap textures of Dawn. Load image files and wrap into a Dawn texture.
 
 #include "TextureDawn.h"
