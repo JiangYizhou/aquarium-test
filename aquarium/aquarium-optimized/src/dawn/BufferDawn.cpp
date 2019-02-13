@@ -21,7 +21,7 @@ BufferDawn::BufferDawn(ContextDawn* context,
 {
     //numElements_ = totoalComponents_ / numComponents;
     size = numComponents * sizeof(float);
-    buf = context->createBufferFromData(buffer.data(), sizeof(float) * buffer.size(), usageBit);
+    buf = context->createBufferFromData(buffer.data(), sizeof(float) * static_cast<int>(buffer.size()), usageBit);
 }
 
 BufferDawn::BufferDawn(ContextDawn* context,
@@ -36,7 +36,7 @@ BufferDawn::BufferDawn(ContextDawn* context,
 {
     //numElements_ = totoalComponents_ / numComponents;
     size = numComponents * sizeof(unsigned short);
-    buf = context->createBufferFromData(buffer.data(), sizeof(unsigned short) * buffer.size(), usageBit);
+    buf = context->createBufferFromData(buffer.data(), sizeof(unsigned short) * static_cast<int>(buffer.size()), usageBit);
 }
 
 BufferDawn::~BufferDawn() {}

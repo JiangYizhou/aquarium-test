@@ -188,7 +188,7 @@ void Aquarium::updateUrls()
     #if defined(WIN32) || defined(_WIN32) || defined(__WIN32)
     GetModuleFileName(NULL, temp, MAX_PATH);
     mPath = std::string(temp);
-    int nPos = mPath.find_last_of(slash);
+    size_t nPos = mPath.find_last_of(slash);
     mPath = mPath.substr(0, nPos) + slash + ".." + slash + ".." + slash;
     #elif __APPLE__
     uint32_t size = sizeof(temp);

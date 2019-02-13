@@ -69,12 +69,12 @@ void OutsideModelGL::init()
     indicesBuffer = static_cast<BufferGL *>(bufferMap["indices"]);
 }
 
-void OutsideModelGL::applyTextures() const
+void OutsideModelGL::draw()
 {
-    contextGL->setTexture(diffuseTexture.first, diffuseTexture.second, 0);
+    contextGL->drawElements(indicesBuffer);
 }
 
-void OutsideModelGL::applyBuffers() const
+void OutsideModelGL::preDraw() const
 {
     ProgramGL *programGL = static_cast<ProgramGL *>(mProgram);
     contextGL->bindVAO(programGL->getVAOId());
@@ -84,15 +84,7 @@ void OutsideModelGL::applyBuffers() const
     contextGL->setAttribs(texCoordBuffer.first, texCoordBuffer.second);
 
     contextGL->setIndices(indicesBuffer);
-}
 
-void OutsideModelGL::draw()
-{
-    contextGL->drawElements(indicesBuffer);
-}
-
-void OutsideModelGL::applyUniforms() const
-{
     contextGL->setUniform(viewInverseUniform.second, viewInverseUniform.first, GL_FLOAT_MAT4);
     contextGL->setUniform(lightWorldPosUniform.second, lightWorldPosUniform.first, GL_FLOAT_VEC3);
     contextGL->setUniform(lightColorUniform.second, lightColorUniform.first, GL_FLOAT_VEC4);
@@ -104,6 +96,8 @@ void OutsideModelGL::applyUniforms() const
     contextGL->setUniform(fogMultUniform.second, &fogMultUniform.first, GL_FLOAT);
     contextGL->setUniform(fogOffsetUniform.second, &fogOffsetUniform.first, GL_FLOAT);
     contextGL->setUniform(fogColorUniform.second, fogColorUniform.first, GL_FLOAT_VEC4);
+
+    contextGL->setTexture(diffuseTexture.first, diffuseTexture.second, 0);
 }
 
 void OutsideModelGL::updatePerInstanceUniforms(ViewUniforms *viewUniforms)

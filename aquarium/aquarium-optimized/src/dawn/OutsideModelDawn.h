@@ -22,9 +22,7 @@ public:
     OutsideModelDawn(const Context* context, Aquarium* aquarium, MODELGROUP type, MODELNAME name, bool blend);
 
     void init() override;
-    void applyUniforms() const override;
-    void applyTextures() const override;
-    void applyBuffers() const override;
+    void preDraw() const override;
     void draw() override;
 
     void updatePerInstanceUniforms(ViewUniforms *viewUniforms) override;

@@ -168,11 +168,7 @@ void GenericModelDawn::init()
                                &lightFactorUniforms);
 }
 
-void GenericModelDawn::applyUniforms() const {}
-
-void GenericModelDawn::applyTextures() const {}
-
-void GenericModelDawn::applyBuffers() const {}
+void GenericModelDawn::preDraw() const {}
 
 void GenericModelDawn::draw()
 {

@@ -21,11 +21,9 @@ class SeaweedModelGL : public SeaweedModel
                    MODELGROUP type,
                    MODELNAME name,
                    bool blend);
-    void applyUniforms() const override;
+    void preDraw() const override;
     void updatePerInstanceUniforms(ViewUniforms *viewUniforms) override;
     void init() override;
-    void applyTextures() const override;
-    void applyBuffers() const override;
     void draw() override;
 
     void updateSeaweedModelTime(float time) override;

@@ -81,15 +81,7 @@ void OutsideModelDawn::init()
     contextDawn->setBufferData(lightFactorBuffer, 0, sizeof(LightFactorUniforms), &lightFactorUniforms);
 }
 
-void OutsideModelDawn::applyUniforms() const
-{
-}
-
-void OutsideModelDawn::applyTextures() const
-{
-}
-
-void OutsideModelDawn::applyBuffers() const
+void OutsideModelDawn::preDraw() const
 {
 }
 

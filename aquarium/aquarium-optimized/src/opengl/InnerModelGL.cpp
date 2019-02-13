@@ -80,15 +80,12 @@ void InnerModelGL::init()
     indicesBuffer = static_cast<BufferGL *>(bufferMap["indices"]);
 }
 
-void InnerModelGL::applyTextures() const
+void InnerModelGL::draw()
 {
-    contextGL->setTexture(diffuseTexture.first, diffuseTexture.second, 0);
-    contextGL->setTexture(normalTexture.first, normalTexture.second, 1);
-    contextGL->setTexture(reflectionTexture.first, reflectionTexture.second, 2);
-    contextGL->setTexture(skyboxTexture.first, skyboxTexture.second, 3);
+    contextGL->drawElements(indicesBuffer);
 }
 
-void InnerModelGL::applyBuffers() const
+void InnerModelGL::preDraw() const
 {
     ProgramGL *programGL = static_cast<ProgramGL *>(mProgram);
     contextGL->bindVAO(programGL->getVAOId());
@@ -101,15 +98,7 @@ void InnerModelGL::applyBuffers() const
     contextGL->setAttribs(binormalBuffer.first, binormalBuffer.second);
 
     contextGL->setIndices(indicesBuffer);
-}
 
-void InnerModelGL::draw()
-{
-    contextGL->drawElements(indicesBuffer);
-}
-
-void InnerModelGL::applyUniforms() const
-{
     contextGL->setUniform(viewInverseUniform.second, viewInverseUniform.first, GL_FLOAT_MAT4);
     contextGL->setUniform(lightWorldPosUniform.second, lightWorldPosUniform.first, GL_FLOAT_VEC3);
     contextGL->setUniform(fogPowerUniform.second, &fogPowerUniform.first, GL_FLOAT);
@@ -119,6 +108,11 @@ void InnerModelGL::applyUniforms() const
     contextGL->setUniform(etaUniform.second, &etaUniform.first, GL_FLOAT);
     contextGL->setUniform(tankColorFudgeUniform.second, &tankColorFudgeUniform.first, GL_FLOAT);
     contextGL->setUniform(refractionFudgeUniform.second, &refractionFudgeUniform.first, GL_FLOAT);
+
+    contextGL->setTexture(diffuseTexture.first, diffuseTexture.second, 0);
+    contextGL->setTexture(normalTexture.first, normalTexture.second, 1);
+    contextGL->setTexture(reflectionTexture.first, reflectionTexture.second, 2);
+    contextGL->setTexture(skyboxTexture.first, skyboxTexture.second, 3);
 }
 
 void InnerModelGL::updatePerInstanceUniforms(ViewUniforms* viewUniforms)

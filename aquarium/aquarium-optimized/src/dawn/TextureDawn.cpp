@@ -110,7 +110,7 @@ void TextureDawn::loadTexture()
         descriptor.usage = dawn::TextureUsageBit::TransferDst | dawn::TextureUsageBit::Sampled;
         mTexture = context->createTexture(descriptor);
 
-        for (int i = 0; i < descriptor.levelCount; ++i)
+        for (unsigned int i = 0; i < descriptor.levelCount; ++i)
         {
             int height                 = mHeight >> i;
             int width                  = resizedWidth >> i;

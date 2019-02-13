@@ -21,11 +21,9 @@ class OutsideModelGL : public OutsideModel
                    MODELGROUP type,
                    MODELNAME name,
                    bool blend);
-    void applyUniforms() const override;
+    void preDraw() const override;
     void updatePerInstanceUniforms(ViewUniforms *viewUniforms) override;
-    void applyTextures() const override;
     void init() override;
-    void applyBuffers() const override;
     void draw() override;
 
     std::pair<float *, int> worldViewProjectionUniform;

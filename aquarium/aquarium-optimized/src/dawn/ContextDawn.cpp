@@ -281,7 +281,7 @@ dawn::PipelineLayout ContextDawn::MakeBasicPipelineLayout(
     std::vector<dawn::BindGroupLayout> bindingsInitializer) const {
     dawn::PipelineLayoutDescriptor descriptor;
 
-    descriptor.numBindGroupLayouts = bindingsInitializer.size();
+    descriptor.numBindGroupLayouts = static_cast<uint32_t>(bindingsInitializer.size());
     descriptor.bindGroupLayouts = bindingsInitializer.data();
     
     return device.CreatePipelineLayout(&descriptor);
@@ -460,7 +460,7 @@ dawn::BindGroup ContextDawn::makeBindGroup(const dawn::BindGroupLayout & layout,
 
     dawn::BindGroupDescriptor descriptor;
     descriptor.layout = layout;
-    descriptor.numBindings = bindings.size();
+    descriptor.numBindings = static_cast<uint32_t>(bindings.size());
     descriptor.bindings = bindings.data();
 
     return device.CreateBindGroup(&descriptor);

@@ -95,15 +95,7 @@ void InnerModelDawn::init()
     contextDawn->setBufferData(innerBuffer, 0, sizeof(InnerUniforms), &innerUniforms);
 }
 
-void InnerModelDawn::applyUniforms() const
-{
-}
-
-void InnerModelDawn::applyTextures() const
-{
-}
-
-void InnerModelDawn::applyBuffers() const
+void InnerModelDawn::preDraw() const
 {
 }
 

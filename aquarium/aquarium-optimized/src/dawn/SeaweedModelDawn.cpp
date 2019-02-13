@@ -80,15 +80,7 @@ void SeaweedModelDawn::init()
     contextDawn->setBufferData(lightFactorBuffer, 0, sizeof(lightFactorUniforms), &lightFactorUniforms);
 }
 
-void SeaweedModelDawn::applyUniforms() const
-{
-}
-
-void SeaweedModelDawn::applyTextures() const
-{
-}
-
-void SeaweedModelDawn::applyBuffers() const
+void SeaweedModelDawn::preDraw() const
 {
 }
 

@@ -39,13 +39,11 @@ class Model
     Model(MODELGROUP type, MODELNAME name, bool blend)
         : mType(type), mName(name), mBlend(blend), mProgram(nullptr){};
     virtual ~Model();
-    virtual void applyUniforms() const     = 0;
+    virtual void preDraw() const     = 0;
     virtual void updatePerInstanceUniforms(ViewUniforms* viewUniforms) = 0;
     virtual void draw() = 0;
 
     void applyPrograms() const;
-    virtual void applyBuffers() const = 0;
-    virtual void applyTextures() const = 0;
     void setProgram(Program *program);
     void prepare(const Context *context);
     virtual void init() = 0;

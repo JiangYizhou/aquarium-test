@@ -41,7 +41,5 @@ void Model::prepare(const Context *context)
 {
     context->enableBlend(mBlend);
     applyPrograms();
-    applyBuffers();
-    applyTextures();
-    applyUniforms();
+    preDraw();
 }

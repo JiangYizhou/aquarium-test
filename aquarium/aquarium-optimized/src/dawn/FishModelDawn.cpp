@@ -145,21 +145,11 @@ void FishModelDawn::init()
                                &lightFactorUniforms);
 }
 
-void FishModelDawn::applyUniforms() const
+void FishModelDawn::preDraw() const
 {
     contextDawn->setBufferData(fishVertexBuffer, 0, sizeof(FishVertexUniforms),
                                &fishVertexUniforms);   
     contextDawn->setBufferData(viewBuffer, 0, sizeof(ViewUniforms), &viewUniformPer);
-}
-
-void FishModelDawn::applyTextures() const
-{
-    // applied during init
-}
-
-void FishModelDawn::applyBuffers() const
-{
-    // applied befor draw, apply in renderpass
 }
 
 void FishModelDawn::draw()
