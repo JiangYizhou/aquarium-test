@@ -60,7 +60,9 @@ void SeaweedModelDawn::init()
 
     pipeline = contextDawn->createRenderPipeline(pipelineLayout, programDawn, inputState, mBlend);
 
-    lightFactorBuffer = contextDawn->createBufferFromData(&lightFactorUniforms, sizeof(lightFactorUniforms), dawn::BufferUsageBit::TransferDst | dawn::BufferUsageBit::Uniform);
+    lightFactorBuffer = contextDawn->createBufferFromData(
+        &lightFactorUniforms, sizeof(lightFactorUniforms),
+        dawn::BufferUsageBit::TransferDst | dawn::BufferUsageBit::Uniform);
     timeBuffer = contextDawn->createBufferFromData(&seaweedPer, sizeof(seaweedPer), dawn::BufferUsageBit::TransferDst | dawn::BufferUsageBit::Uniform);
     viewBuffer = contextDawn->createBufferFromData(
         &viewUniformPer, sizeof(ViewUniformPer),

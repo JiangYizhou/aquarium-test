@@ -451,7 +451,9 @@ dawn::BindGroupBinding ContextDawn::BindingInitializationHelper::GetAsBinding() 
     return result;
 }
 
-dawn::BindGroup ContextDawn::makeBindGroup(const dawn::BindGroupLayout & layout, std::initializer_list<BindingInitializationHelper> bindingsInitializer) const
+dawn::BindGroup ContextDawn::makeBindGroup(
+    const dawn::BindGroupLayout &layout,
+    std::initializer_list<BindingInitializationHelper> bindingsInitializer) const
 {
     std::vector<dawn::BindGroupBinding> bindings;
     for (const BindingInitializationHelper& helper : bindingsInitializer) {

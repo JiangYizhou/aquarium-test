@@ -63,7 +63,9 @@ void OutsideModelDawn::init()
 
     pipeline = contextDawn->createRenderPipeline(pipelineLayout, programDawn, inputState, mBlend);
 
-    lightFactorBuffer = contextDawn->createBufferFromData(&lightFactorUniforms, sizeof(lightFactorUniforms), dawn::BufferUsageBit::TransferDst | dawn::BufferUsageBit::Uniform);
+    lightFactorBuffer = contextDawn->createBufferFromData(
+        &lightFactorUniforms, sizeof(lightFactorUniforms),
+        dawn::BufferUsageBit::TransferDst | dawn::BufferUsageBit::Uniform);
     viewBuffer = contextDawn->createBufferFromData(
         &viewUniformPer, sizeof(ViewUniforms),
         dawn::BufferUsageBit::TransferDst | dawn::BufferUsageBit::Uniform);

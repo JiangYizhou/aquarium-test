@@ -112,7 +112,9 @@ class ContextDawn : public Context
         uint32_t slice,
         dawn::Origin3D origin,
         dawn::TextureAspect aspect) const;
-    dawn::CommandBuffer copyBufferToTexture(const dawn::BufferCopyView &bufferCopyView, const dawn::TextureCopyView &textureCopyView, const dawn::Extent3D& ext3D) const;
+    dawn::CommandBuffer copyBufferToTexture(const dawn::BufferCopyView &bufferCopyView,
+                                            const dawn::TextureCopyView &textureCopyView,
+                                            const dawn::Extent3D &ext3D) const;
     void submit(int numCommands, const dawn::CommandBuffer& commands) const;
 
     dawn::TextureCopyView createTextureCopyView(dawn::Texture texture,

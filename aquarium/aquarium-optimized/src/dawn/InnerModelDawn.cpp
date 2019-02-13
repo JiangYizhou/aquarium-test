@@ -88,7 +88,8 @@ void InnerModelDawn::init()
         { 6, skyboxTexture->getTextureView() }
     });
 
-    bindGroupPer = contextDawn->makeBindGroup(groupLayoutPer, {
+    bindGroupPer =
+        contextDawn->makeBindGroup(groupLayoutPer, {
                                                        {0, viewBuffer, 0, sizeof(ViewUniforms)},
                                                    });
 
