@@ -168,11 +168,13 @@ void GenericModelDawn::init()
                                &lightFactorUniforms);
 }
 
-void GenericModelDawn::preDraw() const {}
+void GenericModelDawn::preDraw() const
+{
+    contextDawn->setBufferData(viewBuffer, 0, sizeof(ViewUniformPer), &viewUniformPer);
+}
 
 void GenericModelDawn::draw()
 {
-    contextDawn->setBufferData(viewBuffer, 0, sizeof(ViewUniformPer), &viewUniformPer);
     uint32_t vertexBufferOffsets[1] = {0};
 
     dawn::RenderPassEncoder pass = contextDawn->pass;

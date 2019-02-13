@@ -84,12 +84,12 @@ void SeaweedModelDawn::init()
 
 void SeaweedModelDawn::preDraw() const
 {
+    contextDawn->setBufferData(viewBuffer, 0, sizeof(ViewUniformPer), &viewUniformPer);
+    contextDawn->setBufferData(timeBuffer, 0, sizeof(SeaweedPer), &seaweedPer);
 }
 
 void SeaweedModelDawn::draw()
 {
-    contextDawn->setBufferData(viewBuffer, 0, sizeof(ViewUniformPer), &viewUniformPer);
-    contextDawn->setBufferData(timeBuffer, 0, sizeof(SeaweedPer), &seaweedPer);
     uint32_t vertexBufferOffsets[1] = { 0 };
 
     dawn::RenderPassEncoder pass = contextDawn->pass;

@@ -549,7 +549,6 @@ void Aquarium::drawBackground()
     for (int i = MODELNAME::MODELRUINCOlOMN; i <= MODELNAME::MODELTREASURECHEST; ++i)
     {
         model = mAquariumModels[i];
-        model->prepare(context);
         updateWorldMatrixAndDraw(model);
     }
 }
@@ -561,7 +560,6 @@ void Aquarium::drawSeaweed()
     {
         //model->updateSeaweedModelTime(g.mclock);
         model = static_cast<SeaweedModel *>(mAquariumModels[i]);
-        model->prepare(context);
         updateWorldMatrixAndDraw(model);
     }
 }
@@ -576,7 +574,7 @@ void Aquarium::drawFishes()
         int numFish          = fishInfo.num;
         model->updateFishCommonUniforms(fishInfo.fishLength, fishInfo.fishBendAmount,
                                         fishInfo.fishWaveLength);
-        model->prepare(context);
+        model->preDraw();
 
         float fishBaseClock   = g.mclock * g_fishSpeed;
         float fishRadius      = fishInfo.radius;
@@ -630,14 +628,12 @@ void Aquarium::drawFishes()
 void Aquarium::drawInner()
 {
     Model *model = mAquariumModels[MODELNAME::MODELGLOBEINNER];
-    model->prepare(context);
     updateWorldMatrixAndDraw(model);
 }
 
 void Aquarium::drawOutside()
 {
     Model *model = mAquariumModels[MODELNAME::MODELENVIRONMENTBOX];
-    model->prepare(context);
     updateWorldMatrixAndDraw(model);
 }
 
@@ -662,10 +658,14 @@ void Aquarium::updateWorldMatrixAndDraw(Model *model)
             // Models of dawn keep viewUniforms for every model while opengl models use global
             // viewUniforms.
             // Update all viewUniforms on dawn backend.
-            model->updatePerInstanceUniforms(&viewUniforms);
             if (mBackendpath == "opengl")
             {
+                model->preDraw();
+                model->updatePerInstanceUniforms(&viewUniforms);
                 model->draw();
+            } else
+            {
+                model->updatePerInstanceUniforms(&viewUniforms);
             }
         }
     }
@@ -674,6 +674,7 @@ void Aquarium::updateWorldMatrixAndDraw(Model *model)
     // backend is opengl or angle, draw for exery instance.
     if (mBackendpath == "dawn" || mBackendpath == "angle")
     {
+        model->preDraw();
         model->draw();
     }
 }

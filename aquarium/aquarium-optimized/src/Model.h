@@ -44,7 +44,6 @@ class Model
     virtual void draw() = 0;
 
     void setProgram(Program *program);
-    void prepare(const Context *context);
     virtual void init() = 0;
 
     std::vector<std::vector<float>> worldmatrices;

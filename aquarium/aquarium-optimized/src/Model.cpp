@@ -31,8 +31,3 @@ void Model::setProgram(Program *prgm)
 {
     mProgram = prgm;
 }
-
-void Model::prepare(const Context *context)
-{
-    preDraw();
-}
