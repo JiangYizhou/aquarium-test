@@ -33,7 +33,7 @@ ContextGL::ContextGL()
 
 ContextGL::~ContextGL() {}
 
-bool ContextGL::createContext(std::string backend)
+bool ContextGL::createContext(std::string backend, bool enableMSAA)
 {
     // initialise GLFW
     if (!glfwInit())
@@ -43,10 +43,14 @@ bool ContextGL::createContext(std::string backend)
     }
 
 #ifdef GL_GLEXT_PROTOTYPES
-    glfwWindowHint(GLFW_SAMPLES, 4);
-    glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
+    // TODO(yizhou) : Enable msaa in angle. Render into a multisample Texture and then blit to a
+    // none multisample texture.
+
 #else
-    glfwWindowHint(GLFW_SAMPLES, 4);
+    if (enableMSAA)
+    {
+        glfwWindowHint(GLFW_SAMPLES, 4);
+    }
 
 #ifdef __APPLE__
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
@@ -77,6 +81,8 @@ bool ContextGL::createContext(std::string backend)
     glfwWindowHint(GLFW_DECORATED, GL_FALSE);
     glfwMakeContextCurrent(mWindow);
 #else
+    glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
+
     std::vector<EGLAttrib> display_attribs;
 
     display_attribs.push_back(EGL_PLATFORM_ANGLE_TYPE_ANGLE);

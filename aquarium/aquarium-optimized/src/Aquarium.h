@@ -396,6 +396,7 @@ class Aquarium
     std::string mShaderVersion;
     std::string mPath;
     ContextFactory *factory;
+    bool enableMSAA;
 
     void updateUrls();
     void loadReource();

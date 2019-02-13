@@ -38,16 +38,17 @@
 
 Aquarium::Aquarium()
     : mModelEnumMap(NULL),
-    mTextureMap(NULL),
-    mProgramMap(NULL),
-    mAquariumModels(),
-    context(nullptr),
-    fpsTimer(),
-    mFishCount(1),
-    mBackendpath(""),
-    mShaderVersion(""),
-    mPath(""),
-    factory(nullptr)
+      mTextureMap(NULL),
+      mProgramMap(NULL),
+      mAquariumModels(),
+      context(nullptr),
+      fpsTimer(),
+      mFishCount(1),
+      mBackendpath(""),
+      mShaderVersion(""),
+      mPath(""),
+      factory(nullptr),
+      enableMSAA(false)
 {
     g.then = 0.0f;
     g.mclock = 0.0f;
@@ -133,6 +134,10 @@ void Aquarium::init(int argc, char **argv)
             }
             context      = factory->createContext(mBackendpath);
         }
+        else if (cmd == "--enable-msaa")
+        {
+            enableMSAA = true;
+        }
         else
         {
         }
@@ -153,7 +158,7 @@ void Aquarium::init(int argc, char **argv)
         #endif
     }
 
-    if (!context->createContext(mBackendFullpath))
+    if (!context->createContext(mBackendFullpath, enableMSAA))
     {
         return;
     }
@@ -663,7 +668,8 @@ void Aquarium::updateWorldMatrixAndDraw(Model *model)
                 model->preDraw();
                 model->updatePerInstanceUniforms(&viewUniforms);
                 model->draw();
-            } else
+            }
+            else
             {
                 model->updatePerInstanceUniforms(&viewUniforms);
             }

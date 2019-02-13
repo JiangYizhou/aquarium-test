@@ -116,6 +116,11 @@ copy libdawn.dll, libdawn_native.dll, libdawn_wire.dll, libshaderc.dll to folder
 # build on Linux or macOS
 cmake .. -Dangle=false -Ddawn=true
 make
+
+#build on macOS by xcode
+#The resource path need one more "../", please revise in Aquarium::updateUrls
+cmake -G xcode .. -Dangle=false -Ddawn=true
+build project by xcode
 ```
 
 ## Build Angle version
@@ -155,12 +160,13 @@ make
 # "--num-fish": specifies how many fishes will be rendered
 # "--backend" : specifies running a certain backend, 'opengl', 'dawn_d3d12', 'dawn_vulkan', 'dawn_metal', 'dawn_opengl'
 # running angle dynamic backend is on todo list. Currently go through angle path by option 'opengl' if angle is linked into the project
-
+# MSAA is disabled by default. To Enable MSAA of OpenGL backend, "--enable-msaa", 4 samples.
+# MSAA of angle or dawn backend is not supported now.
 
 # run on Windows
 run it in Visual Studio
 or
-aquarium.exe --num-fish 10000 --backend opengl
+aquarium.exe --num-fish 10000 --backend opengl --enable-msaa
 aquarium.exe --num-fish 10000 --backend dawn_d3d12
 
 # run on Linux

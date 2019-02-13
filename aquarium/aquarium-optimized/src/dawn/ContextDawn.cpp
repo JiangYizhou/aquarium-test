@@ -43,8 +43,10 @@ ContextDawn::ContextDawn() : mWindow(nullptr) {}
 
 ContextDawn::~ContextDawn() {}
 
-bool ContextDawn::createContext(std::string backend)
+bool ContextDawn::createContext(std::string backend, bool enableMSAA)
 {
+    // TODO(yizhou): MSAA of Dawn is not supported yet.
+
     dawn_native::BackendType backendType = dawn_native::BackendType::Null;
     if (backend == "dawn_d3d12")
     {

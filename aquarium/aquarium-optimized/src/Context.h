@@ -34,7 +34,7 @@ class Context
 {
   public:
     Context(){};
-    virtual bool createContext(std::string backend) = 0;
+    virtual bool createContext(std::string backend, bool enableMSAA) = 0;
     virtual ~Context() {};
     virtual Texture *createTexture(std::string name, std::string url)                      = 0;
     virtual Texture *createTexture(std::string name, const std::vector<std::string> &urls) = 0;

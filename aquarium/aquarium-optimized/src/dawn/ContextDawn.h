@@ -58,7 +58,7 @@ class ContextDawn : public Context
 
     ContextDawn();
     ~ContextDawn();
-    bool createContext(std::string backend) override;
+    bool createContext(std::string backend, bool enableMSAA) override;
     void setWindowTitle(const std::string &text) override;
     bool ShouldQuit() override;
     void KeyBoardQuit() override;
