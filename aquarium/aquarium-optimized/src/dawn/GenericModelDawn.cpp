@@ -36,7 +36,7 @@ void GenericModelDawn::init()
     binormalBuffer = static_cast<BufferDawn *>(bufferMap["binormal"]);
     indicesBuffer  = static_cast<BufferDawn *>(bufferMap["indices"]);
 
-    // Generic models use reflection, normal or diffuse shaders, of which grouplayouts are
+    // Generic models use reflection, normal or diffuse shaders, of which groupLayouts are
     // diiferent in texture binding.  MODELGLOBEBASE use diffuse shader though it contains
     // normal and reflection textures.
     if (normalTexture && mName != MODELNAME::MODELGLOBEBASE)
@@ -57,21 +57,16 @@ void GenericModelDawn::init()
     }
     else
     {
-        // // TODO(yizhou): Work around bug on d3d. Input Slot lost
         inputState = contextDawn->createInputState(
             {
                 {0, 0, dawn::VertexFormat::FloatR32G32B32, 0},
                 {1, 1, dawn::VertexFormat::FloatR32G32B32, 0},
                 {2, 2, dawn::VertexFormat::FloatR32G32, 0},
-                {3, 3, dawn::VertexFormat::FloatR32G32B32, 0},
-                {4, 4, dawn::VertexFormat::FloatR32G32B32, 0},
             },
             {
                 {0, positionBuffer->getDataSize(), dawn::InputStepMode::Vertex},
                 {1, normalBuffer->getDataSize(), dawn::InputStepMode::Vertex},
                 {2, texCoordBuffer->getDataSize(), dawn::InputStepMode::Vertex},
-                {3, tangentBuffer->getDataSize(), dawn::InputStepMode::Vertex},
-                {4, binormalBuffer->getDataSize(), dawn::InputStepMode::Vertex},
             });
     }
 

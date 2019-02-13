@@ -39,19 +39,21 @@ void PrintDeviceError(const char* message, dawn::CallbackUserdata) {
     std::cout << "Device error: " << message << std::endl;
 }
 
-ContextDawn::ContextDawn() : 
-    mWindow(nullptr),
-    pass(nullptr),
-    device(nullptr),
-    queue(nullptr),
-    swapchain(nullptr),
-    commandBufferBuilder(nullptr),
-    mBackbuffer(nullptr),
-    mDepthStencilView(nullptr),
-    mPipeline(nullptr),
-    mBindGroup(nullptr),
-    mPreferredSwapChainFormat(dawn::TextureFormat::R8G8B8A8Unorm),
-    renderPassDescriptor(nullptr){}
+ContextDawn::ContextDawn()
+    : mWindow(nullptr),
+      pass(nullptr),
+      device(nullptr),
+      queue(nullptr),
+      swapchain(nullptr),
+      commandBufferBuilder(nullptr),
+      mBackbuffer(nullptr),
+      mDepthStencilView(nullptr),
+      mPipeline(nullptr),
+      mBindGroup(nullptr),
+      mPreferredSwapChainFormat(dawn::TextureFormat::R8G8B8A8Unorm),
+      renderPassDescriptor(nullptr)
+{
+}
 
 ContextDawn::~ContextDawn() {}
 

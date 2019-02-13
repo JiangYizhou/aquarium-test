@@ -19,9 +19,6 @@ FishModelDawn::FishModelDawn(const Context *context,
 
     lightFactorUniforms.shininess      = 5.0f;
     lightFactorUniforms.specularFactor = 0.3f;
-
-    // TODO(yizhou): scale not init
-    // fishPerUniforms.scale = 1;
 }
 
 void FishModelDawn::init()
@@ -63,8 +60,6 @@ void FishModelDawn::init()
          {5, sizeof(FishPer), dawn::InputStepMode::Instance},
         });
 
-    // TODO(yizhou) : Check if the layout works for normal map fragment shader
-    // becasue the shader doesn't contains reflaction map and skybox
     if (skyboxTexture && reflectionTexture)
     {
         groupLayoutModel = contextDawn->MakeBindGroupLayout({

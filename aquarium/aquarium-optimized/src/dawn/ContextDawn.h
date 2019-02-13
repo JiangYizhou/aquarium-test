@@ -155,7 +155,6 @@ class ContextDawn : public Context
     dawn::RenderPipeline mPipeline;
     dawn::BindGroup mBindGroup;
     dawn::TextureFormat mPreferredSwapChainFormat;
-
 };
 
 #endif

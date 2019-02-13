@@ -622,7 +622,9 @@ void Aquarium::drawFishes()
                 model->draw();
             }
         }
-        // TODO(yizhou): If backend is dawn, draw only once for every type of fish by drawInstance. If backend is opengl or angle, draw for exery fish.
+        // TODO(yizhou): If backend is dawn, draw only once for every type of fish by drawInstance.
+        // If backend is opengl or angle, draw for exery fish. Update the logic the same as Dawn if
+        // uniform blocks are implemented for OpenGL.
         if (mBackendpath == "dawn")
         {
             model->draw();
@@ -678,6 +680,7 @@ void Aquarium::updateWorldMatrixAndDraw(Model *model)
 
     // TODO(yizhou): If backend is dawn, draw only once for every model. If
     // backend is opengl or angle, draw for exery instance.
+    // Update the logic the same as Dawn if uniform blocks are implemented for OpenGL.
     if (mBackendpath == "dawn" || mBackendpath == "angle")
     {
         model->preDraw();
