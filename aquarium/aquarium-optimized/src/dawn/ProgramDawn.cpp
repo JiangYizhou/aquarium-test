@@ -12,7 +12,7 @@
 #include <regex>
 
 ProgramDawn::ProgramDawn(ContextDawn *context, string vId, string fId)
-    : context(context), Program(vId, fId)
+    : context(context), Program(vId, fId), vsModule(nullptr), fsModule(nullptr)
 {
 }
 

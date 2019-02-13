@@ -138,23 +138,24 @@ class ContextDawn : public Context
     void GetNextRenderPassDescriptor(
         dawn::Texture* backbuffer,
         dawn::RenderPassDescriptor* info) const;
-    dawn::SwapChain swapchain;
-
-    dawn::RenderPassDescriptor renderPassDescriptor;
 
     dawn::RenderPassEncoder pass;
-    dawn::CommandBufferBuilder commandBufferBuilder;
 
   private:
     GLFWwindow *mWindow;
+
     dawn::Device device;
     dawn::Queue queue;
+    dawn::SwapChain swapchain;
+    dawn::CommandBufferBuilder commandBufferBuilder;
+    dawn::RenderPassDescriptor renderPassDescriptor;
 
     dawn::Texture mBackbuffer;
     dawn::TextureView mDepthStencilView;
     dawn::RenderPipeline mPipeline;
     dawn::BindGroup mBindGroup;
     dawn::TextureFormat mPreferredSwapChainFormat;
+
 };
 
 #endif

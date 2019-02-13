@@ -32,10 +32,8 @@ class BufferDawn : public Buffer
     ~BufferDawn() override;
 
     const dawn::Buffer &getBuffer() const { return mBuf; }
-    const int getNumComponents() const { return mNumComponents; }
     const int getTotalComponents() const { return mTotoalComponents; }
 
-    const bool getNormalize() const { return mNormalize; }
     const uint32_t getStride() const { return mStride; }
     const void *getOffset() const { return mOffset; }
     const dawn::BufferUsageBit getUsageBit() const { return mUsageBit; }
@@ -44,9 +42,7 @@ class BufferDawn : public Buffer
   private:
     dawn::Buffer mBuf;
     dawn::BufferUsageBit mUsageBit;
-    int mNumComponents;
     int mTotoalComponents;
-    bool mNormalize;
     uint32_t mStride;
     void *mOffset;
     int mSize;

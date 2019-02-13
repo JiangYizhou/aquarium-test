@@ -25,6 +25,9 @@ TextureDawn::TextureDawn(ContextDawn *context, std::string name, std::string url
       mTextureDimension(dawn::TextureDimension::e2D),
       mTextureViewDimension(dawn::TextureViewDimension::e2D),
       mFormat(dawn::TextureFormat::R8G8B8A8Unorm),
+      mTexture(nullptr),
+      mSampler(nullptr),
+      mTextureView(nullptr),
       Texture(name, url, true)
 {
 }
