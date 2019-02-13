@@ -65,7 +65,7 @@ class ContextDawn : public Context
     void DoFlush() override;
     void Terminate() override;
 
-    void resetState() override;
+    void preFrame() override;
 
     Model *createModel(Aquarium* aquarium, MODELGROUP type, MODELNAME name, bool blend) override;
 

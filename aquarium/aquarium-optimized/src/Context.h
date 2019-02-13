@@ -51,8 +51,7 @@ class Context
     virtual void DoFlush()                                                                 = 0;
     virtual void Terminate()                                                               = 0;
 
-    virtual void resetState()                 = 0;
-    void enableBlend(bool flag) const;
+    virtual void preFrame() = 0;
 
     const int getClientWidth() const { return mClientWidth; };
     const int getclientHeight() const { return mClientHeight; };

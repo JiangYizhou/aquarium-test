@@ -530,7 +530,7 @@ void Aquarium::render()
 
     matrix::resetPseudoRandom();
 
-    context->resetState();
+    context->preFrame();
 
     drawBackground();
 

@@ -328,6 +328,17 @@ void ContextGL::generateMipmap(unsigned int target)
     glGenerateMipmap(target);
 }
 
+void ContextGL::initState()
+{
+    glEnable(GL_DEPTH_TEST);
+    glColorMask(true, true, true, true);
+    glClearColor(0, 0.8f, 1, 0);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glBlendEquation(GL_FUNC_ADD);
+    glEnable(GL_CULL_FACE);
+    glDepthMask(true);
+}
+
 Buffer *ContextGL::createBuffer(int numComponents, const std::vector<float> &buf, bool isIndex)
 {
     BufferGL *buffer = new BufferGL(this, static_cast<int>(buf.size()), numComponents, isIndex, GL_FLOAT, false);
@@ -450,16 +461,10 @@ Model *ContextGL::createModel(Aquarium *aquarium, MODELGROUP type, MODELNAME nam
     return model;
 }
 
-void ContextGL::resetState()
+void ContextGL::preFrame()
 {
     glEnable(GL_DEPTH_TEST);
-    glColorMask(true, true, true, true);
-    glClearColor(0, 0.8f, 1, 0);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    glBlendEquation(GL_FUNC_ADD);
-    glEnable(GL_CULL_FACE);
-    glDepthMask(true);
 
     ASSERT(glGetError() == GL_NO_ERROR);
 }

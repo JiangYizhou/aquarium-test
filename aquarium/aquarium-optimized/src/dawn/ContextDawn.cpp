@@ -547,7 +547,8 @@ void ContextDawn::Terminate() {
 }
 
 // Update backbuffer and renderPassDescriptor
-void ContextDawn::resetState() {
+void ContextDawn::preFrame()
+{
     GetNextRenderPassDescriptor(&mBackbuffer, &renderPassDescriptor);
     commandBufferBuilder =
         device.CreateCommandBufferBuilder();

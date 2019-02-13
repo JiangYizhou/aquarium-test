@@ -43,7 +43,7 @@ class ContextGL : public Context
     void DoFlush() override;
     void Terminate() override;
 
-    void resetState() override;
+    void preFrame() override;
     void enableBlend(bool flag) const;
 
     Model *createModel(Aquarium *aquarium, MODELGROUP type, MODELNAME name, bool blend) override;
@@ -92,6 +92,8 @@ class ContextGL : public Context
     void generateMipmap(unsigned int target);
 
   private:
+    void initState();
+
 #ifndef EGL_EGL_PROTOTYPES
       GLFWwindow *mWindow;
 #else
