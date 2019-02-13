@@ -66,13 +66,8 @@ class ContextDawn : public Context
     void Terminate() override;
 
     void resetState() override;
-    void enableBlend(bool flag) const override;
 
     Model *createModel(Aquarium* aquarium, MODELGROUP type, MODELNAME name, bool blend) override;
-    void setTexture(const TextureDawn *texture, int index, int unit) const;
-    void setAttribs(BufferDawn *bufferGL, int index) const;
-    void setIndices(BufferDawn *bufferGL) const;
-    void drawElements(BufferDawn *buffer) const;
 
     Buffer *createBuffer(int numComponents,
         const std::vector<float> &buffer,
@@ -80,25 +75,11 @@ class ContextDawn : public Context
     Buffer *createBuffer(int numComponents,
         const std::vector<unsigned short> &buffer,
         bool isIndex) override;
-    void generateBuffer(unsigned int *buf);
-    void deleteBuffer(unsigned int *buf);
-    void bindBuffer(unsigned int target, unsigned int buf);
-    void uploadBuffer(unsigned int target, const std::vector<float> &buf);
-    void uploadBuffer(unsigned int target, const std::vector<unsigned short> &buf);
 
     Program *createProgram(std::string vId, std::string fId) override;
-    void generateProgram(unsigned int *program);
-    void setProgram(unsigned int program);
-    void deleteProgram(unsigned int *program);
-    bool compileProgram(unsigned int programId,
-        const string &VertexShaderCode,
-        const string &FragmentShaderCode);
 
     Texture *createTexture(std::string name, std::string url) override;
     Texture *createTexture(std::string name, const std::vector<std::string> &urls) override;
-    void generateTexture(unsigned int *texture);
-    void bindTexture(unsigned int target, unsigned int texture);
-    void deleteTexture(unsigned int *texture);
     
     dawn::Texture createTexture(const dawn::TextureDescriptor &descriptor) const;
     dawn::Sampler createSampler(const dawn::SamplerDescriptor &descriptor) const;

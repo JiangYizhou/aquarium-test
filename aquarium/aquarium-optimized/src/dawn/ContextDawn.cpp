@@ -135,18 +135,6 @@ Texture *ContextDawn::createTexture(std::string name, const std::vector<std::str
     return texture;
 }
 
-void ContextDawn::generateTexture(unsigned int * texture)
-{
-}
-
-void ContextDawn::bindTexture(unsigned int target, unsigned int texture)
-{
-}
-
-void ContextDawn::deleteTexture(unsigned int * texture)
-{
-}
-
 dawn::Texture ContextDawn::createTexture(const dawn::TextureDescriptor & descriptor) const
 {
     return device.CreateTexture(&descriptor);
@@ -520,45 +508,12 @@ Buffer *ContextDawn::createBuffer(int numComponents,
     return buffer;
 }
 
-void ContextDawn::generateBuffer(unsigned int * buf)
-{
-}
-
-void ContextDawn::deleteBuffer(unsigned int * buf)
-{
-}
-
-void ContextDawn::bindBuffer(unsigned int target, unsigned int buf)
-{
-}
-
-void ContextDawn::uploadBuffer(unsigned int target, const std::vector<float>& buf)
-{
-}
-
 Program *ContextDawn::createProgram(std::string vId, std::string fId)
 {
     ProgramDawn* program = new ProgramDawn(this, vId, fId);
     program->loadProgram();
 
     return program;
-}
-
-void ContextDawn::generateProgram(unsigned int * program)
-{
-}
-
-void ContextDawn::setProgram(unsigned int program)
-{
-}
-
-void ContextDawn::deleteProgram(unsigned int * program)
-{
-}
-
-bool ContextDawn::compileProgram(unsigned int programId, const string & VertexShaderCode, const string & FragmentShaderCode)
-{
-    return false;
 }
 
 void ContextDawn::setWindowTitle(const std::string &text)
@@ -633,8 +588,6 @@ void ContextDawn::GetNextRenderPassDescriptor(
          .GetResult();
 }
 
-void ContextDawn::enableBlend(bool flag) const {}
-
 Model * ContextDawn::createModel(Aquarium* aquarium, MODELGROUP type, MODELNAME name, bool blend)
 {
     Model *model;
@@ -661,21 +614,5 @@ Model * ContextDawn::createModel(Aquarium* aquarium, MODELGROUP type, MODELNAME 
     }
 
     return model;
-}
-
-void ContextDawn::setTexture(const TextureDawn * texture, int index, int unit) const
-{
-}
-
-void ContextDawn::setAttribs(BufferDawn * bufferGL, int index) const
-{
-}
-
-void ContextDawn::setIndices(BufferDawn * bufferGL) const
-{
-}
-
-void ContextDawn::drawElements(BufferDawn * buffer) const
-{
 }
 

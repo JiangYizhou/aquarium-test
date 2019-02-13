@@ -7,11 +7,6 @@
 
 #include "Model.h"
 
-void Model::setProgram(Program *prgm)
-{
-    mProgram = prgm;
-}
-
 Model::Model()
     : mProgram(nullptr),
     mType(GROUPMAX),
@@ -32,14 +27,12 @@ Model::~Model()
     }
 }
 
-void Model::applyPrograms() const
+void Model::setProgram(Program *prgm)
 {
-    mProgram->setProgram();
+    mProgram = prgm;
 }
 
 void Model::prepare(const Context *context)
 {
-    context->enableBlend(mBlend);
-    applyPrograms();
     preDraw();
 }

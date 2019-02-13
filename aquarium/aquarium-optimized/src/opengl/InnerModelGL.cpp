@@ -87,6 +87,9 @@ void InnerModelGL::draw()
 
 void InnerModelGL::preDraw() const
 {
+    mProgram->setProgram();
+    contextGL->enableBlend(mBlend);
+
     ProgramGL *programGL = static_cast<ProgramGL *>(mProgram);
     contextGL->bindVAO(programGL->getVAOId());
 

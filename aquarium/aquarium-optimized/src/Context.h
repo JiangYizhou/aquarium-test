@@ -52,7 +52,7 @@ class Context
     virtual void Terminate()                                                               = 0;
 
     virtual void resetState()                 = 0;
-    virtual void enableBlend(bool flag) const = 0;
+    void enableBlend(bool flag) const;
 
     const int getClientWidth() const { return mClientWidth; };
     const int getclientHeight() const { return mClientHeight; };

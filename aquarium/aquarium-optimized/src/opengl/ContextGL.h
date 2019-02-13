@@ -44,7 +44,7 @@ class ContextGL : public Context
     void Terminate() override;
 
     void resetState() override;
-    void enableBlend(bool flag) const override;
+    void enableBlend(bool flag) const;
 
     Model *createModel(Aquarium *aquarium, MODELGROUP type, MODELNAME name, bool blend) override;
     int getUniformLocation(unsigned int programId, std::string name) const;

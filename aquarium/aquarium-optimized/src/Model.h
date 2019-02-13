@@ -43,7 +43,6 @@ class Model
     virtual void updatePerInstanceUniforms(ViewUniforms* viewUniforms) = 0;
     virtual void draw() = 0;
 
-    void applyPrograms() const;
     void setProgram(Program *program);
     void prepare(const Context *context);
     virtual void init() = 0;
