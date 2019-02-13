@@ -179,14 +179,6 @@ const G_sceneInfo g_sceneInfo[] = {
     {"TreasureChest", MODELNAME::MODELTREASURECHEST, {"", ""}, true, MODELGROUP::GENERIC}
 };
 
-/*
-const G_sceneInfo g_sceneInfo[] = {
-    {"SunknShipBoxes", MODELNAME::MODELSUNKNSHIPBOXES, {"", ""}, true, MODELGROUP::GENERIC},
-    {"SunknShipDeck", MODELNAME::MODELSUNKNSHIPDECK, {"", ""}, true, MODELGROUP::GENERIC},
-    {"SunknShipHull", MODELNAME::MODELSUNKNSHIPHULL, {"", ""}, true, MODELGROUP::GENERIC},
-};
-*/
-
 const std::vector<std::string> g_skyBoxUrls = {
     "GlobeOuter_EM_positive_x.jpg", "GlobeOuter_EM_negative_x.jpg", "GlobeOuter_EM_positive_y.jpg",
     "GlobeOuter_EM_negative_y.jpg", "GlobeOuter_EM_positive_z.jpg", "GlobeOuter_EM_negative_z.jpg"};
@@ -340,7 +332,6 @@ struct Global
     float m4t2[16];
     float m4t3[16];
     float colorMult[4] = {1, 1, 1, 1};
-    // float fogColor[4] = {g_fogRed, g_fogGreen, g_fogBlue, 1.0f};
     float then;
     float mclock;
     float eyeClock;

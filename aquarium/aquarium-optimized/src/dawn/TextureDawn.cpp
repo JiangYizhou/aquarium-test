@@ -16,8 +16,8 @@
 
 TextureDawn::~TextureDawn() {
 
-    DestoryImageData(pixelVec);
-    DestoryImageData(resizedVec);
+    DestoryImageData(mPixelVec);
+    DestoryImageData(mResizedVec);
 }
 
 TextureDawn::TextureDawn(ContextDawn * context, std::string name, std::string url)
@@ -34,7 +34,7 @@ void TextureDawn::loadTexture()
 {
     dawn::SamplerDescriptor samplerDesc;
     const int kPadding = 256;
-    loadImage(mUrls, &pixelVec);
+    loadImage(mUrls, &mPixelVec);
 
     if (mTextureViewDimension == dawn::TextureViewDimension::Cube)
     {
@@ -52,7 +52,7 @@ void TextureDawn::loadTexture()
 
         for (unsigned int i = 0; i < 6; i++)
         {
-            dawn::Buffer stagingBuffer = context->createBufferFromData(pixelVec[i], mWidth * mHeight * 4, dawn::BufferUsageBit::TransferSrc);
+            dawn::Buffer stagingBuffer = context->createBufferFromData(mPixelVec[i], mWidth * mHeight * 4, dawn::BufferUsageBit::TransferSrc);
             dawn::BufferCopyView bufferCopyView = context->createBufferCopyView(stagingBuffer, 0, mWidth * 4, mHeight);
             dawn::TextureCopyView textureCopyView = context->createTextureCopyView(mTexture, 0, i, { 0, 0, 0 });
             dawn::Extent3D copySize = { static_cast<uint32_t>(mWidth), static_cast<uint32_t>(mHeight), 1 };
@@ -95,7 +95,7 @@ void TextureDawn::loadTexture()
         {
             resizedWidth = (mWidth / 256 + 1) * 256;
         }
-        generateMipmap(pixelVec[0], mWidth, mHeight, 0, resizedVec, resizedWidth, mHeight, 0, 4);
+        generateMipmap(mPixelVec[0], mWidth, mHeight, 0, mResizedVec, resizedWidth, mHeight, 0, 4);
 
         dawn::TextureDescriptor descriptor;
         descriptor.dimension = mTextureDimension;
@@ -116,7 +116,7 @@ void TextureDawn::loadTexture()
             int width                  = resizedWidth >> i;
             if (width ==0 || height == 0)
                 break;
-            dawn::Buffer stagingBuffer = context->createBufferFromData(resizedVec[i], resizedWidth * height * 4, dawn::BufferUsageBit::TransferSrc);
+            dawn::Buffer stagingBuffer = context->createBufferFromData(mResizedVec[i], resizedWidth * height * 4, dawn::BufferUsageBit::TransferSrc);
             dawn::BufferCopyView bufferCopyView = context->createBufferCopyView(stagingBuffer, 0, resizedWidth * 4, height);
             dawn::TextureCopyView textureCopyView = context->createTextureCopyView(mTexture, i, 0, { 0, 0, 0 });
             dawn::Extent3D copySize = {static_cast<uint32_t>(width),

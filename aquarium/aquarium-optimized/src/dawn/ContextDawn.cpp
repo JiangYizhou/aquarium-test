@@ -112,11 +112,11 @@ bool ContextDawn::createContext(std::string backend)
         .SetImplementation(binding->GetSwapChainImplementation())
         .GetResult();
 
-    preferredSwapChainFormat = static_cast<dawn::TextureFormat>(binding->GetPreferredSwapChainTextureFormat());
-    swapchain.Configure(preferredSwapChainFormat,
+    mPreferredSwapChainFormat = static_cast<dawn::TextureFormat>(binding->GetPreferredSwapChainTextureFormat());
+    swapchain.Configure(mPreferredSwapChainFormat,
         dawn::TextureUsageBit::OutputAttachment, mClientWidth, mClientHeight);
 
-    depthStencilView = createDepthStencilView();
+    mDepthStencilView = createDepthStencilView();
 
     return true;
 }
@@ -330,7 +330,7 @@ dawn::RenderPipeline ContextDawn::createRenderPipeline(dawn::PipelineLayout pipe
     cAttachmentsState.hasDepthStencilAttachment = true;
 
     for (uint32_t i = 0; i < kMaxColorAttachments; ++i) {
-        colorAttachments[i].format = preferredSwapChainFormat;
+        colorAttachments[i].format = mPreferredSwapChainFormat;
         cColorAttachments[i]        = &colorAttachments[i];
     }
 
@@ -580,7 +580,7 @@ void ContextDawn::DoFlush() {
     dawn::CommandBuffer cmd = commandBufferBuilder.GetResult();
     queue.Submit(1, &cmd);
 
-    swapchain.Present(backbuffer);
+    swapchain.Present(mBackbuffer);
 
     glfwPollEvents();
 }
@@ -591,7 +591,7 @@ void ContextDawn::Terminate() {
 
 // Update backbuffer and renderPassDescriptor
 void ContextDawn::resetState() {
-    GetNextRenderPassDescriptor(&backbuffer, &renderPassDescriptor);
+    GetNextRenderPassDescriptor(&mBackbuffer, &renderPassDescriptor);
     commandBufferBuilder =
         device.CreateCommandBufferBuilder();
     pass = commandBufferBuilder.BeginRenderPass(renderPassDescriptor);
@@ -612,7 +612,7 @@ void ContextDawn::GetNextRenderPassDescriptor(
     colorAttachment.storeOp = dawn::StoreOp::Store;
 
     dawn::RenderPassDepthStencilAttachmentDescriptor depthStencilAttachment;
-    depthStencilAttachment.attachment = depthStencilView;
+    depthStencilAttachment.attachment = mDepthStencilView;
     depthStencilAttachment.depthLoadOp = dawn::LoadOp::Clear;
     depthStencilAttachment.stencilLoadOp = dawn::LoadOp::Clear;
     depthStencilAttachment.clearDepth = 1.0f;

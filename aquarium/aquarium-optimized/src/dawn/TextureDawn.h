@@ -36,8 +36,8 @@ class TextureDawn : public Texture
     dawn::Sampler mSampler;
     dawn::TextureFormat mFormat;
     dawn::TextureView mTextureView;
-    std::vector<unsigned char *> pixelVec;
-    std::vector<unsigned char *> resizedVec;
+    std::vector<unsigned char *> mPixelVec;
+    std::vector<unsigned char *> mResizedVec;
     ContextDawn *context;
 };
 

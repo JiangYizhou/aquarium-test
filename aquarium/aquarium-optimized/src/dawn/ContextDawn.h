@@ -165,13 +165,13 @@ class ContextDawn : public Context
   private:
     GLFWwindow *mWindow;
     dawn::Device device;
-
-    dawn::TextureView depthStencilView;
-    dawn::RenderPipeline pipeline;
-    dawn::BindGroup bindGroup;
     dawn::Queue queue;
-    dawn::TextureFormat preferredSwapChainFormat;
-    dawn::Texture backbuffer;
+
+    dawn::Texture mBackbuffer;
+    dawn::TextureView mDepthStencilView;
+    dawn::RenderPipeline mPipeline;
+    dawn::BindGroup mBindGroup;
+    dawn::TextureFormat mPreferredSwapChainFormat;
 };
 
 #endif

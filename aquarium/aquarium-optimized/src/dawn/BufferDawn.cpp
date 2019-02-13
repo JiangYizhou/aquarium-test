@@ -14,14 +14,13 @@ BufferDawn::BufferDawn(ContextDawn* context,
                        int numComponents,
                        const std::vector<float> &buffer,
                        bool isIndex)
-    : usageBit(isIndex ? dawn::BufferUsageBit::Index : dawn::BufferUsageBit::Vertex),
-      totoalComponents_(totalCmoponents),
-      stride_(0),
-      offset_(nullptr)
+    : mUsageBit(isIndex ? dawn::BufferUsageBit::Index : dawn::BufferUsageBit::Vertex),
+      mTotoalComponents(totalCmoponents),
+      mStride(0),
+      mOffset(nullptr)
 {
-    //numElements_ = totoalComponents_ / numComponents;
-    size = numComponents * sizeof(float);
-    buf = context->createBufferFromData(buffer.data(), sizeof(float) * static_cast<int>(buffer.size()), usageBit);
+    mSize = numComponents * sizeof(float);
+    mBuf = context->createBufferFromData(buffer.data(), sizeof(float) * static_cast<int>(buffer.size()), mUsageBit);
 }
 
 BufferDawn::BufferDawn(ContextDawn* context,
@@ -29,14 +28,13 @@ BufferDawn::BufferDawn(ContextDawn* context,
                        int numComponents,
                        const std::vector<unsigned short> &buffer,
                        bool isIndex)
-    : usageBit(isIndex ? dawn::BufferUsageBit::Index : dawn::BufferUsageBit::Vertex),
-      totoalComponents_(totalCmoponents),
-      stride_(0),
-      offset_(nullptr)
+    : mUsageBit(isIndex ? dawn::BufferUsageBit::Index : dawn::BufferUsageBit::Vertex),
+      mTotoalComponents(totalCmoponents),
+      mStride(0),
+      mOffset(nullptr)
 {
-    //numElements_ = totoalComponents_ / numComponents;
-    size = numComponents * sizeof(unsigned short);
-    buf = context->createBufferFromData(buffer.data(), sizeof(unsigned short) * static_cast<int>(buffer.size()), usageBit);
+    mSize = numComponents * sizeof(unsigned short);
+    mBuf = context->createBufferFromData(buffer.data(), sizeof(unsigned short) * static_cast<int>(buffer.size()), mUsageBit);
 }
 
 BufferDawn::~BufferDawn() {}

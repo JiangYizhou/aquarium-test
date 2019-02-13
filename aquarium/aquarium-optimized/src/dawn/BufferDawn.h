@@ -31,26 +31,25 @@ class BufferDawn : public Buffer
                bool isIndex);
     ~BufferDawn() override;
 
-    const dawn::Buffer &getBuffer() const { return buf; }
-    const int getNumComponents() const { return numComponents_; }
-    const int getTotalComponents() const { return totoalComponents_; }
-    //const int getNumberElements() const { return numElements_; }
-    const bool getNormalize() const { return normalize_; }
-    const uint32_t getStride() const { return stride_; }
-    const void *getOffset() const { return offset_; }
-    const dawn::BufferUsageBit getUsageBit() const { return usageBit; }
-    int getDataSize() { return size; }
+    const dawn::Buffer &getBuffer() const { return mBuf; }
+    const int getNumComponents() const { return mNumComponents; }
+    const int getTotalComponents() const { return mTotoalComponents; }
+
+    const bool getNormalize() const { return mNormalize; }
+    const uint32_t getStride() const { return mStride; }
+    const void *getOffset() const { return mOffset; }
+    const dawn::BufferUsageBit getUsageBit() const { return mUsageBit; }
+    int getDataSize() { return mSize; }
 
   private:
-    dawn::Buffer buf;
-    dawn::BufferUsageBit usageBit;
-    int numComponents_;
-    int totoalComponents_;
-    //int numElements_;
-    bool normalize_;
-    uint32_t stride_;
-    void *offset_;
-    int size;
+    dawn::Buffer mBuf;
+    dawn::BufferUsageBit mUsageBit;
+    int mNumComponents;
+    int mTotoalComponents;
+    bool mNormalize;
+    uint32_t mStride;
+    void *mOffset;
+    int mSize;
 };
 
 #endif
