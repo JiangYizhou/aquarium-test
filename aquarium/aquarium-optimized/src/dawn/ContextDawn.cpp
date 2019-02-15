@@ -10,27 +10,23 @@
 #include <vector>
 
 #include "../Aquarium.h"
+#include "BufferDawn.h"
 #include "ContextDawn.h"
-
-#include "common/Assert.h"
-#include "common/Platform.h"
+#include "FishModelDawn.h"
+#include "GenericModelDawn.h"
+#include "InnerModelDawn.h"
+#include "OutsideModelDawn.h"
+#include "ProgramDawn.h"
+#include "SeaweedModelDawn.h"
+#include "TextureDawn.h"
 
 #include <dawn/dawn.h>
 #include <dawn/dawn_wsi.h>
 #include <dawn/dawncpp.h>
 #include <dawn_native/DawnNative.h>
-#include "utils/BackendBinding.h"
-#include "common/Constants.h"
 #include <shaderc/shaderc.hpp>
-
-#include "BufferDawn.h"
-#include "TextureDawn.h"
-#include "ProgramDawn.h"
-#include "FishModelDawn.h"
-#include "GenericModelDawn.h"
-#include "InnerModelDawn.h"
-#include "OutsideModelDawn.h"
-#include "SeaweedModelDawn.h"
+#include "common/Constants.h"
+#include "utils/BackendBinding.h"
 
 #include <array>
 #include <cstring>
@@ -163,40 +159,24 @@ dawn::Sampler ContextDawn::createSampler(const dawn::SamplerDescriptor & descrip
 
 dawn::Buffer ContextDawn::createBufferFromData(const void * pixels, int size, dawn::BufferUsageBit usage) const
 {
-    dawn::BufferDescriptor descriptor;
-    descriptor.size = size;
-    descriptor.usage = usage | dawn::BufferUsageBit::TransferDst;
-
-    dawn::Buffer buffer = device.CreateBuffer(&descriptor);
-    buffer.SetSubData(0, size, reinterpret_cast<const uint8_t*>(pixels));
-    return buffer;
+    return utils::CreateBufferFromData(device, pixels, size, usage);
 }
 
 dawn::BufferCopyView ContextDawn::createBufferCopyView(const dawn::Buffer& buffer,
     uint32_t offset,
     uint32_t rowPitch,
     uint32_t imageHeight) const {
-    dawn::BufferCopyView bufferCopyView;
-    bufferCopyView.buffer = buffer;
-    bufferCopyView.offset = offset;
-    bufferCopyView.rowPitch = rowPitch;
-    bufferCopyView.imageHeight = imageHeight;
 
-    return bufferCopyView;
+    return utils::CreateBufferCopyView(buffer, offset, rowPitch, imageHeight);
 }
 
-dawn::TextureCopyView ContextDawn::CreateTextureCopyView(const dawn::Texture& texture,
-    uint32_t level,
-    uint32_t slice,
-    dawn::Origin3D origin,
-    dawn::TextureAspect aspect) const {
-    dawn::TextureCopyView textureCopyView;
-    textureCopyView.texture = texture;
-    textureCopyView.level = level;
-    textureCopyView.slice = slice;
-    textureCopyView.origin = origin;
+dawn::TextureCopyView ContextDawn::createTextureCopyView(dawn::Texture texture,
+                                                         uint32_t level,
+                                                         uint32_t slice,
+                                                         dawn::Origin3D origin)
+{
 
-    return textureCopyView;
+    return utils::CreateTextureCopyView(texture, level, slice, origin);
 }
 
 dawn::CommandBuffer ContextDawn::copyBufferToTexture(const dawn::BufferCopyView &bufferCopyView, const dawn::TextureCopyView &textureCopyView, const dawn::Extent3D& ext3D) const
@@ -211,74 +191,17 @@ void ContextDawn::submit(int numCommands, const dawn::CommandBuffer& commands) c
     queue.Submit(numCommands, &commands);
 }
 
-dawn::TextureCopyView ContextDawn::createTextureCopyView(dawn::Texture texture, uint32_t level, uint32_t slice, dawn::Origin3D origin) const
+dawn::ShaderModule ContextDawn::createShaderModule(dawn::ShaderStage stage,
+                                                   const std::string &str) const
 {
-    dawn::TextureCopyView textureCopyView;
-    textureCopyView.texture = texture;
-    textureCopyView.level = level;
-    textureCopyView.slice = slice;
-    textureCopyView.origin = origin;
-
-    return textureCopyView;
-}
-
-shaderc_shader_kind ContextDawn::ShadercShaderKind(dawn::ShaderStage stage) const {
-    switch (stage) {
-    case dawn::ShaderStage::Vertex:
-        return shaderc_glsl_vertex_shader;
-    case dawn::ShaderStage::Fragment:
-        return shaderc_glsl_fragment_shader;
-    case dawn::ShaderStage::Compute:
-        return shaderc_glsl_compute_shader;
-    default:
-        UNREACHABLE();
-    }
-}
-
-dawn::ShaderModule ContextDawn::CreateShaderModuleFromResult(
-    const dawn::Device& device,
-    const shaderc::SpvCompilationResult& result) const {
-    // result.cend and result.cbegin return pointers to uint32_t.
-    const uint32_t* resultBegin = result.cbegin();
-    const uint32_t* resultEnd = result.cend();
-    // So this size is in units of sizeof(uint32_t).
-    ptrdiff_t resultSize = resultEnd - resultBegin;
-    // SetSource takes data as uint32_t*.
-
-    dawn::ShaderModuleDescriptor descriptor;
-    descriptor.codeSize = static_cast<uint32_t>(resultSize);
-    descriptor.code = result.cbegin();
-    return device.CreateShaderModule(&descriptor);
-}
-
-dawn::ShaderModule ContextDawn::createShaderModule(dawn::ShaderStage stage, const std::string & str, const std::string & shaderId) const
-{
-    shaderc_shader_kind kind = ShadercShaderKind(stage);
-
-    shaderc::Compiler compiler;
-    auto result = compiler.CompileGlslToSpv(str.c_str(), str.length(), kind, shaderId.c_str());
-    if (result.GetCompilationStatus() != shaderc_compilation_status_success) {
-        std::cerr << result.GetErrorMessage();
-        return {};
-    }
-    return CreateShaderModuleFromResult(device, result);
+    return utils::CreateShaderModule(device, stage, str.c_str());
 }
 
 dawn::BindGroupLayout ContextDawn::MakeBindGroupLayout(
     std::initializer_list<dawn::BindGroupLayoutBinding> bindingsInitializer) const {
     dawn::ShaderStageBit kNoStages{};
 
-    std::vector<dawn::BindGroupLayoutBinding> bindings;
-    for (const dawn::BindGroupLayoutBinding& binding : bindingsInitializer) {
-        if (binding.visibility != kNoStages) {
-            bindings.push_back(binding);
-        }
-    }
-
-    dawn::BindGroupLayoutDescriptor descriptor;
-    descriptor.numBindings = static_cast<uint32_t>(bindings.size());
-    descriptor.bindings = bindings.data();
-    return device.CreateBindGroupLayout(&descriptor);
+    return utils::MakeBindGroupLayout(device, bindingsInitializer);
 }
 
 dawn::PipelineLayout ContextDawn::MakeBasicPipelineLayout(
@@ -425,51 +348,11 @@ void ContextDawn::setBufferData(const dawn::Buffer& buffer, uint32_t start, uint
     buffer.SetSubData(start, size, reinterpret_cast<const uint8_t*>(pixels));
 }
 
-ContextDawn::BindingInitializationHelper::BindingInitializationHelper(uint32_t binding,
-    const dawn::Sampler& sampler)
-    : binding(binding), sampler(sampler) {
-}
-
-ContextDawn::BindingInitializationHelper::BindingInitializationHelper(uint32_t binding,
-    const dawn::TextureView& textureView)
-    : binding(binding), textureView(textureView) {
-}
-
-ContextDawn::BindingInitializationHelper::BindingInitializationHelper(uint32_t binding,
-    const dawn::Buffer& buffer,
-    uint32_t offset,
-    uint32_t size)
-    : binding(binding), buffer(buffer), offset(offset), size(size) {
-}
-
-dawn::BindGroupBinding ContextDawn::BindingInitializationHelper::GetAsBinding() const {
-    dawn::BindGroupBinding result;
-
-    result.binding = binding;
-    result.sampler = sampler;
-    result.textureView = textureView;
-    result.buffer = buffer;
-    result.offset = offset;
-    result.size = size;
-
-    return result;
-}
-
 dawn::BindGroup ContextDawn::makeBindGroup(
     const dawn::BindGroupLayout &layout,
-    std::initializer_list<BindingInitializationHelper> bindingsInitializer) const
+    std::initializer_list<utils::BindingInitializationHelper> bindingsInitializer) const
 {
-    std::vector<dawn::BindGroupBinding> bindings;
-    for (const BindingInitializationHelper& helper : bindingsInitializer) {
-        bindings.push_back(helper.GetAsBinding());
-    }
-
-    dawn::BindGroupDescriptor descriptor;
-    descriptor.layout = layout;
-    descriptor.numBindings = static_cast<uint32_t>(bindings.size());
-    descriptor.bindings = bindings.data();
-
-    return device.CreateBindGroup(&descriptor);
+    return utils::MakeBindGroup(device, layout, bindingsInitializer);
 }
 
 void ContextDawn::initGeneralResources(Aquarium* aquarium)
