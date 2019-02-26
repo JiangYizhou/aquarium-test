@@ -11,6 +11,7 @@
 
 #include "../Context.h"
 
+#include <dawn_native/DawnNative.h>
 #include "dawn/dawncpp.h"
 #include "utils/DawnHelpers.h"
 
@@ -106,11 +107,13 @@ class ContextDawn : public Context
 
   private:
     GLFWwindow *mWindow;
+    std::unique_ptr<dawn_native::Instance> instance;
+    dawn_native::BackendType backendType;
 
     dawn::Device device;
     dawn::Queue queue;
     dawn::SwapChain swapchain;
-    dawn::CommandBufferBuilder commandBufferBuilder;
+    dawn::CommandEncoder commandEncoder;
     dawn::RenderPassDescriptor renderPassDescriptor;
 
     dawn::Texture mBackbuffer;

@@ -23,10 +23,11 @@
 #include <dawn/dawn.h>
 #include <dawn/dawn_wsi.h>
 #include <dawn/dawncpp.h>
-#include <dawn_native/DawnNative.h>
 #include <shaderc/shaderc.hpp>
 #include "common/Constants.h"
 #include "utils/BackendBinding.h"
+#include "utils/ComboRenderPipelineDescriptor.h"
+#include "../ASSERT.h"
 
 #include <array>
 #include <cstring>
@@ -41,7 +42,7 @@ ContextDawn::ContextDawn()
       device(nullptr),
       queue(nullptr),
       swapchain(nullptr),
-      commandBufferBuilder(nullptr),
+      commandEncoder(nullptr),
       mBackbuffer(nullptr),
       mDepthStencilView(nullptr),
       mPipeline(nullptr),
@@ -57,7 +58,6 @@ bool ContextDawn::createContext(std::string backend, bool enableMSAA)
 {
     // TODO(yizhou): MSAA of Dawn is not supported yet.
 
-    dawn_native::BackendType backendType = dawn_native::BackendType::Null;
     if (backend == "dawn_d3d12")
     {
         backendType = dawn_native::BackendType::D3D12;
@@ -75,11 +75,6 @@ bool ContextDawn::createContext(std::string backend, bool enableMSAA)
         backendType = dawn_native::BackendType::OpenGL;
     }
 
-    utils::BackendBinding* binding = utils::CreateBinding(backendType);
-    if (binding == nullptr) {
-        return false;
-    }
-
     // initialise GLFW
     if (!glfwInit())
     {
@@ -87,7 +82,7 @@ bool ContextDawn::createContext(std::string backend, bool enableMSAA)
         return false;
     }
 
-    binding->SetupGLFWWindowHints();
+     utils::SetupGLFWWindowHintsForBackend(backendType);
     // set full screen
     //glfwWindowHint(GLFW_DECORATED, GL_FALSE);
 
@@ -110,19 +105,39 @@ bool ContextDawn::createContext(std::string backend, bool enableMSAA)
         return false;
     }
 
-    binding->SetWindow(mWindow);
+	instance = std::make_unique<dawn_native::Instance>();
+    utils::DiscoverAdapter(instance.get(), mWindow, backendType);
 
-    dawnDevice backendDevice = binding->CreateDevice();
+    // Get an adapter for the backend to use, and create the device.
+    dawn_native::Adapter backendAdapter;
+    {
+        for (auto &adapter : instance->GetAdapters())
+		{
+            if (adapter.GetBackendType() == backendType)
+			{
+                backendAdapter = adapter;
+                break;
+			}
+		}
+    }
+
+    dawnDevice backendDevice   = backendAdapter.CreateDevice();
     dawnProcTable backendProcs = dawn_native::GetProcs();
+
+	utils::BackendBinding *binding = utils::CreateBinding(backendType, mWindow, backendDevice);
+    if (binding == nullptr)
+    {
+        return false;
+    }
 
     dawnSetProcs(&backendProcs);
     backendProcs.deviceSetErrorCallback(backendDevice, PrintDeviceError, 0);
     device =  dawn::Device::Acquire(backendDevice);
 
     queue = device.CreateQueue();
-    swapchain = device.CreateSwapChainBuilder()
-        .SetImplementation(binding->GetSwapChainImplementation())
-        .GetResult();
+    dawn::SwapChainDescriptor swapChainDesc;
+    swapChainDesc.implementation = binding->GetSwapChainImplementation();
+    swapchain = device.CreateSwapChain(&swapChainDesc);
 
     mPreferredSwapChainFormat = static_cast<dawn::TextureFormat>(binding->GetPreferredSwapChainTextureFormat());
     swapchain.Configure(mPreferredSwapChainFormat,
@@ -181,9 +196,10 @@ dawn::TextureCopyView ContextDawn::createTextureCopyView(dawn::Texture texture,
 
 dawn::CommandBuffer ContextDawn::copyBufferToTexture(const dawn::BufferCopyView &bufferCopyView, const dawn::TextureCopyView &textureCopyView, const dawn::Extent3D& ext3D) const
 {
-    return  device.CreateCommandBufferBuilder()
-        .CopyBufferToTexture(&bufferCopyView, &textureCopyView, &ext3D)
-        .GetResult();
+    dawn::CommandEncoder encoder = device.CreateCommandEncoder();
+    encoder.CopyBufferToTexture(&bufferCopyView, &textureCopyView, &ext3D);
+    dawn::CommandBuffer copy = encoder.Finish();
+    return copy;
 }
 
 void ContextDawn::submit(int numCommands, const dawn::CommandBuffer& commands) const
@@ -208,7 +224,7 @@ dawn::PipelineLayout ContextDawn::MakeBasicPipelineLayout(
     std::vector<dawn::BindGroupLayout> bindingsInitializer) const {
     dawn::PipelineLayoutDescriptor descriptor;
 
-    descriptor.numBindGroupLayouts = static_cast<uint32_t>(bindingsInitializer.size());
+    descriptor.bindGroupLayoutCount = static_cast<uint32_t>(bindingsInitializer.size());
     descriptor.bindGroupLayouts = bindingsInitializer.data();
     
     return device.CreatePipelineLayout(&descriptor);
@@ -220,13 +236,21 @@ dawn::InputState ContextDawn::createInputState(std::initializer_list<Attribute> 
 
     for (auto& attribute : attributeInitilizer)
     {
-        inputStateBuilder.SetAttribute(attribute.shaderLocation, attribute.bindingSlot,
-                                       attribute.format, attribute.offset);
+        dawn::VertexAttributeDescriptor attrib;
+        attrib.shaderLocation = attribute.shaderLocation;
+        attrib.inputSlot      = attribute.bindingSlot;
+        attrib.offset         = attribute.offset;
+        attrib.format         = attribute.format;
+        inputStateBuilder.SetAttribute(&attrib);
     }
 
     for (auto &input : inputInitilizer)
     {
-        inputStateBuilder.SetInput(input.bindingSlot, input.stride, input.stepMode);
+        dawn::VertexInputDescriptor in;
+        in.inputSlot = input.bindingSlot;
+        in.stride    = input.stride;
+        in.stepMode  = input.stepMode;
+        inputStateBuilder.SetInput(&in);
     }
 
     return inputStateBuilder.GetResult();
@@ -245,24 +269,6 @@ dawn::RenderPipeline ContextDawn::createRenderPipeline(dawn::PipelineLayout pipe
     cFragmentStage.entryPoint = "main";
     cFragmentStage.module = fsModule;
 
-    std::array<dawn::AttachmentDescriptor *, kMaxColorAttachments> cColorAttachments;
-    dawn::AttachmentDescriptor colorAttachments[kMaxColorAttachments];
-    dawn::AttachmentDescriptor cDepthStencilAttachment;
-    std::array<dawn::BlendStateDescriptor, kMaxColorAttachments> cBlendStates;
-
-    dawn::AttachmentsStateDescriptor cAttachmentsState;
-    cAttachmentsState.numColorAttachments = 1;
-    cAttachmentsState.colorAttachments = &cColorAttachments[0];
-    cAttachmentsState.depthStencilAttachment = &cDepthStencilAttachment;
-    cAttachmentsState.hasDepthStencilAttachment = true;
-
-    for (uint32_t i = 0; i < kMaxColorAttachments; ++i) {
-        colorAttachments[i].format = mPreferredSwapChainFormat;
-        cColorAttachments[i]        = &colorAttachments[i];
-    }
-
-    cDepthStencilAttachment.format = dawn::TextureFormat::D32FloatS8Uint;
-
     dawn::BlendDescriptor blendDescriptor;
     blendDescriptor.operation = dawn::BlendOperation::Add;
     if (enableBlend)
@@ -275,45 +281,29 @@ dawn::RenderPipeline ContextDawn::createRenderPipeline(dawn::PipelineLayout pipe
         blendDescriptor.dstFactor = dawn::BlendFactor::Zero;
     }
 
-    dawn::BlendStateDescriptor blendStateDescriptor;
-    blendStateDescriptor.nextInChain    = nullptr;
-    blendStateDescriptor.alphaBlend     = blendDescriptor;
-    blendStateDescriptor.colorBlend     = blendDescriptor;
-    blendStateDescriptor.colorWriteMask = dawn::ColorWriteMask::All;
+	dawn::ColorStateDescriptor ColorStateDescriptor;
+    ColorStateDescriptor.colorBlend = blendDescriptor;
+    ColorStateDescriptor.alphaBlend = blendDescriptor;
+    ColorStateDescriptor.colorWriteMask = dawn::ColorWriteMask::All;
 
-    for (uint32_t i = 0; i < kMaxColorAttachments; ++i)
-    {
-        cBlendStates[i] = blendStateDescriptor;
-    }
-
-    dawn::StencilStateFaceDescriptor stencilFace;
-    stencilFace.compare       = dawn::CompareFunction::Always;
-    stencilFace.failOp = dawn::StencilOperation::Keep;
-    stencilFace.depthFailOp   = dawn::StencilOperation::Keep;
-    stencilFace.passOp        = dawn::StencilOperation::Keep;
-
-    dawn::DepthStencilStateDescriptor depthStencilDescriptor;
-    depthStencilDescriptor.depthWriteEnabled = true;
-    depthStencilDescriptor.depthCompare      = dawn::CompareFunction::Less;
-    depthStencilDescriptor.stencilBack              = stencilFace;
-    depthStencilDescriptor.stencilFront             = stencilFace;
-    depthStencilDescriptor.stencilReadMask   = 0xff;
-    depthStencilDescriptor.stencilWriteMask  = 0xff;
-
-    dawn::RenderPipelineDescriptor descriptor;
-    descriptor.layout = pipelineLayout;
-    descriptor.vertexStage = &cVertexStage;
-    descriptor.fragmentStage = &cFragmentStage;
-    descriptor.attachmentsState = &cAttachmentsState;
-    descriptor.inputState = inputState;
-    descriptor.depthStencilState = &depthStencilDescriptor;
-    descriptor.primitiveTopology = dawn::PrimitiveTopology::TriangleList;
-    descriptor.indexFormat = dawn::IndexFormat::Uint16;
-    descriptor.sampleCount = 1;
-    descriptor.numBlendStates = 1;
-    descriptor.blendStates       = &cBlendStates[0];
+	// test
+    utils::ComboRenderPipelineDescriptor descriptor(device);
+    descriptor.layout                               = pipelineLayout;
+    descriptor.cVertexStage.module                  = vsModule;
+    descriptor.cFragmentStage.module                = fsModule;
+    descriptor.inputState                           = inputState;
+    descriptor.depthStencilState                    = &descriptor.cDepthStencilState;
+    descriptor.cDepthStencilState.format            = dawn::TextureFormat::D32FloatS8Uint;
+    descriptor.cColorStates[0]                      = &ColorStateDescriptor;
+    descriptor.cColorStates[0]->format              = mPreferredSwapChainFormat;
+    descriptor.cDepthStencilState.depthWriteEnabled = true;
+    descriptor.cDepthStencilState.depthCompare      = dawn::CompareFunction::Less;
+    descriptor.primitiveTopology                    = dawn::PrimitiveTopology::TriangleList;
+    descriptor.indexFormat                          = dawn::IndexFormat::Uint16;
+    descriptor.sampleCount                          = 1;
 
     dawn::RenderPipeline pipeline = device.CreateRenderPipeline(&descriptor);
+
     return pipeline;
 }
 
@@ -324,10 +314,10 @@ dawn::TextureView ContextDawn::createDepthStencilView() const
     descriptor.size.width = mClientWidth;
     descriptor.size.height = mClientHeight;
     descriptor.size.depth = 1;
-    descriptor.arraySize = 1;
+    descriptor.arrayLayerCount = 1;
     descriptor.sampleCount = 1;
     descriptor.format = dawn::TextureFormat::D32FloatS8Uint;
-    descriptor.levelCount = 1;
+    descriptor.mipLevelCount   = 1;
     descriptor.usage = dawn::TextureUsageBit::OutputAttachment;
     auto depthStencilTexture = device.CreateTexture(&descriptor);
     return depthStencilTexture.CreateDefaultTextureView();
@@ -433,7 +423,7 @@ void ContextDawn::KeyBoardQuit() {
 void ContextDawn::DoFlush() {
 
     pass.EndPass();
-    dawn::CommandBuffer cmd = commandBufferBuilder.GetResult();
+    dawn::CommandBuffer cmd = commandEncoder.Finish();
     queue.Submit(1, &cmd);
 
     swapchain.Present(mBackbuffer);
@@ -449,9 +439,9 @@ void ContextDawn::Terminate() {
 void ContextDawn::preFrame()
 {
     GetNextRenderPassDescriptor(&mBackbuffer, &renderPassDescriptor);
-    commandBufferBuilder =
-        device.CreateCommandBufferBuilder();
-    pass = commandBufferBuilder.BeginRenderPass(renderPassDescriptor);
+    commandEncoder =
+        device.CreateCommandEncoder();
+    pass           = commandEncoder.BeginRenderPass(renderPassDescriptor);
 }
 
 void ContextDawn::GetNextRenderPassDescriptor(
