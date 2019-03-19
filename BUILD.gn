@@ -1,0 +1,111 @@
+declare_args() {
+  enable_dawn = true
+}
+
+executable("Aquarium") {
+  sources = [
+    "aquarium/aquarium-optimized/src/Aquarium.cpp",
+    "aquarium/aquarium-optimized/src/Aquarium.h",
+    "aquarium/aquarium-optimized/src/ASSERT.h",
+    "aquarium/aquarium-optimized/src/Buffer.h",
+    "aquarium/aquarium-optimized/src/Context.cpp",
+    "aquarium/aquarium-optimized/src/Context.h",
+    "aquarium/aquarium-optimized/src/ContextFactory.cpp",
+    "aquarium/aquarium-optimized/src/ContextFactory.h",
+    "aquarium/aquarium-optimized/src/FishModel.h",
+    "aquarium/aquarium-optimized/src/FPSTimer.cpp",
+    "aquarium/aquarium-optimized/src/FPSTimer.h",
+    "aquarium/aquarium-optimized/src/GenericModel.h",
+    "aquarium/aquarium-optimized/src/Main.cpp",
+    "aquarium/aquarium-optimized/src/Matrix.h",
+    "aquarium/aquarium-optimized/src/Model.cpp",
+    "aquarium/aquarium-optimized/src/Model.h",
+    "aquarium/aquarium-optimized/src/OutsideModel.h",
+    "aquarium/aquarium-optimized/src/Program.cpp",
+    "aquarium/aquarium-optimized/src/Program.h",
+    "aquarium/aquarium-optimized/src/SeaweedModel.h",
+    "aquarium/aquarium-optimized/src/Texture.cpp",
+    "aquarium/aquarium-optimized/src/Texture.h",
+    "aquarium/aquarium-optimized/src/opengl/BufferGL.cpp",
+    "aquarium/aquarium-optimized/src/opengl/BufferGL.h",
+    "aquarium/aquarium-optimized/src/opengl/ContextGL.cpp",
+    "aquarium/aquarium-optimized/src/opengl/ContextGL.h",
+    "aquarium/aquarium-optimized/src/opengl/FishModelGL.cpp",
+    "aquarium/aquarium-optimized/src/opengl/FishModelGL.h",
+    "aquarium/aquarium-optimized/src/opengl/GenericModelGL.cpp",
+    "aquarium/aquarium-optimized/src/opengl/GenericModelGL.h",
+    "aquarium/aquarium-optimized/src/opengl/InnerModelGL.cpp",
+    "aquarium/aquarium-optimized/src/opengl/InnerModelGL.h",
+    "aquarium/aquarium-optimized/src/opengl/OutsideModelGL.cpp",
+    "aquarium/aquarium-optimized/src/opengl/OutsideModelGL.h",
+    "aquarium/aquarium-optimized/src/opengl/ProgramGL.cpp",
+    "aquarium/aquarium-optimized/src/opengl/ProgramGL.h",
+    "aquarium/aquarium-optimized/src/opengl/SeaweedModelGL.cpp",
+    "aquarium/aquarium-optimized/src/opengl/SeaweedModelGL.h",
+    "aquarium/aquarium-optimized/src/opengl/TextureGL.cpp",
+    "aquarium/aquarium-optimized/src/opengl/TextureGL.h",
+  ]
+
+  deps = [
+    "aquarium/thirdparty:stb",
+    "aquarium/thirdparty:glad",
+    "aquarium/thirdparty:glm",
+  ]
+
+  include_dirs = [
+    "aquarium/thirdparty/dawn/src",
+    "aquarium/thirdparty/glad/include",
+    "aquarium/thirdparty/rapidjson/include",
+    "aquarium/thirdparty/stb",
+  ]
+
+  defines = []
+
+  if (enable_dawn) {
+    defines += [ "ENABLE_DAWN_BACKEND" ]
+
+    sources += [
+      "aquarium/aquarium-optimized/src/dawn/BufferDawn.cpp",
+      "aquarium/aquarium-optimized/src/dawn/BufferDawn.h",
+      "aquarium/aquarium-optimized/src/dawn/ContextDawn.cpp",
+      "aquarium/aquarium-optimized/src/dawn/ContextDawn.h",
+      "aquarium/aquarium-optimized/src/dawn/FishModelDawn.cpp",
+      "aquarium/aquarium-optimized/src/dawn/FishModelDawn.h",
+      "aquarium/aquarium-optimized/src/dawn/GenericModelDawn.cpp",
+      "aquarium/aquarium-optimized/src/dawn/GenericModelDawn.h",
+      "aquarium/aquarium-optimized/src/dawn/InnerModelDawn.cpp",
+      "aquarium/aquarium-optimized/src/dawn/InnerModelDawn.h",
+      "aquarium/aquarium-optimized/src/dawn/OutsideModelDawn.cpp",
+      "aquarium/aquarium-optimized/src/dawn/OutsideModelDawn.h",
+      "aquarium/aquarium-optimized/src/dawn/ProgramDawn.cpp",
+      "aquarium/aquarium-optimized/src/dawn/ProgramDawn.h",
+      "aquarium/aquarium-optimized/src/dawn/SeaweedModelDawn.cpp",
+      "aquarium/aquarium-optimized/src/dawn/SeaweedModelDawn.h",
+      "aquarium/aquarium-optimized/src/dawn/TextureDawn.cpp",
+      "aquarium/aquarium-optimized/src/dawn/TextureDawn.h",
+    ]
+
+    deps += [
+      "aquarium/thirdparty/dawn:dawn_headers",
+      "aquarium/thirdparty/dawn:dawn_utils",
+      "aquarium/thirdparty/dawn:libdawn",
+      "aquarium/thirdparty/dawn:libdawn_native",
+      "aquarium/thirdparty/dawn/third_party/shaderc:libshaderc",
+    ]
+
+    include_dirs += [
+      "aquarium/thirdparty/dawn/third_party/glfw/include",
+      "aquarium/thirdparty/dawn/third_party/shaderc/libshaderc/include"
+    ]
+  } else {
+    deps += [ "aquarium/thirdparty:glfw" ]
+
+    include_dirs += [
+      "aquarium/thirdparty/glfw/include",
+    ]
+  }
+
+  cflags_cc = [
+    "-Wno-string-conversion"
+  ]
+}

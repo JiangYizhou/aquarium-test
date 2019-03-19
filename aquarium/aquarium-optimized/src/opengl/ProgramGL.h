@@ -29,12 +29,12 @@ class ProgramGL : public Program
 {
 public:
     ProgramGL() {}
-    ProgramGL(ContextGL *, string vId, string fId);
+    ProgramGL(ContextGL *, std::string vId, std::string fId);
     ~ProgramGL() override;
 
     void setProgram() override;
-    const GLuint getProgramId() const { return mProgramId; }
-    const GLuint getVAOId() { return mVAO; }
+    GLuint getProgramId() const { return mProgramId; }
+    GLuint getVAOId() { return mVAO; }
     void loadProgram();
 
   private:

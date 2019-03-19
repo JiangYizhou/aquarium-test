@@ -12,7 +12,7 @@ GenericModelGL::GenericModelGL(const ContextGL *context,
                                MODELGROUP type,
                                MODELNAME name,
                                bool blend)
-    : contextGL(contextGL), GenericModel(type, name, blend)
+    : GenericModel(type, name, blend), contextGL(context)
 {
     viewInverseUniform.first = aquarium->viewUniforms.viewInverse;
     lightWorldPosUniform.first = aquarium->lightWorldPositionUniform.lightWorldPos;

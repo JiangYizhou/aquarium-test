@@ -12,7 +12,7 @@ OutsideModelGL::OutsideModelGL(const ContextGL *context,
                                MODELGROUP type,
                                MODELNAME name,
                                bool blend)
-    : contextGL(contextGL), OutsideModel(type, name, blend)
+    : OutsideModel(type, name, blend), contextGL(context)
 {
     viewInverseUniform.first = aquarium->viewUniforms.viewInverse;
     lightWorldPosUniform.first = aquarium->lightWorldPositionUniform.lightWorldPos;

@@ -6,7 +6,7 @@
 // Texture.h: Define abstract Texture for Aquarium.
 
 #pragma once
-#ifndef  TEXTURE_H
+#ifndef TEXTURE_H
 #define TEXTURE_H 1
 
 #include <string>
@@ -17,7 +17,7 @@ class Texture
   public:
     virtual ~Texture(){};
     Texture() {}
-    Texture(std::string name, const std::vector<std::string> &urls, bool flip) : mName(name), mUrls(urls), mFlip(flip) {}
+    Texture(std::string name, const std::vector<std::string> &urls, bool flip) : mUrls(urls), mFlip(flip), mName(name) {}
     Texture(std::string name, const std::string &url, bool flip);
     std::string getName() { return mName; }
     virtual void loadTexture() = 0;

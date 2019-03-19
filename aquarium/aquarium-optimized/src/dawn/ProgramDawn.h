@@ -28,7 +28,7 @@ class ProgramDawn : public Program
 {
 public:
     ProgramDawn() {}
-    ProgramDawn(ContextDawn *context, string vId, string fId);
+    ProgramDawn(ContextDawn *context, std::string vId, std::string fId);
     ~ProgramDawn() override;
 
     void loadProgram();

@@ -11,8 +11,6 @@
 
 #include <vector>
 
-using namespace std;
-
 constexpr int NUM_FRAMES_TO_AVERAGE = 16;
 
 class FPSTimer
@@ -21,12 +19,12 @@ public:
   FPSTimer();
 
   void update(float elapsedTime);
-  const float getAverageFPS() const { return mAverageFPS; }
-  const float getInstantaneousFPS() const { return mInstantaneousFPS; }
+  float getAverageFPS() const { return mAverageFPS; }
+  float getInstantaneousFPS() const { return mInstantaneousFPS; }
 
 private:
   float mTotalTime;
-  vector<float> mTimeTable;
+  std::vector<float> mTimeTable;
   int mTimeTableCursor;
   float mInstantaneousFPS;
   float mAverageFPS;

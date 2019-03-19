@@ -21,13 +21,13 @@
 #else
 #include "glad/glad.h"
 #endif
-#include <stdio.h>
+#include <cstdio>
 #include <string>
 #include <vector>
 #include <iostream>
 #include <fstream>
-#include <stdlib.h>
-#include <string.h>
+#include <cstdlib>
+#include <cstring>
 #include "ProgramGL.h"
 #include <map>
 #include <regex>
@@ -35,10 +35,10 @@
 #include "../Texture.h"
 #include "../Buffer.h"
 
-ProgramGL::ProgramGL(ContextGL *context, string vId, string fId)
-    : mProgramId(0u),
-    context(context),
-    Program(vId, fId)
+ProgramGL::ProgramGL(ContextGL *context, std::string vId, std::string fId)
+    : Program(vId, fId),
+    mProgramId(0u),
+    context(context)
 {
     context->generateProgram(&mProgramId);
     context->generateVAO(&mVAO);
@@ -52,23 +52,23 @@ ProgramGL::~ProgramGL()
 
 void ProgramGL::loadProgram()
 {
-    ifstream VertexShaderStream(vId, ios::in);
+    std::ifstream VertexShaderStream(vId, std::ios::in);
     std::string VertexShaderCode((std::istreambuf_iterator<char>(VertexShaderStream)),
                                  std::istreambuf_iterator<char>());
     VertexShaderStream.close();
 
     // Read the Fragment Shader code from the file
-    ifstream FragmentShaderStream(fId, ios::in);
+    std::ifstream FragmentShaderStream(fId, std::ios::in);
     std::string FragmentShaderCode((std::istreambuf_iterator<char>(FragmentShaderStream)),
                                    std::istreambuf_iterator<char>());
     FragmentShaderStream.close();
 
-    const string fogUniforms =
+    const std::string fogUniforms =
         R"(uniform float fogPower;
         uniform float fogMult;
         uniform float fogOffset;
         uniform vec4 fogColor;)";
-    const string fogCode =
+    const std::string fogCode =
         R"(outColor = mix(outColor, vec4(fogColor.rgb, diffuseColor.a),
         clamp(pow((v_position.z / v_position.w), fogPower) * fogMult - fogOffset,0.0,1.0));)";
 
@@ -99,6 +99,9 @@ void ProgramGL::loadProgram()
 
     bool status = context->compileProgram(mProgramId, VertexShaderCode, FragmentShaderCode);
     ASSERT(status);
+    if (!status) {
+        std::cout << "Error occurs in compiling program!" << std::endl;
+    }
 }
 
 void ProgramGL::setProgram()

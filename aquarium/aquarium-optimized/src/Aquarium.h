@@ -5,19 +5,14 @@
 //
 // Aquarium.h: Define global variables, enums, constant variables and Class Aquarium.
 
-#pragma once
+
 #ifndef AQUARIUM_H
-#define AQUARIUM_H 1
+#define AQUARIUM_H
 
 #include <string>
 #include <unordered_map>
 
-#include "Context.h"
-#include "ContextFactory.h"
 #include "FPSTimer.h"
-#include "Model.h"
-#include "Program.h"
-#include "Texture.h"
 
 class ContextFactory;
 class Context;
@@ -32,11 +27,6 @@ const std::string slash = "\\";
 const std::string slash = "/";
 #include "math.h"
 #endif
-
-constexpr char *repoFolder     = "aquarium-optimized";
-constexpr char *sourceFolder   = "src";
-constexpr char *shaderFolder   = "shaders";
-constexpr char *resourceFolder = "assets";
 
 enum MODELNAME : short
 {
@@ -220,10 +210,10 @@ static Fish fishTable[] = {{"SmallFishA", MODELNAME::MODELSMALLFISHA, FISHENUM::
                             0.0f,          16.0f,
                             10.0f,         -1.0f,
                             0.5f,          true,
-                            0.04f,         0.0f,
-                            0.1f,          9.0f,
-                            0.3f,          0.3f,
-                            1000.0f},
+                            0.04f,         {0.0f,
+                            0.1f,          9.0f},
+                            {0.3f,          0.3f,
+                            1000.0f}},
                            {"BigFishB",    MODELNAME::MODELBIGFISHB,
                             FISHENUM::BIG, 0.5f,
                             0.5f,          45.0f,
@@ -231,10 +221,10 @@ static Fish fishTable[] = {{"SmallFishA", MODELNAME::MODELSMALLFISHA, FISHENUM::
                             0.0f,          16.0f,
                             10.0f,         -0.7f,
                             0.3f,          true,
-                            0.04f,         0.0f,
-                            -0.3f,         9.0f,
-                            0.3f,          0.3f,
-                            1000.0f}};
+                            0.04f,         {0.0f,
+                            -0.3f,         9.0f},
+                            {0.3f,          0.3f,
+                            1000.0f}} };
 
 constexpr float g_tailOffsetMult      = 1.0f;
 constexpr float g_endOfDome           = static_cast<float>(M_PI / 8);
@@ -384,7 +374,7 @@ class Aquarium
 
   private:
     void render();
-    unordered_map<std::string, MODELNAME> mModelEnumMap;
+    std::unordered_map<std::string, MODELNAME> mModelEnumMap;
     std::unordered_map<std::string, Texture *> mTextureMap;
     std::unordered_map<std::string, Program *> mProgramMap;
     Model *mAquariumModels[MODELNAME::MODELMAX];

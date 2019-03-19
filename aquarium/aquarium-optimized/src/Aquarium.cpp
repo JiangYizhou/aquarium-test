@@ -27,19 +27,25 @@
 
 #include "ASSERT.h"
 #include "Aquarium.h"
+#include "ContextFactory.h"
 #include "FishModel.h"
 #include "Matrix.h"
+#include "Program.h"
 #include "SeaweedModel.h"
+#include "Texture.h"
 #include "opengl/ContextGL.h"
 #include "rapidjson/document.h"
 #include "rapidjson/istreamwrapper.h"
 #include "rapidjson/stringbuffer.h"
 #include "rapidjson/writer.h"
 
+static const char *shaderFolder = "shaders";
+static const char *resourceFolder = "assets";
+
 Aquarium::Aquarium()
-    : mModelEnumMap(NULL),
-      mTextureMap(NULL),
-      mProgramMap(NULL),
+    : mModelEnumMap(),
+      mTextureMap(),
+      mProgramMap(),
       mAquariumModels(),
       context(nullptr),
       fpsTimer(),
@@ -189,23 +195,26 @@ void Aquarium::display()
 void Aquarium::updateUrls()
 {
     // Get path of current build.
-    char temp[200]; 
     #if defined(WIN32) || defined(_WIN32) || defined(__WIN32)
+    TCHAR temp[200];
     GetModuleFileName(NULL, temp, MAX_PATH);
-    mPath = std::string(temp);
+    std::wstring ws(temp);
+    mPath = std::string(ws.begin(), ws.end());
     size_t nPos = mPath.find_last_of(slash);
-    mPath = mPath.substr(0, nPos) + slash + ".." + slash + ".." + slash;
+    mPath = mPath.substr(0, nPos) + slash + ".." + slash + ".." + slash + "aquarium" + slash;
     #elif __APPLE__
+    char temp[200];
     uint32_t size = sizeof(temp);
     _NSGetExecutablePath(temp, &size);
     mPath             = std::string(temp);
     int nPos = mPath.find_last_of(slash);
-    mPath = mPath.substr(0, nPos) + slash + ".." + slash;
+    mPath = mPath.substr(0, nPos) + slash + ".." + slash + ".." + slash + "aquarium" + slash;
     #else
-    ssize_t count = readlink("/proc/self/exe", temp, sizeof(temp));
+    char temp[200];
+    readlink("/proc/self/exe", temp, sizeof(temp));
     mPath             = std::string(temp);
     int nPos = mPath.find_last_of(slash);
-    mPath = mPath.substr(0, nPos) + slash + ".." + slash;
+    mPath = mPath.substr(0, nPos) + slash + ".." + slash + ".." + slash + "aquarium" + slash;
     #endif
 }
 
@@ -214,7 +223,7 @@ void Aquarium::setUpSkyBox(std::vector<std::string> *skyUrls)
     for (const auto v : g_skyBoxUrls)
     {
         std::ostringstream url;
-        url << mPath << ".." << slash << resourceFolder << slash
+        url << mPath << resourceFolder << slash
         << v;
 
         skyUrls->push_back(url.str());
@@ -246,10 +255,10 @@ void Aquarium::setupModelEnumMap()
 void Aquarium::loadPlacement()
 {
     std::ostringstream oss;
-    oss << mPath << ".." << slash << resourceFolder << slash
+    oss << mPath <<  resourceFolder << slash
         << "PropPlacement.js";
     std::string proppath = oss.str();
-    std::ifstream PlacementStream(proppath, ios::in);
+    std::ifstream PlacementStream(proppath, std::ios::in);
     rapidjson::IStreamWrapper isPlacement(PlacementStream);
     rapidjson::Document document;
     document.ParseStream(isPlacement);
@@ -266,7 +275,7 @@ void Aquarium::loadPlacement()
         const rapidjson::Value &worldMatrix = objects[i]["worldMatrix"];
         ASSERT(worldMatrix.IsArray() && worldMatrix.Size() == 16);
 
-        vector<float> matrix;
+        std::vector<float> matrix;
         for (rapidjson::SizeType j = 0; j < worldMatrix.Size(); ++j)
         {
             matrix.push_back(worldMatrix[j].GetFloat());
@@ -293,16 +302,16 @@ void Aquarium::loadModels()
 void Aquarium::loadModel(const G_sceneInfo &info)
 {
     std::ostringstream oss;
-    oss << mPath << ".." << slash << resourceFolder << slash;
+    oss << mPath << resourceFolder << slash;
     std::string imagePath = oss.str();
     oss << info.namestr << ".js";
     std::string modelPath = oss.str();
     oss.str("");
-    oss << mPath << ".." << slash << shaderFolder << slash
+    oss << mPath << shaderFolder << slash
         << mBackendpath << slash << mShaderVersion << slash;
     std::string programPath = oss.str();
 
-    ifstream ModelStream(modelPath, ios::in);
+    std::ifstream ModelStream(modelPath, std::ios::in);
     rapidjson::IStreamWrapper is(ModelStream);
     rapidjson::Document document;
     document.ParseStream(is);
@@ -313,7 +322,7 @@ void Aquarium::loadModel(const G_sceneInfo &info)
     Model *model               = context->createModel(this, info.type, info.name, info.blend);
     mAquariumModels[info.name] = model;
 
-    for (auto &value : document["models"].GetArray())
+    for (auto &value : models.GetArray())
     {
         // set up textures
         const rapidjson::Value &textures = value["textures"];
@@ -430,21 +439,21 @@ void Aquarium::calculateFishCount()
             if (i == FISHENUM::BIG)
             {
                 int temp = mFishCount < g_numFishSmall ? 1 : 2;
-                numfloat = min(numLeft, temp);
+                numfloat = std::min(numLeft, temp);
             }
             else if (i == FISHENUM::MEDIUM)
             {
                 if (mFishCount < g_numFishMedium)
                 {
-                    numfloat = min(numLeft, mFishCount / 10);
+                    numfloat = std::min(numLeft, mFishCount / 10);
                 }
                 else if (mFishCount < g_numFishBig)
                 {
-                    numfloat = min(numLeft, g_numFishLeftSmall);
+                    numfloat = std::min(numLeft, g_numFishLeftSmall);
                 }
                 else
                 {
-                    numfloat = min(numLeft, g_numFishLeftBig);
+                    numfloat = std::min(numLeft, g_numFishLeftBig);
                 }
             }
             numLeft      = numLeft - numfloat;
@@ -480,7 +489,7 @@ void Aquarium::updateGlobalUniforms()
     fpsTimer.update(elapsedTime);
 
     std::string text =
-        "Aquarium FPS: " + to_string(static_cast<unsigned int>(fpsTimer.getAverageFPS()));
+        "Aquarium FPS: " + std::to_string(static_cast<unsigned int>(fpsTimer.getAverageFPS()));
     context->setWindowTitle(text);
 
     g.mclock += elapsedTime * g_speed;
@@ -546,6 +555,7 @@ void Aquarium::render()
     drawSeaweed();
 
     drawOutside();
+
 }
 
 void Aquarium::drawBackground()
@@ -588,7 +598,7 @@ void Aquarium::drawFishes()
         float fishSpeedRange  = fishInfo.speedRange;
         float fishTailSpeed   = fishInfo.tailSpeed * g_fishTailSpeed;
         float fishOffset      = g_fishOffset;
-        float fishClockSpeed  = g_fishSpeed;
+        //float fishClockSpeed  = g_fishSpeed;
         float fishHeight      = g_fishHeight + fishInfo.heightOffset;
         float fishHeightRange = g_fishHeightRange * fishInfo.heightRange;
         float fishXClock      = g_fishXClock;

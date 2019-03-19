@@ -5,15 +5,12 @@
 //
 // ContextGL.h: Defines the accessing to graphics API of OpenGL.
 
-#pragma once
 #ifndef ContextGL_H
 #define ContextGL_H 1
 
 #include <vector>
 
 #include "../Context.h"
-#include "BufferGL.h"
-#include "TextureGL.h"
 
 #ifdef EGL_EGL_PROTOTYPES
 #include <angle_gl.h>
@@ -26,6 +23,7 @@
 #else
 #include "glad/glad.h"
 #endif
+
 #include "GLFW/glfw3.h"
 
 class BufferGL;
@@ -72,8 +70,8 @@ class ContextGL : public Context
     void setProgram(unsigned int program);
     void deleteProgram(unsigned int *program);
     bool compileProgram(unsigned int programId,
-                        const string &VertexShaderCode,
-                        const string &FragmentShaderCode);
+                        const std::string &VertexShaderCode,
+                        const std::string &FragmentShaderCode);
     void bindVAO(unsigned int vao) const;
     void generateVAO(unsigned int *mVAO);
     void deleteVAO(unsigned int *mVAO);
@@ -94,17 +92,16 @@ class ContextGL : public Context
   private:
     void initState();
 
-#ifndef EGL_EGL_PROTOTYPES
-      GLFWwindow *mWindow;
-#else
-      EGLBoolean FindEGLConfig(EGLDisplay dpy, const EGLint *attrib_list, EGLConfig *config);
-      EGLContext createContext(EGLContext share) const;
+    GLFWwindow *mWindow;
 
-      GLFWwindow *mWindow;
-      EGLSurface mSurface;
-      EGLContext mContext;
-      EGLDisplay mDisplay;
-      EGLConfig mConfig;
+#ifdef EGL_EGL_PROTOTYPES
+    EGLBoolean FindEGLConfig(EGLDisplay dpy, const EGLint *attrib_list, EGLConfig *config);
+    EGLContext createContext(EGLContext share) const;
+
+    EGLSurface mSurface;
+    EGLContext mContext;
+    EGLDisplay mDisplay;
+    EGLConfig mConfig;
 #endif
 };
 

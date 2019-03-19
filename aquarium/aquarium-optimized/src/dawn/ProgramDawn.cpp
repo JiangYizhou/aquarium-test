@@ -8,11 +8,11 @@
 #include "ContextDawn.h"
 #include "../ASSERT.h"
 #include <fstream>
-#include <string.h>
+#include <cstring>
 #include <regex>
 
-ProgramDawn::ProgramDawn(ContextDawn *context, string vId, string fId)
-    : context(context), Program(vId, fId), vsModule(nullptr), fsModule(nullptr)
+ProgramDawn::ProgramDawn(ContextDawn *context, std::string vId, std::string fId)
+    : Program(vId, fId), vsModule(nullptr), fsModule(nullptr), context(context)
 {
 }
 
@@ -22,13 +22,13 @@ ProgramDawn::~ProgramDawn()
 
 void ProgramDawn::loadProgram()
 {
-    ifstream VertexShaderStream(vId, ios::in);
+    std::ifstream VertexShaderStream(vId, std::ios::in);
     std::string VertexShaderCode((std::istreambuf_iterator<char>(VertexShaderStream)),
         std::istreambuf_iterator<char>());
     VertexShaderStream.close();
 
     // Read the Fragment Shader code from the file
-    ifstream FragmentShaderStream(fId, ios::in);
+    std::ifstream FragmentShaderStream(fId, std::ios::in);
     std::string FragmentShaderCode((std::istreambuf_iterator<char>(FragmentShaderStream)),
         std::istreambuf_iterator<char>());
     FragmentShaderStream.close();

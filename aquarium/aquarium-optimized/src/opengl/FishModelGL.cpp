@@ -5,14 +5,16 @@
 //
 // FishModelGL.h: Implements fish model of OpenGL.
 
+#include "ContextGL.h"
 #include "FishModelGL.h"
+#include "ProgramGL.h"
 
 FishModelGL::FishModelGL(const ContextGL *contextGL,
                          Aquarium *aquarium,
                          MODELGROUP type,
                          MODELNAME name,
                          bool blend)
-    : contextGL(contextGL), FishModel(type, name, blend)
+    : FishModel(type, name, blend), contextGL(contextGL)
 {
     viewInverseUniform.first = aquarium->viewUniforms.viewInverse;
     lightWorldPosUniform.first = aquarium->lightWorldPositionUniform.lightWorldPos;

@@ -38,15 +38,15 @@ class BufferGL : public Buffer
              bool normalize);
     ~BufferGL() override;
 
-    const unsigned int getBuffer() const { return mBuf; }
-    const int getNumComponents() const { return mNumComponents; }
-    const int getTotalComponents() const { return mTotoalComponents; }
-    const int getNumberElements() const { return mNumElements; }
-    const unsigned int getType() const { return mType; }
-    const bool getNormalize() const { return mNormalize; }
-    const int getStride() const { return mStride; }
-    const void *getOffset() const { return mOffset; }
-    const unsigned int getTarget() const { return mTarget; }
+    unsigned int getBuffer() const { return mBuf; }
+    int getNumComponents() const { return mNumComponents; }
+    int getTotalComponents() const { return mTotoalComponents; }
+    int getNumberElements() const { return mNumElements; }
+    unsigned int getType() const { return mType; }
+    bool getNormalize() const { return mNormalize; }
+    int getStride() const { return mStride; }
+    void *getOffset() const { return mOffset; }
+    unsigned int getTarget() const { return mTarget; }
     void loadBuffer(const std::vector<float> &buf);
     void loadBuffer(const std::vector<unsigned short> &buf);
 

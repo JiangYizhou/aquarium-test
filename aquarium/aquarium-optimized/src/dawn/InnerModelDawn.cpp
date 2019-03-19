@@ -5,6 +5,8 @@
 //
 // InnerModelDawn.cpp: Implements inner model of Dawn.
 
+#include <cstring>
+
 #include "InnerModelDawn.h"
 
 InnerModelDawn::InnerModelDawn(const Context* context, Aquarium* aquarium, MODELGROUP type, MODELNAME name, bool blend)
@@ -74,10 +76,6 @@ void InnerModelDawn::init()
         &viewUniformPer, sizeof(ViewUniforms),
         dawn::BufferUsageBit::TransferDst | dawn::BufferUsageBit::Uniform);
 
-    std::initializer_list<dawn::Sampler> samplersInitializer = { reflectionTexture->getSampler(), skyboxTexture->getSampler() };
-    std::initializer_list<dawn::TextureView> textureViewsInitializer = { diffuseTexture->getTextureView(),
-        normalTexture->getTextureView(), reflectionTexture->getTextureView(), skyboxTexture->getTextureView() };
-
     bindGroupModel = contextDawn->makeBindGroup(groupLayoutModel, {
         { 0, innerBuffer, 0, sizeof(InnerUniforms) },
         { 1, reflectionTexture->getSampler() },
@@ -121,7 +119,7 @@ void InnerModelDawn::draw()
 
 void InnerModelDawn::updatePerInstanceUniforms(ViewUniforms* viewUniforms)
 {
-    memcpy(&viewUniformPer, viewUniforms, sizeof(ViewUniforms));
+    std::memcpy(&viewUniformPer, viewUniforms, sizeof(ViewUniforms));
 
     contextDawn->setBufferData(viewBuffer, 0, sizeof(ViewUniforms), &viewUniformPer);
 }

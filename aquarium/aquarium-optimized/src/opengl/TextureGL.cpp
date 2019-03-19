@@ -11,17 +11,17 @@
 
 // initializs texture 2d
 TextureGL::TextureGL(ContextGL *context, std::string name, std::string url)
-    : mTarget(GL_TEXTURE_2D),
+    : Texture(name, url, true),
+    mTarget(GL_TEXTURE_2D),
     mFormat(GL_RGBA),
-    context(context),
-    Texture(name, url, true)
+    context(context)
 {
     context->generateTexture(&mTextureId);
 }
 
 // initializs cube map
 TextureGL::TextureGL(ContextGL *context, std::string name, const std::vector<std::string> &urls)
-    : context(context), mTarget(GL_TEXTURE_CUBE_MAP), mFormat(GL_RGBA), Texture(name, urls, false)
+    : Texture(name, urls, false), mTarget(GL_TEXTURE_CUBE_MAP), mFormat(GL_RGBA), context(context)
 {
     ASSERT(urls.size() == 6);
     context->generateTexture(&mTextureId);

@@ -12,7 +12,6 @@
 #include <string>
 
 #include "Model.h"
-#include "Texture.h"
 
 class FishModel : public Model
 {
