@@ -8,21 +8,16 @@
 // Apply program for its model. Update uniforms, textures
 // and buffers for each frame.
 
-#pragma once
+
 #ifndef MODEL_H
 #define MODEL_H 1
 
-#include<stdio.h>
-#include<string.h>
+#include <cstdio>
+#include <cstring>
 #include <vector>
 
 #include "Aquarium.h"
-#include "Buffer.h"
-#include "Context.h"
-#include "Program.h"
-#include "Texture.h"
 
-class Aquarium;
 class Program;
 class Context;
 class Texture;
@@ -37,7 +32,7 @@ class Model
   public:
     Model();
     Model(MODELGROUP type, MODELNAME name, bool blend)
-        : mType(type), mName(name), mBlend(blend), mProgram(nullptr){};
+        : mProgram(nullptr), mBlend(blend), mName(name) {};
     virtual ~Model();
     virtual void preDraw() const     = 0;
     virtual void updatePerInstanceUniforms(ViewUniforms* viewUniforms) = 0;
@@ -56,7 +51,7 @@ class Model
     MODELNAME mName;
 
   private:
-    MODELGROUP mType;
+    //MODELGROUP mType;
 };
 
 #endif

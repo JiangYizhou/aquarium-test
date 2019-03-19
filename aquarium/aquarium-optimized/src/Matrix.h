@@ -314,7 +314,7 @@ void cameraLookAt(T *dst, const T *eye, const T *target, const T *up)
 }
 
 static long long randomSeed_;
-static void resetPseudoRandom()
+void resetPseudoRandom()
 {
     randomSeed_ = 0;
 }
@@ -344,11 +344,6 @@ void translation(T *dst, const T *v)
     dst[13] = v[1];
     dst[14] = v[2];
     dst[15] = 1;
-}
-
-static double random()
-{
-    return rand() / (double)RAND_MAX;
 }
 
 template <typename T>

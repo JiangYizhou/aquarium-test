@@ -1,0 +1,13 @@
+buildconfig = "//build/config/BUILDCONFIG.gn"
+
+default_args = {
+  clang_use_chrome_plugins = false
+}
+
+check_targets = [
+  # Everything in BUILD.gn
+  "//:*",
+
+  # Everything in third_party/BUILD.gn
+  "//third_party/:*",
+]

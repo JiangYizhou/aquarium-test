@@ -36,11 +36,11 @@ class TextureGL : public Texture
     TextureGL(ContextGL *context, std::string name, std::string url);
     TextureGL(ContextGL *context, std::string name, const std::vector<std::string> &urls);
 
-    const unsigned int getTextureId() const { return mTextureId; }
-    const unsigned int getTarget() const { return mTarget; }
+    unsigned int getTextureId() const { return mTextureId; }
+    unsigned int getTarget() const { return mTarget; }
     void setTextureId(unsigned int texId) { mTextureId = texId; }
 
-    void loadTexture();
+    void loadTexture() override;
 
   private:
 

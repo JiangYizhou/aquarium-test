@@ -7,11 +7,13 @@
 
 #include "Model.h"
 
+#include "Aquarium.h"
+#include "Buffer.h"
+
 Model::Model()
     : mProgram(nullptr),
-    mType(GROUPMAX),
-    mName(MODELMAX),
-    mBlend(false)
+      mBlend(false),
+      mName(MODELMAX)
 {
 }
 

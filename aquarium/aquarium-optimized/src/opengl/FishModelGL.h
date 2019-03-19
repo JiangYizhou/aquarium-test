@@ -5,15 +5,15 @@
 //
 // FishModelGL.h: Defines fish model of OpenGL.
 
-#pragma once
 #ifndef FishModelGL_H
 #define FishModelGL_H 1
 
 #include <string>
 
 #include "../FishModel.h"
-#include "ContextGL.h"
-#include "ProgramGL.h"
+
+class TextureGL;
+class BufferGL;
 
 class FishModelGL : public FishModel
 {

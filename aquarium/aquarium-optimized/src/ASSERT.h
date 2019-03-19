@@ -7,6 +7,8 @@
 #ifndef ASSERT_H
 #define ASSERT_H 1
 
+#include <cstdio>
+
 //TODO(yizhou) : replace this ASSERT by the code template of ANGLE or Chromium
 #ifndef NDEBUG
 #define	ASSERT(expression)				{	\

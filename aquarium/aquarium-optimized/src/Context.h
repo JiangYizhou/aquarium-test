@@ -10,14 +10,6 @@
 #define Context_H 1
 
 #include <string>
-
-#include "Aquarium.h"
-#include "Buffer.h"
-#include "Model.h"
-#include "Program.h"
-#include "Texture.h"
-
-#include <string>
 #include <vector>
 
 class Aquarium;
@@ -53,8 +45,8 @@ class Context
 
     virtual void preFrame() = 0;
 
-    const int getClientWidth() const { return mClientWidth; };
-    const int getclientHeight() const { return mClientHeight; };
+    int getClientWidth() const { return mClientWidth; };
+    int getclientHeight() const { return mClientHeight; };
 
     virtual Model *createModel(Aquarium *aquarium, MODELGROUP type, MODELNAME name, bool blend) = 0;
 

@@ -1,0 +1,3 @@
+shaderc_glslang_dir = "//aquarium/thirdparty/dawn/third_party/glslang"
+shaderc_spirv_tools_dir = "//aquarium/thirdparty/dawn/third_party/SPIRV-Tools"
+shaderc_spirv_cross_dir = "//aquarium/thirdparty/dawn/third_party/"

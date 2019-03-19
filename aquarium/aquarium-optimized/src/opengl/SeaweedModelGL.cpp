@@ -12,7 +12,7 @@ SeaweedModelGL::SeaweedModelGL(const ContextGL *context,
                                MODELGROUP type,
                                MODELNAME name,
                                bool blend)
-    : contextGL(contextGL), SeaweedModel(type, name, blend)
+    : SeaweedModel(type, name, blend), contextGL(context)
 {
     viewInverseUniform.first = aquarium->viewUniforms.viewInverse;
     lightWorldPosUniform.first = aquarium->lightWorldPositionUniform.lightWorldPos;

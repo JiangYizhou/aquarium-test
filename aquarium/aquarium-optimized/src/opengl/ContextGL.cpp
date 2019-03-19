@@ -469,6 +469,7 @@ Model *ContextGL::createModel(Aquarium *aquarium, MODELGROUP type, MODELNAME nam
 
 void ContextGL::preFrame()
 {
+    glClearColor(0.0f, 1.0f, 0.0f, 1.0f);
     glEnable(GL_DEPTH_TEST);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
@@ -601,8 +602,8 @@ void ContextGL::deleteProgram(unsigned int *program)
 }
 
 bool ContextGL::compileProgram(unsigned int programId,
-                               const string &VertexShaderCode,
-                               const string &FragmentShaderCode)
+                               const std::string &VertexShaderCode,
+                               const std::string &FragmentShaderCode)
 {
     // Create the shaders
     GLuint VertexShaderID   = glCreateShader(GL_VERTEX_SHADER);
@@ -621,7 +622,7 @@ bool ContextGL::compileProgram(unsigned int programId,
     if (!Result)
     {
         glGetShaderiv(VertexShaderID, GL_INFO_LOG_LENGTH, &InfoLogLength);
-        vector<char> VertexShaderErrorMessage(InfoLogLength);
+        std::vector<char> VertexShaderErrorMessage(InfoLogLength);
         glGetShaderInfoLog(VertexShaderID, InfoLogLength, NULL, &VertexShaderErrorMessage[0]);
         std::cout << stdout << &VertexShaderErrorMessage[0] << std::endl;
     }
@@ -636,7 +637,7 @@ bool ContextGL::compileProgram(unsigned int programId,
     if (!Result)
     {
         glGetShaderiv(FragmentShaderID, GL_INFO_LOG_LENGTH, &InfoLogLength);
-        vector<char> FragmentShaderErrorMessage(InfoLogLength);
+        std::vector<char> FragmentShaderErrorMessage(InfoLogLength);
         glGetShaderInfoLog(FragmentShaderID, InfoLogLength, NULL, &FragmentShaderErrorMessage[0]);
         std::cout << stdout << &FragmentShaderErrorMessage[0] << std::endl;
     }
@@ -653,7 +654,7 @@ bool ContextGL::compileProgram(unsigned int programId,
     if (!Result)
     {
         glGetProgramiv(programId, GL_INFO_LOG_LENGTH, &InfoLogLength);
-        vector<char> ProgramErrorMessage(max(InfoLogLength, int(1)));
+        std::vector<char> ProgramErrorMessage(std::max(InfoLogLength, int(1)));
         glGetProgramInfoLog(programId, InfoLogLength, NULL, &ProgramErrorMessage[0]);
         std::cout << stdout << &ProgramErrorMessage[0] << std::endl;
     }

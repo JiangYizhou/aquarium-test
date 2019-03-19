@@ -5,7 +5,7 @@
 //
 #include "ContextFactory.h"
 #include "opengl/ContextGL.h"
-#ifndef EGL_EGL_PROTOTYPES
+#ifdef ENABLE_DAWN_BACKEND
 #include "dawn/ContextDawn.h"
 #endif
 
@@ -26,7 +26,9 @@ Context *ContextFactory::createContext(std::string str)
     }
     else if (str == "dawn")
     {
+#ifdef ENABLE_DAWN_BACKEND
        context = new ContextDawn();
+#endif
     }
 
     return context;
