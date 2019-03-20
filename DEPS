@@ -16,27 +16,17 @@ deps = {
   'tools/clang': {
     'url': '{chromium_git}/chromium/src/tools/clang@1d879cee563167a2b18baffb096cf9e29f2f9376',
   },
-  'testing': {
-    'url': '{chromium_git}/chromium/src/testing@b07830f6905ce9e33034ad14820bc0a58b6e9e41',
-  },
-  'aquarium/thirdparty/googletest': {
-    'url': '{chromium_git}/external/github.com/google/googletest@5ec7f0c4a113e2f18ac2c6cc7df51ad6afc24081',
-  },
-
-  'aquarium/thirdparty/stb': {
+  'third_party/stb': {
     'url': '{github_git}/nothings/stb.git@c7110588a4d24c4bb5155c184fbb77dd90b3116e',
   },
-  'aquarium/thirdparty/glfw': {
+  'third_party/glfw': {
     'url': '{chromium_git}/external/github.com/glfw/glfw@2de2589f910b1a85905f425be4d32f33cec092df',
     'condition': 'dawn_standalone',
   },
-  'aquarium/thirdparty/glm': {
-    'url': '{github_git}/g-truc/glm.git@06f084063fd6d9aa2ef6904517650700ae47b63d',
-  },
-  'aquarium/thirdparty/rapidjson': {
+  'third_party/rapidjson': {
     'url': '{github_git}/Tencent/rapidjson.git',
   },
-  'aquarium/thirdparty/dawn': {
+  'third_party/dawn': {
     'url': '{dawn_git}/dawn.git@{dawn_revision}',
   },
 }
@@ -133,5 +123,5 @@ hooks = [
 recursedeps = [
   # buildtools provides clang_format, libc++, and libc++abi
   'buildtools',
-  'aquarium/thirdparty/dawn',
+  'third_party/dawn',
 ]

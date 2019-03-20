@@ -20,15 +20,14 @@ bld/
 [Oo]bj/
 
 .gclient_entries
-aquarium/thirdparty/dawn
-aquarium/thirdparty/glfw
-aquarium/thirdparty/rapidjson
-aquarium/thirdparty/stb
-aquarium/thirdparty/glm
-aquarium/thirdparty/googletest
+third_party/dawn
+third_party/glfw
+third_party/rapidjson
+third_party/stb
+third_party/llvm-build
 
+build_overrides/
 buildtools/
 out/
 testing/
-third_party/
 tools/
