@@ -201,20 +201,20 @@ void Aquarium::updateUrls()
     std::wstring ws(temp);
     mPath = std::string(ws.begin(), ws.end());
     size_t nPos = mPath.find_last_of(slash);
-    mPath = mPath.substr(0, nPos) + slash + ".." + slash + ".." + slash + "aquarium" + slash;
+    mPath = mPath.substr(0, nPos) + slash + ".." + slash + ".." + slash;
     #elif __APPLE__
     char temp[200];
     uint32_t size = sizeof(temp);
     _NSGetExecutablePath(temp, &size);
     mPath             = std::string(temp);
     int nPos = mPath.find_last_of(slash);
-    mPath = mPath.substr(0, nPos) + slash + ".." + slash + ".." + slash + "aquarium" + slash;
+    mPath = mPath.substr(0, nPos) + slash + ".." + slash + ".." + slash;
     #else
     char temp[200];
     readlink("/proc/self/exe", temp, sizeof(temp));
     mPath             = std::string(temp);
     int nPos = mPath.find_last_of(slash);
-    mPath = mPath.substr(0, nPos) + slash + ".." + slash + ".." + slash + "aquarium" + slash;
+    mPath = mPath.substr(0, nPos) + slash + ".." + slash + ".." + slash;
     #endif
 }
 

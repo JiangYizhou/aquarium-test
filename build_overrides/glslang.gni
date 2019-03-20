@@ -1,1 +1,1 @@
-glslang_spirv_tools_dir = "//aquarium/thirdparty/dawn/third_party/SPIRV-Tools"
+glslang_spirv_tools_dir = "//third_party/dawn/third_party/SPIRV-Tools"
