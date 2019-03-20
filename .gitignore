@@ -27,6 +27,7 @@ bld/
 .gclient_entries
 third_party/dawn
 third_party/glfw
+third_party/googletest
 third_party/rapidjson
 third_party/stb
 third_party/llvm-build
