@@ -11,7 +11,8 @@
 
 #include "../Context.h"
 
-#include "dawn/dawncpp.h"
+#include <dawn/dawncpp.h>
+#include <dawn_native/DawnNative.h>
 #include "utils/DawnHelpers.h"
 
 #include "GLFW/glfw3.h"
@@ -50,12 +51,10 @@ class ContextDawn : public Context
     void preFrame() override;
 
     Model *createModel(Aquarium* aquarium, MODELGROUP type, MODELNAME name, bool blend) override;
+    Buffer *createBuffer(int numComponents, std::vector<float> &buffer, bool isIndex) override;
     Buffer *createBuffer(int numComponents,
-        const std::vector<float> &buffer,
-        bool isIndex) override;
-    Buffer *createBuffer(int numComponents,
-        const std::vector<unsigned short> &buffer,
-        bool isIndex) override;
+                         std::vector<unsigned short> &buffer,
+                         bool isIndex) override;
 
     Program *createProgram(std::string vId, std::string fId) override;
 
@@ -91,8 +90,6 @@ class ContextDawn : public Context
     dawn::BindGroup makeBindGroup(
         const dawn::BindGroupLayout &layout,
         std::initializer_list<utils::BindingInitializationHelper> bindingsInitializer) const;
-    void GetNextRenderPassDescriptor(dawn::Texture *backbuffer,
-                                     dawn::RenderPassDescriptor *info) const;
 
     void initGeneralResources(Aquarium* aquarium) override;
     void updateWorldlUniforms(Aquarium* aquarium) override;
@@ -106,12 +103,12 @@ class ContextDawn : public Context
 
   private:
     GLFWwindow *mWindow;
+    std::unique_ptr<dawn_native::Instance> instance;
 
-    dawn::Device device;
     dawn::Queue queue;
     dawn::SwapChain swapchain;
-    dawn::CommandBufferBuilder commandBufferBuilder;
-    dawn::RenderPassDescriptor renderPassDescriptor;
+    dawn::CommandEncoder commandEncoder;
+    utils::ComboRenderPassDescriptor renderPassDescriptor;
 
     dawn::Texture mBackbuffer;
     dawn::TextureView mDepthStencilView;
@@ -122,6 +119,8 @@ class ContextDawn : public Context
     dawn::Buffer lightWorldPositionBuffer;
     dawn::Buffer lightBuffer;
     dawn::Buffer fogBuffer;
+
+    dawn::Device device;
 };
 
 #endif

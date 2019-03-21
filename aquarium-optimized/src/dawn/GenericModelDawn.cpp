@@ -174,10 +174,10 @@ void GenericModelDawn::draw()
 
     dawn::RenderPassEncoder pass = contextDawn->pass;
     pass.SetPipeline(pipeline);
-    pass.SetBindGroup(0, contextDawn->bindGroupGeneral);
-    pass.SetBindGroup(1, contextDawn->bindGroupWorld);
-    pass.SetBindGroup(2, bindGroupModel);
-    pass.SetBindGroup(3, bindGroupPer);
+    pass.SetBindGroup(0, contextDawn->bindGroupGeneral, 0, nullptr);
+    pass.SetBindGroup(1, contextDawn->bindGroupWorld, 0, nullptr);
+    pass.SetBindGroup(2, bindGroupModel, 0, nullptr);
+    pass.SetBindGroup(3, bindGroupPer, 0, nullptr);
     pass.SetVertexBuffers(0, 1, &positionBuffer->getBuffer(), vertexBufferOffsets);
     pass.SetVertexBuffers(1, 1, &normalBuffer->getBuffer(), vertexBufferOffsets);
     pass.SetVertexBuffers(2, 1, &texCoordBuffer->getBuffer(), vertexBufferOffsets);

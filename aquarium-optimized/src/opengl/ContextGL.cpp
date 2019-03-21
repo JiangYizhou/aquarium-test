@@ -345,7 +345,7 @@ void ContextGL::initState()
     glDepthMask(true);
 }
 
-Buffer *ContextGL::createBuffer(int numComponents, const std::vector<float> &buf, bool isIndex)
+Buffer *ContextGL::createBuffer(int numComponents, std::vector<float> &buf, bool isIndex)
 {
     BufferGL *buffer = new BufferGL(this, static_cast<int>(buf.size()), numComponents, isIndex, GL_FLOAT, false);
     buffer->loadBuffer(buf);
@@ -353,9 +353,7 @@ Buffer *ContextGL::createBuffer(int numComponents, const std::vector<float> &buf
     return buffer;
 }
 
-Buffer *ContextGL::createBuffer(int numComponents,
-                                const std::vector<unsigned short> &buf,
-                                bool isIndex)
+Buffer *ContextGL::createBuffer(int numComponents, std::vector<unsigned short> &buf, bool isIndex)
 {
     BufferGL *buffer =
         new BufferGL(this, static_cast<int>(buf.size()), numComponents, isIndex, GL_UNSIGNED_SHORT, true);

@@ -53,11 +53,9 @@ class ContextGL : public Context
     void setIndices(BufferGL *bufferGL) const;
     void drawElements(BufferGL *buffer) const;
 
+    Buffer *createBuffer(int numComponents, std::vector<float> &buffer, bool isIndex) override;
     Buffer *createBuffer(int numComponents,
-                         const std::vector<float> &buffer,
-                         bool isIndex) override;
-    Buffer *createBuffer(int numComponents,
-                         const std::vector<unsigned short> &buffer,
+                         std::vector<unsigned short> &buffer,
                          bool isIndex) override;
     void generateBuffer(unsigned int *buf);
     void deleteBuffer(unsigned int *buf);

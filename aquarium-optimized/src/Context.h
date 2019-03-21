@@ -30,12 +30,10 @@ class Context
     virtual ~Context() {};
     virtual Texture *createTexture(std::string name, std::string url)                      = 0;
     virtual Texture *createTexture(std::string name, const std::vector<std::string> &urls) = 0;
+    virtual Buffer *createBuffer(int numComponents, std::vector<float> &buffer, bool isIndex) = 0;
     virtual Buffer *createBuffer(int numComponents,
-                                 const std::vector<float> &buffer,
-                                 bool isIndex)                                             = 0;
-    virtual Buffer *createBuffer(int numComponents,
-                                 const std::vector<unsigned short> &buffer,
-                                 bool isIndex)                                             = 0;
+                                 std::vector<unsigned short> &buffer,
+                                 bool isIndex)                                                = 0;
     virtual Program *createProgram(std::string vId, std::string fId)                       = 0;
     virtual void setWindowTitle(const std::string &text)                                   = 0;
     virtual bool ShouldQuit()                                                              = 0;

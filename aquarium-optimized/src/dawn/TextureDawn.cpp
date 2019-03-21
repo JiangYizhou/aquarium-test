@@ -56,10 +56,10 @@ void TextureDawn::loadTexture()
         descriptor.size.width = mWidth;
         descriptor.size.height = mHeight;
         descriptor.size.depth = 1;
-        descriptor.arraySize = 6;
+        descriptor.arrayLayerCount = 6;
         descriptor.sampleCount = 1;
         descriptor.format = mFormat;
-        descriptor.levelCount = 1;
+        descriptor.mipLevelCount   = 1;
         descriptor.usage = dawn::TextureUsageBit::TransferDst | dawn::TextureUsageBit::Sampled;
         mTexture = context->createTexture(descriptor);
 
@@ -78,9 +78,9 @@ void TextureDawn::loadTexture()
         viewDescriptor.dimension = dawn::TextureViewDimension::Cube;
         viewDescriptor.format = mFormat;
         viewDescriptor.baseMipLevel = 0;
-        viewDescriptor.levelCount = 1;
+        viewDescriptor.mipLevelCount   = 1;
         viewDescriptor.baseArrayLayer = 0;
-        viewDescriptor.layerCount = 6;
+        viewDescriptor.arrayLayerCount = 6;
 
         mTextureView = mTexture.CreateTextureView(&viewDescriptor);
 
@@ -115,15 +115,16 @@ void TextureDawn::loadTexture()
         descriptor.size.width  = resizedWidth;
         descriptor.size.height = mHeight;
         descriptor.size.depth = 1;
-        descriptor.arraySize = 1;
+        descriptor.arrayLayerCount = 1;
         descriptor.sampleCount = 1;
         descriptor.format = mFormat;
-        descriptor.levelCount =
-            static_cast<uint32_t>(std::floor(static_cast<float>(std::log2(std::max(mWidth, mHeight))))) + 1;
+        descriptor.mipLevelCount   = static_cast<uint32_t>(std::floor(
+                                       static_cast<float>(std::log2(std::max(mWidth, mHeight))))) +
+                                   1;
         descriptor.usage = dawn::TextureUsageBit::TransferDst | dawn::TextureUsageBit::Sampled;
         mTexture = context->createTexture(descriptor);
 
-        for (unsigned int i = 0; i < descriptor.levelCount; ++i)
+        for (unsigned int i = 0; i < descriptor.mipLevelCount; ++i)
         {
             int height                 = mHeight >> i;
             int width                  = resizedWidth >> i;
@@ -145,10 +146,12 @@ void TextureDawn::loadTexture()
         viewDescriptor.dimension = dawn::TextureViewDimension::e2D;
         viewDescriptor.format = mFormat;
         viewDescriptor.baseMipLevel = 0;
-        viewDescriptor.levelCount =
-            static_cast<uint32_t>(std::floor(static_cast<float>(std::log2(std::max(mWidth, mHeight))))) + 1;
+        viewDescriptor.mipLevelCount =
+            static_cast<uint32_t>(
+                std::floor(static_cast<float>(std::log2(std::max(mWidth, mHeight))))) +
+            1;
         viewDescriptor.baseArrayLayer = 0;
-        viewDescriptor.layerCount = 1;
+        viewDescriptor.arrayLayerCount = 1;
 
         mTextureView = mTexture.CreateTextureView(&viewDescriptor);
 
