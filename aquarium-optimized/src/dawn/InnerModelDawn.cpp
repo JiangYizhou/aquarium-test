@@ -19,6 +19,19 @@ InnerModelDawn::InnerModelDawn(const Context* context, Aquarium* aquarium, MODEL
     innerUniforms.refractionFudge = 3.0f;
 }
 
+InnerModelDawn::~InnerModelDawn()
+{
+    inputState       = nullptr;
+    pipeline         = nullptr;
+    groupLayoutModel = nullptr;
+    groupLayoutPer   = nullptr;
+    pipelineLayout   = nullptr;
+    bindGroupModel   = nullptr;
+    bindGroupPer     = nullptr;
+    innerBuffer      = nullptr;
+    viewBuffer       = nullptr;
+}
+
 void InnerModelDawn::init()
 {
     programDawn = static_cast<ProgramDawn *>(mProgram);

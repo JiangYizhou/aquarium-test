@@ -24,6 +24,7 @@ class FishModelDawn : public FishModel
                   MODELGROUP type,
                   MODELNAME name,
                   bool blend);
+    ~FishModelDawn();
 
     void init() override;
     void preDraw() const override;

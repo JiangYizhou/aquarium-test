@@ -53,7 +53,26 @@ ContextDawn::ContextDawn()
 {
 }
 
-ContextDawn::~ContextDawn() {}
+ContextDawn::~ContextDawn()
+{
+    mDepthStencilView        = nullptr;
+    mBackbuffer              = nullptr;
+    mPipeline                = nullptr;
+    mBindGroup               = nullptr;
+    lightWorldPositionBuffer = nullptr;
+    lightBuffer              = nullptr;
+    fogBuffer                = nullptr;
+    pass                     = nullptr;
+    groupLayoutGeneral       = nullptr;
+    bindGroupGeneral         = nullptr;
+    groupLayoutWorld         = nullptr;
+    bindGroupWorld           = nullptr;
+    commandEncoder           = nullptr;
+    renderPassDescriptor     = {};
+    swapchain                = nullptr;
+    queue                    = nullptr;
+    device                   = nullptr;
+}
 
 bool ContextDawn::createContext(std::string backend, bool enableMSAA)
 {

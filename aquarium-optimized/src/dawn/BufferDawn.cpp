@@ -54,4 +54,7 @@ BufferDawn::BufferDawn(ContextDawn *context,
     mBuf = context->createBufferFromData(buffer.data(), sizeof(unsigned short) * static_cast<int>(buffer.size()), mUsageBit);
 }
 
-BufferDawn::~BufferDawn() {}
+BufferDawn::~BufferDawn()
+{
+    mBuf = nullptr;
+}

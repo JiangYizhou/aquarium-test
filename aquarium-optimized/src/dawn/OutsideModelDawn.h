@@ -20,6 +20,7 @@ class OutsideModelDawn : public OutsideModel
 {
 public:
     OutsideModelDawn(const Context* context, Aquarium* aquarium, MODELGROUP type, MODELNAME name, bool blend);
+    ~OutsideModelDawn();
 
     void init() override;
     void preDraw() const override;

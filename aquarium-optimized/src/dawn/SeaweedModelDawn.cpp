@@ -17,6 +17,20 @@ SeaweedModelDawn::SeaweedModelDawn(const Context* context, Aquarium* aquarium, M
     lightFactorUniforms.specularFactor = 1.0f;
 }
 
+SeaweedModelDawn::~SeaweedModelDawn()
+{
+    inputState        = nullptr;
+    pipeline          = nullptr;
+    groupLayoutModel  = nullptr;
+    groupLayoutPer    = nullptr;
+    pipelineLayout    = nullptr;
+    bindGroupModel    = nullptr;
+    bindGroupPer      = nullptr;
+    lightFactorBuffer = nullptr;
+    viewBuffer        = nullptr;
+    timeBuffer        = nullptr;
+}
+
 void SeaweedModelDawn::init()
 {
     programDawn = static_cast<ProgramDawn *>(mProgram);

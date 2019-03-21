@@ -18,6 +18,7 @@ class SeaweedModelDawn : public SeaweedModel
 {
   public:
     SeaweedModelDawn(const Context* context, Aquarium* aquarium, MODELGROUP type, MODELNAME name, bool blend);
+    ~SeaweedModelDawn();
 
     void init() override;
     void preDraw() const override;

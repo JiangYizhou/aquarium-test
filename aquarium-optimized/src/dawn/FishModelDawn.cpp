@@ -205,3 +205,18 @@ void FishModelDawn::updateFishPerUniforms(float x,
 
     instance++;
 }
+
+FishModelDawn::~FishModelDawn()
+{
+    inputState        = nullptr;
+    pipeline          = nullptr;
+    groupLayoutModel  = nullptr;
+    groupLayoutPer    = nullptr;
+    pipelineLayout    = nullptr;
+    bindGroupModel    = nullptr;
+    bindGroupPer      = nullptr;
+    fishVertexBuffer  = nullptr;
+    lightFactorBuffer = nullptr;
+    viewBuffer        = nullptr;
+    fishPersBuffer    = nullptr;
+}

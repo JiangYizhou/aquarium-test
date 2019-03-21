@@ -20,6 +20,19 @@ GenericModelDawn::GenericModelDawn(const Context *context,
     lightFactorUniforms.specularFactor = 1.0f;
 }
 
+GenericModelDawn::~GenericModelDawn()
+{
+    inputState        = nullptr;
+    pipeline          = nullptr;
+    groupLayoutModel  = nullptr;
+    groupLayoutPer    = nullptr;
+    pipelineLayout    = nullptr;
+    bindGroupModel    = nullptr;
+    bindGroupPer      = nullptr;
+    lightFactorBuffer = nullptr;
+    viewBuffer        = nullptr;
+}
+
 void GenericModelDawn::init()
 {
     programDawn = static_cast<ProgramDawn *>(mProgram);

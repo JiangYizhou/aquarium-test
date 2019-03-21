@@ -14,6 +14,19 @@ OutsideModelDawn::OutsideModelDawn(const Context* context, Aquarium* aquarium, M
     lightFactorUniforms.specularFactor = 0.0f;
 }
 
+OutsideModelDawn::~OutsideModelDawn()
+{
+    inputState        = nullptr;
+    pipeline          = nullptr;
+    groupLayoutModel  = nullptr;
+    groupLayoutPer    = nullptr;
+    pipelineLayout    = nullptr;
+    bindGroupModel    = nullptr;
+    bindGroupPer      = nullptr;
+    lightFactorBuffer = nullptr;
+    viewBuffer        = nullptr;
+}
+
 void OutsideModelDawn::init()
 {
     programDawn = static_cast<ProgramDawn *>(mProgram);

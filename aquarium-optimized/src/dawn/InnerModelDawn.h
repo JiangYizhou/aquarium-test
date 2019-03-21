@@ -18,6 +18,7 @@ class InnerModelDawn : public InnerModel
 {
   public:
     InnerModelDawn(const Context* context, Aquarium* aquarium, MODELGROUP type, MODELNAME name, bool blend);
+    ~InnerModelDawn();
 
     void init() override;
     void preDraw() const override;

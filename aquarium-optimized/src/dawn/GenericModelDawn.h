@@ -20,6 +20,7 @@ class GenericModelDawn : public GenericModel
 {
 public:
     GenericModelDawn(const Context* context, Aquarium* aquarium, MODELGROUP type, MODELNAME name, bool blend);
+    ~GenericModelDawn();
 
     void init() override;
     void preDraw() const override;
