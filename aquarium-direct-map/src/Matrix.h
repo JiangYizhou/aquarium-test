@@ -377,11 +377,6 @@ void translation(std::vector<T> &dst, const std::vector<T> &v)
     dst[15] = 1;
 }
 
-static double random()
-{
-    return rand() / (double)RAND_MAX;
-}
-
 template <typename T>
 void translate(std::vector<T> &m, const std::vector<T> &v)
 {

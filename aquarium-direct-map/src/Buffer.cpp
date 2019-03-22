@@ -12,36 +12,35 @@
 #include "ASSERT.h"
 
 Buffer::Buffer(AttribBuffer *attribBuffer, GLenum target)
-    : buf(0),
-    target(target),
-    numComponents_(attribBuffer->getNumComponents()),
-    numElements_(attribBuffer->getNumElements()),
-    totalComponents_(0),
-    type_(0),
-    normalize_(true),
-    stride_(0),
-    offset_(nullptr)
+    : mBuf(0),
+      mNumComponents(attribBuffer->getNumComponents()),
+      mNumElements(attribBuffer->getNumElements()),
+      mTotalComponents(0),
+      mType(0),
+      mNormalize(true),
+      mStride(0),
+      mOffset(nullptr)
 
 {
-    glGenBuffers(1, &buf);
+    glGenBuffers(1, &mBuf);
 
-    glBindBuffer(target, buf);
+    glBindBuffer(target, mBuf);
 
-    totalComponents_ = numComponents_ * numElements_;
+    mTotalComponents = mNumComponents * mNumElements;
 
     auto bufferFloat  = attribBuffer->getBufferFloat();
     auto bufferUShort = attribBuffer->getBufferUShort();
 
     if (attribBuffer->getType() == "Float32Array")
     {
-        type_      = GL_FLOAT;
-        normalize_ = false;
+        mType      = GL_FLOAT;
+        mNormalize = false;
         glBufferData(target, sizeof(GLfloat) * bufferFloat->size(), bufferFloat->data(),
                      GL_STATIC_DRAW);
     }
     else if (attribBuffer->getType() == "Uint16Array")
     {
-        type_ = GL_UNSIGNED_SHORT;
+        mType = GL_UNSIGNED_SHORT;
         glBufferData(target, sizeof(GLushort) * bufferUShort->size(), bufferUShort->data(),
                      GL_STATIC_DRAW);
     }
@@ -55,5 +54,5 @@ Buffer::Buffer(AttribBuffer *attribBuffer, GLenum target)
 
 Buffer::~Buffer()
 {
-    glDeleteBuffers(1, &buf);
+    glDeleteBuffers(1, &mBuf);
 }

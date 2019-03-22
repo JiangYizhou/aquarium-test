@@ -20,25 +20,24 @@ public:
   Buffer(AttribBuffer *array, GLenum target);
   ~Buffer();
 
-  const GLuint getBuffer() const { return buf; }
-  const int getNumComponents() const { return numComponents_; }
-  const int getNumElements() const { return numElements_; }
-  const int getTotalComponents() const { return totalComponents_; }
-  const GLenum getType() const { return type_; }
-  const bool getNormalize() const { return normalize_; }
-  const GLsizei getStride() const { return stride_; }
-  const void *getOffset() const { return offset_; }
+  GLuint getBuffer() const { return mBuf; }
+  int getNumComponents() const { return mNumComponents; }
+  int getNumElements() const { return mNumElements; }
+  int getTotalComponents() const { return mTotalComponents; }
+  GLenum getType() const { return mType; }
+  bool getNormalize() const { return mNormalize; }
+  GLsizei getStride() const { return mStride; }
+  void *getOffset() const { return mOffset; }
 
 private:
-  GLuint buf;
-  GLenum target;
-  int numComponents_;
-  int numElements_;
-  int totalComponents_;
-  GLenum type_;
-  bool normalize_;
-  GLsizei stride_;
-  void *offset_;
+  GLuint mBuf;
+  int mNumComponents;
+  int mNumElements;
+  int mTotalComponents;
+  GLenum mType;
+  bool mNormalize;
+  GLsizei mStride;
+  void *mOffset;
 };
 
 #endif // !BUFFER_H

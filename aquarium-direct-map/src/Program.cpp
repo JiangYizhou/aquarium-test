@@ -204,9 +204,8 @@ void Program::setUniform(const std::string &name, float v)
         return;
     }
     Uniform *uniform = uniforms[name];
-    GLenum type      = uniform->getType();
     GLint loc = uniform->getIndex();
-    ASSERT(type == GL_FLOAT);
+    ASSERT(uniform->getType() == GL_FLOAT);
     glUniform1f(loc, v);
 
     ASSERT(glGetError() == GL_NO_ERROR);
@@ -262,8 +261,7 @@ void Program::setUniform(const std::string &name, const Texture *texture)
     }
 
     Uniform *uniform = uniforms[name];
-    GLenum type      = uniform->getType();
-    ASSERT(type == GL_SAMPLER_2D || type == GL_SAMPLER_CUBE);
+    ASSERT(uniform->getType() == GL_SAMPLER_2D || uniform->getType() == GL_SAMPLER_CUBE);
     GLint loc = uniform->getIndex();
 
     glUniform1i(loc, textureUnits[name]);

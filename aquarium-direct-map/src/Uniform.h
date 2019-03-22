@@ -18,11 +18,11 @@ public:
   Uniform(){};
   Uniform(const std::string &name, GLenum type, int length, int size, GLint index);
 
-  const std::string &getName() const { return name; }
-  const GLenum getType() const { return type; }
-  const GLsizei getLength() const { return length; }
-  const GLsizei getSize() const { return size; }
-  const GLint getIndex() const { return index; }
+  std::string getName() const { return name; }
+  GLenum getType() const { return type; }
+  GLsizei getLength() const { return length; }
+  GLsizei getSize() const { return size; }
+  GLint getIndex() const { return index; }
 
 private:
   std::string name;

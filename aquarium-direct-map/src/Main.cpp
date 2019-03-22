@@ -47,7 +47,7 @@ int clientWidth;
 int clientHeight;
 
 // Get current path of the binary
-std::string path;
+std::string mPath;
 
 // The number of fish is passed from cmd args directly
 int g_numFish;
@@ -179,8 +179,7 @@ void initializeGlobalInfo()
 void LoadPlacement()
 {
     std::ostringstream oss;
-    oss << path << ".." << slash << resourceFolder << slash
-        << "PropPlacement.js";
+    oss << mPath << resourceFolder << slash << "PropPlacement.js";
     std::string proppath = oss.str();
     std::ifstream PlacementStream(proppath, std::ios::in);
     rapidjson::IStreamWrapper isPlacement(PlacementStream);
@@ -221,10 +220,10 @@ void LoadPlacement()
         }
 }
 
-Scene *loadScene(const std::string &name, std::string* opt_programIds, bool fog)
+Scene *loadScene(const std::string &name, std::string *opt_programIds)
 {
-    Scene *scene = new Scene(opt_programIds, fog);
-    scene->load(path, name);
+    Scene *scene = new Scene(opt_programIds);
+    scene->load(mPath, name);
     return scene;
 }
 
@@ -233,7 +232,7 @@ void LoadScenes()
 {
     for (auto &info : g_sceneInfo)
     {
-        g_scenes[info.name] = loadScene(info.name, info.program, info.fog);
+        g_scenes[info.name] = loadScene(info.name, info.program);
     }
 }
 
@@ -266,29 +265,26 @@ void onDestroy()
 void getCurrentPath()
 {
     // Get path of current build.
-    char temp[100];
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32)
+    TCHAR temp[200];
     GetModuleFileName(NULL, temp, MAX_PATH);
-    path = std::string(temp);
-    size_t nPos = path.find_last_of(slash);
-    std::ostringstream oss;
-    oss << path.substr(0, nPos) << slash << ".." << slash << ".." << slash;
-    path = oss.str();
+    std::wstring ws(temp);
+    mPath       = std::string(ws.begin(), ws.end());
+    size_t nPos = mPath.find_last_of(slash);
+    mPath       = mPath.substr(0, nPos) + slash + ".." + slash + ".." + slash;
 #elif __APPLE__
+    char temp[200];
     uint32_t size = sizeof(temp);
     _NSGetExecutablePath(temp, &size);
-    path = std::string(temp);
-    int nPos = path.find_last_of(slash);
-    std::ostringstream oss;
-    oss << path.substr(0, nPos) << slash << ".." << slash;
-    path = oss.str();
+    mPath    = std::string(temp);
+    int nPos = mPath.find_last_of(slash);
+    mPath    = mPath.substr(0, nPos) + slash + ".." + slash + ".." + slash;
 #else
-    ssize_t count = readlink("/proc/self/exe", temp, sizeof(temp));
-    path = std::string(temp);
-    int nPos = path.find_last_of(slash);
-    std::ostringstream oss;
-    oss << path.substr(0, nPos) << slash << ".." << slash;
-    path = oss.str();
+    char temp[200];
+    readlink("/proc/self/exe", temp, sizeof(temp));
+    mPath    = std::string(temp);
+    int nPos = mPath.find_last_of(slash);
+    mPath    = mPath.substr(0, nPos) + slash + ".." + slash + ".." + slash;
 #endif
 }
 
@@ -389,7 +385,7 @@ int main(int argc, char **argv) {
     {
         std::cout << "Failed to open GLFW window." << std::endl;
         glfwTerminate();
-        return false;
+        return -1;
     }
     glfwWindowHint(GLFW_DECORATED, GL_FALSE);
     glfwMakeContextCurrent(window);
@@ -600,7 +596,7 @@ void render() {
             float fishSpeedRange                 = fishInfo.speedRange;
             float fishTailSpeed                  = fishInfo.tailSpeed * f["fishTailSpeed"];
             float fishOffset                     = f["fishOffset"];
-            float fishClockSpeed                 = f["fishSpeed"];
+            // float fishClockSpeed                 = f["fishSpeed"];
             float fishHeight                     = f["fishHeight"] + fishInfo.heightOffset;
             float fishHeightRange                = f["fishHeightRange"] * fishInfo.heightRange;
             float fishXClock                     = f["fishXClock"];

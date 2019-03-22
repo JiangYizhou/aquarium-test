@@ -22,8 +22,8 @@ public:
   Texture(const std::string &url, bool flip);
   Texture(const std::vector<std::string> &urls);
 
-  const GLuint getTexture() const { return texture; }
-  const GLenum getTarget() const { return target; }
+  GLuint getTexture() const { return texture; }
+  GLenum getTarget() const { return target; }
   void setTexture(GLuint texId) { texture = texId; }
   bool loadImageBySTB(const std::string &filename, uint8_t **pixels);
   void DestroyImageData(uint8_t *pixels);

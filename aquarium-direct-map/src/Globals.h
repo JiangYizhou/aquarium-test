@@ -20,7 +20,7 @@
 #include "Scene.h"
 
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32) && !defined(__CYGWIN__)
-constexpr char* slash = "\\";
+const std::string slash = "\\";
 #define M_PI 3.141592653589793
 #else
 constexpr char* slash = "/";
@@ -219,10 +219,10 @@ struct FishConst
 
 static FishConst fishConst;
 
-constexpr char* repoFolder = "aquarium-native";
-constexpr char* sourceFolder = "src";
-constexpr char* shaderFolder = "shaders";
-constexpr char* shaderVersion = "opengl/450";
-constexpr char* resourceFolder = "assets";
+const std::string repoFolder     = "aquarium-native";
+const std::string sourceFolder   = "src";
+const std::string shaderFolder   = "shaders";
+const std::string shaderVersion  = "opengl/450";
+const std::string resourceFolder = "assets";
 
 #endif

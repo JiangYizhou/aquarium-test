@@ -21,7 +21,7 @@ class Scene {
 public:
   Scene() {}
   ~Scene();
-  Scene(std::string* opt_programIds, bool fog);
+  Scene(std::string *opt_programIds);
 
   void load(const std::string &path, const std::string &name);
   const std::vector<Model *> &getModels() const { return models; }
@@ -32,7 +32,6 @@ private:
   void setupSkybox(const std::string &path);
 
   std::string *programIds;
-  bool fog;
   std::string url;
   std::vector<Model *> models;
   std::unordered_map<std::string, Texture *> textureMap;

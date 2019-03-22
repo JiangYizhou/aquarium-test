@@ -26,14 +26,8 @@ std::vector<std::string> g_skyBoxUrls = {
     "GlobeOuter_EM_positive_x.jpg", "GlobeOuter_EM_negative_x.jpg", "GlobeOuter_EM_positive_y.jpg",
     "GlobeOuter_EM_negative_y.jpg", "GlobeOuter_EM_positive_z.jpg", "GlobeOuter_EM_negative_z.jpg" };
 
-
-Scene::Scene(std::string* opt_programIds, bool fog)
-    : programIds(opt_programIds),
-    fog(fog),
-    url(),
-    models(NULL),
-    textureMap(NULL),
-    arrayMap(NULL)
+Scene::Scene(std::string *opt_programIds)
+    : programIds(opt_programIds), url(), models(NULL), textureMap(NULL), arrayMap(NULL)
 {
 }
 
@@ -81,7 +75,7 @@ void Scene::setupSkybox(const std::string &path)
     for (auto &v : g_skyBoxUrls)
     {
         std::ostringstream url;
-        url << path << ".." << slash << resourceFolder << slash << v;
+        url << path << resourceFolder << slash << v;
 
         v = url.str();
     }
@@ -90,12 +84,12 @@ void Scene::setupSkybox(const std::string &path)
 void Scene::load(const std::string &path, const std::string &name)
 {
     std::ostringstream oss;
-    oss << path << ".." << slash << resourceFolder << slash;
+    oss << path << resourceFolder << slash;
     std::string imagePath = oss.str();
     oss << name << ".js";
     std::string modelPath = oss.str();
     oss.str("");
-    oss << path << ".." << slash << shaderFolder << slash << shaderVersion << slash;
+    oss << path << shaderFolder << slash << shaderVersion << slash;
     std::string programPath = oss.str();
 
     this->url    = modelPath;
@@ -119,7 +113,7 @@ void Scene::load(const std::string &path, const std::string &name)
 
             if (g_textureMap.find(image) == g_textureMap.end())
             {
-                g_textureMap[image] = new Texture(imagePath + slash + image, true);
+                g_textureMap[image] = new Texture(imagePath + image, true);
             }
 
             textureMap[name] = g_textureMap[image];

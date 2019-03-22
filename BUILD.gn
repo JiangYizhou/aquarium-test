@@ -114,3 +114,45 @@ executable("aquarium") {
     "-Wno-string-conversion"
   ]
 }
+
+executable("aquarium-direct-map") {
+  sources = [
+    "aquarium-direct-map/src/ASSERT.h",
+    "aquarium-direct-map/src/AttribBuffer.h",
+    "aquarium-direct-map/src/AttribBuffer.cpp",
+    "aquarium-direct-map/src/Buffer.h",
+    "aquarium-direct-map/src/Buffer.cpp",
+    "aquarium-direct-map/src/FPSTimer.h",
+    "aquarium-direct-map/src/FPSTimer.cpp",
+    "aquarium-direct-map/src/Globals.h",
+    "aquarium-direct-map/src/Main.cpp",
+    "aquarium-direct-map/src/Matrix.h",
+    "aquarium-direct-map/src/Model.h",
+    "aquarium-direct-map/src/Model.cpp",
+    "aquarium-direct-map/src/Program.h",
+    "aquarium-direct-map/src/Program.cpp",
+    "aquarium-direct-map/src/Scene.h",
+    "aquarium-direct-map/src/Scene.cpp",
+    "aquarium-direct-map/src/Texture.h",
+    "aquarium-direct-map/src/Texture.cpp",
+    "aquarium-direct-map/src/Uniform.h",
+    "aquarium-direct-map/src/Uniform.cpp",
+  ]
+  
+  deps = [
+    "third_party:stb",
+    "third_party:glad",
+    "third_party:glfw",
+  ]
+  
+  include_dirs = [
+    "third_party/glad/include",
+    "third_party/rapidjson/include",
+    "third_party/stb",
+    "third_party/glfw/include",
+  ]
+  
+  cflags_cc = [
+    "-Wno-string-conversion"
+  ]
+}
