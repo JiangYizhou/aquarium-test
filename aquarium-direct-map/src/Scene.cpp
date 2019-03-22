@@ -27,7 +27,7 @@ std::vector<std::string> g_skyBoxUrls = {
     "GlobeOuter_EM_negative_y.jpg", "GlobeOuter_EM_positive_z.jpg", "GlobeOuter_EM_negative_z.jpg" };
 
 Scene::Scene(std::string *opt_programIds)
-    : programIds(opt_programIds), url(), models(NULL), textureMap(NULL), arrayMap(NULL)
+    : programIds(opt_programIds), url(), models(), textureMap(), arrayMap()
 {
 }
 

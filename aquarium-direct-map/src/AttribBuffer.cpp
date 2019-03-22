@@ -13,7 +13,7 @@ AttribBuffer::AttribBuffer(int numComponents,
                            std::string opt_type)
     : type(opt_type),
     bufferFloat(buffer),
-    bufferUShort(NULL),
+    bufferUShort(),
     numComponents(numComponents),
     numElements(size / numComponents)
 {
@@ -24,7 +24,7 @@ AttribBuffer::AttribBuffer(int numComponents,
                            int size,
                            std::string opt_type)
     : type(opt_type),
-    bufferFloat(NULL),
+    bufferFloat(),
     bufferUShort(buffer),
     numComponents(numComponents),
     numElements(size / numComponents)

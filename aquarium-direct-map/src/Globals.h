@@ -23,7 +23,7 @@
 const std::string slash = "\\";
 #define M_PI 3.141592653589793
 #else
-constexpr char* slash = "/";
+const std::string slash = "/";
 #endif
 
 class Scene;

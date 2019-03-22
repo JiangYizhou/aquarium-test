@@ -17,10 +17,10 @@
 
 // initializs texture 2d
 Texture::Texture(const std::string &url, bool flip)
-    : urls(NULL),
+    : urls(),
     target(GL_TEXTURE_2D),
     texture(0u),
-    params(NULL),
+    params(),
     width(0),
     height(0),
     flip(flip)

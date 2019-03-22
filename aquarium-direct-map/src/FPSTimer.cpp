@@ -11,7 +11,7 @@
 
 FPSTimer::FPSTimer()
     : totalTime_(static_cast<float>(NUM_FRAMES_TO_AVERAGE)),
-    timeTable_(NULL),
+    timeTable_(),
     timeTableCursor_(0),
     instantaneousFPS(0.0f),
     averageFPS(0.0f)

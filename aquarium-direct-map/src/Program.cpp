@@ -19,9 +19,9 @@
 
 Program::Program(std::string vId, std::string fId)
     : program(0u),
-    attribLocs(NULL),
-    uniforms(NULL),
-    textureUnits(NULL)
+    attribLocs(),
+    uniforms(),
+    textureUnits()
 {
     createProgramFromTags(vId, fId);
     createSetters();

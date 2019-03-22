@@ -14,7 +14,7 @@
 Model::Model(Program *program_,
              std::unordered_map<std::string, AttribBuffer *> *arrays,
              std::unordered_map<std::string, Texture *> *textures)
-    : buffers(NULL),
+    : buffers(),
     textures(textures),
     program(program_),
     mode(GL_TRIANGLES)
