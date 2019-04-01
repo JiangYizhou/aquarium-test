@@ -61,69 +61,39 @@ Native Aquarium is a native implementation of [WebGL Aquarium](https://github.co
 </table>
 
 
-## Build OpenGL version
+## Build Aquarium by GN
 
-Native Aquarium uses cmake to build on Linux, macOS and Windows.
+Native Aquarium uses gn to build on Linux, macOS and Windows.
 ```sh
 # cd the repo
-cd aquarium-optimized
+cd aquarium-test
 
-# get submodules
-git submodule init && git submodule update
-
-# make build directory
-mkdir build && cd build
-
-# build on Windows
-cmake -G "Visual Studio 15 2017 Win64" ..
-open build/Aquarium.sln using visual studio, set Aquarium as StartUp project and build
-
-# build on Linux or macOS
-cmake ..
-make
-```
-
-## Build Dawn version
-First build dawn by gn, then link libs to Aquarium and build by cmake.
-```sh
-# cd the repo
-cd aquarium-optimized
-
-# get submodules
-git submodule init && git submodule update
-
-#build dawn
-#If you want to enable opengl backend of dawn, please add DAWN_ENABLE_BACKEND_OPENGL to args.gn
-cd thirdparty/dawn
-cp scripts/standalone.gclient .gclient
+# download thirdparty
 gclient sync
-gn gen out/Debug --args="is_debug=true is_clang=false"
-ninja -C out/Debug CppHelloTriangle
-gn gen out/Release --args="is_debug=false is_clang=false"
-ninja -C out/Release CppHelloTriangle
-```
-#build aquarium
-```sh
-# make build directory
-mkdir build && cd build
 
-# build on Windows
-# Change Runtime Library in project properties to MT if dawn libs can't be linked
-cmake -G "Visual Studio 15 2017 Win64" .. -Dangle=false -Ddawn=true
-open build/Aquarium.sln using visual studio, set Aquarium as StartUp project and build
-copy libdawn.dll, libdawn_native.dll, libdawn_wire.dll, libshaderc.dll to folder build
+# Build on Windows
+# To build release version, --args="is_debug=false"
+gn gen out/build --ide=vs
+open out/build/all.sln using visual studio.
+
+# The project aquarium is the optimized version and aquarium-direct-map is the direct map version.
+build aquarium by vs
 
 # build on Linux or macOS
-cmake .. -Dangle=false -Ddawn=true
-make
+gn gen out/Release --args="is_debug=false"
+ninja -C out/Release aquarium
+ninja -C out/Release aquarium-direct-map
 
-#build on macOS by xcode
-#The resource path need one more "../", please revise in Aquarium::updateUrls
-cmake -G xcode .. -Dangle=false -Ddawn=true
-build project by xcode
+# build on macOS by xcode
+# To build release version, --args="is_debug=false"
+gn gen out/build --ide=xcode
+# The project aquarium is the optimized version and aquarium-direct-map is the direct map version.
+build aquarium by xcode
 ```
 
 ## Build Angle version
+TODO: Replace cmake build by gn
+
 First build angle by gn, then link libs to Aquarium and build by cmake.
 ```sh
 # cd the repo
@@ -132,7 +102,7 @@ cd aquarium-optimized
 # get submodules
 git submodule init && git submodule update
 
-#build dawn
+#build angle
 cd thirdparty/angle
 gclient sync
 gn gen out/Debug --args="is_debug=true is_clang=false"
