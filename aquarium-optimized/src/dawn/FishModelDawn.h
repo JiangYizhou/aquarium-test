@@ -31,9 +31,6 @@ class FishModelDawn : public FishModel
     void draw() override;
 
     void updatePerInstanceUniforms(ViewUniforms *viewUniforms) override;
-    void updateFishCommonUniforms(float fishLength,
-                                  float fishBendAmount,
-                                  float fishWaveLength) override;
     void updateFishPerUniforms(float x,
                                float y,
                                float z,

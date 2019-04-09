@@ -30,6 +30,11 @@ FishModelGL::FishModelGL(const ContextGL *contextGL,
 
     viewProjectionUniform.first = aquarium->viewUniforms.viewProjection;
     scaleUniform.first = 1;
+
+    const Fish &fishInfo              = fishTable[name - MODELNAME::MODELSMALLFISHA];
+    fishLengthUniform.first     = fishInfo.fishLength;
+    fishBendAmountUniform.first = fishInfo.fishBendAmount;
+    fishWaveLengthUniform.first = fishInfo.fishWaveLength;
 }
 
 void FishModelGL::init()
@@ -149,14 +154,7 @@ void FishModelGL::updatePerInstanceUniforms(ViewUniforms *viewUniforms)
     contextGL->setUniform(worldPositionUniform.second, worldPositionUniform.first, GL_FLOAT_VEC3);
     contextGL->setUniform(nextPositionUniform.second, nextPositionUniform.first, GL_FLOAT_VEC3);
 }
-void FishModelGL::updateFishCommonUniforms(float fishLength,
-                                           float fishBendAmount,
-                                           float fishWaveLength)
-{
-    fishLengthUniform.first     = fishLength;
-    fishBendAmountUniform.first = fishBendAmount;
-    fishWaveLengthUniform.first = fishWaveLength;
-}
+
 void FishModelGL::updateFishPerUniforms(float x,
                                         float y,
                                         float z,
