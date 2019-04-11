@@ -13,11 +13,9 @@ InnerModelDawn::InnerModelDawn(const Context* context, Aquarium* aquarium, MODEL
     : InnerModel(type, name, blend)
 {
     contextDawn = static_cast<const ContextDawn*>(context);
-
-    innerUniforms.eta = 1.0f;
-    innerUniforms.tankColorFudge = 0.796f;
-    innerUniforms.refractionFudge = 3.0f;
 }
+
+InnerModelDawn::InnerUniforms InnerModelDawn::innerUniforms = {1.0f, 0.796f, 3.0f};
 
 InnerModelDawn::~InnerModelDawn()
 {

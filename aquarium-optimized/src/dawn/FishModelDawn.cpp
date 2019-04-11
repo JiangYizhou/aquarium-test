@@ -17,14 +17,13 @@ FishModelDawn::FishModelDawn(const Context *context,
 {
     contextDawn = static_cast<const ContextDawn *>(context);
 
-    lightFactorUniforms.shininess      = 5.0f;
-    lightFactorUniforms.specularFactor = 0.3f;
-
     const Fish &fishInfo = fishTable[name - MODELNAME::MODELSMALLFISHA];
     fishVertexUniforms.fishLength     = fishInfo.fishLength;
     fishVertexUniforms.fishBendAmount = fishInfo.fishBendAmount;
     fishVertexUniforms.fishWaveLength = fishInfo.fishWaveLength;
 }
+
+FishModelDawn::LightFactorUniforms FishModelDawn::lightFactorUniforms = {5.0f, 0.3f};
 
 void FishModelDawn::init()
 {

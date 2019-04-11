@@ -43,7 +43,7 @@ class SeaweedModelDawn : public SeaweedModel
     {
         float shininess;
         float specularFactor;
-    } lightFactorUniforms;
+    } static lightFactorUniforms;
 
     struct SeaweedPer
     {

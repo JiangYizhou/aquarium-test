@@ -45,7 +45,7 @@ public:
     {
         float shininess;
         float specularFactor;
-    } lightFactorUniforms;
+    } static lightFactorUniforms;
 
     ViewUniforms viewUniformPer;
 

@@ -12,10 +12,10 @@ SeaweedModelDawn::SeaweedModelDawn(const Context* context, Aquarium* aquarium, M
 {
     contextDawn = static_cast<const ContextDawn*>(context);
     mAquarium   = aquarium;
-
-    lightFactorUniforms.shininess = 50.0f;
-    lightFactorUniforms.specularFactor = 1.0f;
 }
+
+
+SeaweedModelDawn::LightFactorUniforms SeaweedModelDawn::lightFactorUniforms = {50.0f, 1.0f};
 
 SeaweedModelDawn::~SeaweedModelDawn()
 {

@@ -15,10 +15,9 @@ GenericModelDawn::GenericModelDawn(const Context *context,
     : GenericModel(type, name, blend), instance(0)
 {
     contextDawn = static_cast<const ContextDawn *>(context);
-
-    lightFactorUniforms.shininess      = 50.0f;
-    lightFactorUniforms.specularFactor = 1.0f;
 }
+
+GenericModelDawn::LightFactorUniforms GenericModelDawn::lightFactorUniforms = {50.0f, 1.0f};
 
 GenericModelDawn::~GenericModelDawn()
 {

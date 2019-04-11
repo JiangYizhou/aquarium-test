@@ -51,7 +51,7 @@ class FishModelDawn : public FishModel
     {
         float shininess;
         float specularFactor;
-    } lightFactorUniforms;
+    } static lightFactorUniforms;
 
     struct FishPer
     {

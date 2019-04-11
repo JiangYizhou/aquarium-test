@@ -9,10 +9,9 @@ OutsideModelDawn::OutsideModelDawn(const Context* context, Aquarium* aquarium, M
     : OutsideModel(type, name, blend)
 {
     contextDawn = static_cast<const ContextDawn*>(context);
-
-    lightFactorUniforms.shininess = 50.0f;
-    lightFactorUniforms.specularFactor = 0.0f;
 }
+
+OutsideModelDawn::LightFactorUniforms OutsideModelDawn::lightFactorUniforms = {50.0f, 0.0f};
 
 OutsideModelDawn::~OutsideModelDawn()
 {
