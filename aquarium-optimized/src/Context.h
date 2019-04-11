@@ -25,9 +25,9 @@ struct Global;
 class Context
 {
   public:
-    Context(){};
+    Context(){}
     virtual bool createContext(std::string backend, bool enableMSAA) = 0;
-    virtual ~Context() {};
+    virtual ~Context() {}
     virtual Texture *createTexture(std::string name, std::string url)                      = 0;
     virtual Texture *createTexture(std::string name, const std::vector<std::string> &urls) = 0;
     virtual Buffer *createBuffer(int numComponents, std::vector<float> &buffer, bool isIndex) = 0;
@@ -43,8 +43,8 @@ class Context
 
     virtual void preFrame() = 0;
 
-    int getClientWidth() const { return mClientWidth; };
-    int getclientHeight() const { return mClientHeight; };
+    int getClientWidth() const { return mClientWidth; }
+    int getclientHeight() const { return mClientHeight; }
 
     virtual Model *createModel(Aquarium *aquarium, MODELGROUP type, MODELNAME name, bool blend) = 0;
 

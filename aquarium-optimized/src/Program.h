@@ -16,12 +16,12 @@ enum UNIFORMNAME : short;
 class Program
 {
   public:
-    Program(){};
+    Program(){}
     Program(std::string vertexShader, std::string fragmentShader)
         : vId(vertexShader), fId(fragmentShader)
     {
     }
-    virtual ~Program(){};
+    virtual ~Program(){}
     virtual void setProgram();
 
   protected:
