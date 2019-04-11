@@ -19,6 +19,11 @@ FishModelDawn::FishModelDawn(const Context *context,
 
     lightFactorUniforms.shininess      = 5.0f;
     lightFactorUniforms.specularFactor = 0.3f;
+
+    const Fish &fishInfo = fishTable[name - MODELNAME::MODELSMALLFISHA];
+    fishVertexUniforms.fishLength     = fishInfo.fishLength;
+    fishVertexUniforms.fishBendAmount = fishInfo.fishBendAmount;
+    fishVertexUniforms.fishWaveLength = fishInfo.fishWaveLength;
 }
 
 void FishModelDawn::init()
@@ -138,12 +143,12 @@ void FishModelDawn::init()
 
     contextDawn->setBufferData(lightFactorBuffer, 0, sizeof(LightFactorUniforms),
                                &lightFactorUniforms);
+    contextDawn->setBufferData(fishVertexBuffer, 0, sizeof(FishVertexUniforms),
+                               &fishVertexUniforms);
 }
 
 void FishModelDawn::preDraw() const
 {
-    contextDawn->setBufferData(fishVertexBuffer, 0, sizeof(FishVertexUniforms),
-                               &fishVertexUniforms);   
     contextDawn->setBufferData(viewBuffer, 0, sizeof(ViewUniforms), &viewUniformPer);
 }
 
@@ -174,15 +179,6 @@ void FishModelDawn::draw()
 void FishModelDawn::updatePerInstanceUniforms(ViewUniforms *viewUniforms)
 {
     memcpy(&viewUniformPer, viewUniforms, sizeof(ViewUniforms));
-}
-
-void FishModelDawn::updateFishCommonUniforms(float fishLength,
-                                             float fishBendAmount,
-                                             float fishWaveLength)
-{
-    fishVertexUniforms.fishLength     = fishLength;
-    fishVertexUniforms.fishBendAmount = fishBendAmount;
-    fishVertexUniforms.fishWaveLength = fishWaveLength;
 }
 
 void FishModelDawn::updateFishPerUniforms(float x,
