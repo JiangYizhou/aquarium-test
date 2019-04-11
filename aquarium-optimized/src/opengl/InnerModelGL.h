@@ -18,13 +18,13 @@ class InnerModelGL : public InnerModel
   public:
     InnerModelGL(const ContextGL *context, Aquarium *aquarium, MODELGROUP type, MODELNAME name, bool blend);
     void preDraw() const override;
-    void updatePerInstanceUniforms(ViewUniforms *viewUniforms) override;
+    void updatePerInstanceUniforms(WorldUniforms *WorldUniforms) override;
     void init() override;
     void draw() override;
 
     std::pair<float *, int> worldViewProjectionUniform;
     std::pair<float *, int> worldUniform;
-    // std::pair<float*, int> worldInverseUniform;
+    std::pair<float*, int> worldInverseUniform;
     std::pair<float *, int> worldInverseTransposeUniform;
 
     std::pair<float *, int> viewInverseUniform;

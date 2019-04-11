@@ -23,7 +23,7 @@ class InnerModelDawn : public InnerModel
     void init() override;
     void preDraw() const override;
     void draw() override;
-    void updatePerInstanceUniforms(ViewUniforms *viewUniforms) override;
+    void updatePerInstanceUniforms(WorldUniforms *WorldUniforms) override;
 
     struct InnerUniforms
     {
@@ -33,7 +33,7 @@ class InnerModelDawn : public InnerModel
         float padding;
     } innerUniforms;
 
-    ViewUniforms viewUniformPer;
+    WorldUniforms worldUniformPer;
 
     TextureDawn *diffuseTexture;
     TextureDawn *normalTexture;

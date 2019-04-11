@@ -112,9 +112,6 @@ void FishModelDawn::init()
     lightFactorBuffer = contextDawn->createBufferFromData(
         &lightFactorUniforms, sizeof(LightFactorUniforms),
         dawn::BufferUsageBit::TransferDst | dawn::BufferUsageBit::Uniform);
-    viewBuffer = contextDawn->createBufferFromData(
-        &viewUniformPer, sizeof(ViewUniforms),
-        dawn::BufferUsageBit::TransferDst | dawn::BufferUsageBit::Uniform);
 
     // Fish models includes small, medium and big. Some of them contains reflection and skybox
     // texture, but some doesn't.
@@ -140,11 +137,6 @@ void FishModelDawn::init()
                                {4, normalTexture->getTextureView()}});
     }
 
-    bindGroupPer =
-        contextDawn->makeBindGroup(groupLayoutPer, {
-                                                       {0, viewBuffer, 0, sizeof(ViewUniforms)},
-                                                   });
-
     contextDawn->setBufferData(lightFactorBuffer, 0, sizeof(LightFactorUniforms),
                                &lightFactorUniforms);
     contextDawn->setBufferData(fishVertexBuffer, 0, sizeof(FishVertexUniforms),
@@ -153,7 +145,6 @@ void FishModelDawn::init()
 
 void FishModelDawn::preDraw() const
 {
-    contextDawn->setBufferData(viewBuffer, 0, sizeof(ViewUniforms), &viewUniformPer);
 }
 
 void FishModelDawn::draw()
@@ -167,7 +158,6 @@ void FishModelDawn::draw()
     pass.SetBindGroup(0, contextDawn->bindGroupGeneral, 0, nullptr);
     pass.SetBindGroup(1, contextDawn->bindGroupWorld, 0, nullptr);
     pass.SetBindGroup(2, bindGroupModel, 0, nullptr);
-    pass.SetBindGroup(3, bindGroupPer, 0, nullptr);
     pass.SetVertexBuffers(0, 1, &positionBuffer->getBuffer(), vertexBufferOffsets);
     pass.SetVertexBuffers(1, 1, &normalBuffer->getBuffer(), vertexBufferOffsets);
     pass.SetVertexBuffers(2, 1, &texCoordBuffer->getBuffer(), vertexBufferOffsets);
@@ -180,9 +170,8 @@ void FishModelDawn::draw()
     instance = 0;
 }
 
-void FishModelDawn::updatePerInstanceUniforms(ViewUniforms *viewUniforms)
+void FishModelDawn::updatePerInstanceUniforms(WorldUniforms *worldUniforms)
 {
-    memcpy(&viewUniformPer, viewUniforms, sizeof(ViewUniforms));
 }
 
 void FishModelDawn::updateFishPerUniforms(float x,
@@ -217,6 +206,5 @@ FishModelDawn::~FishModelDawn()
     bindGroupPer      = nullptr;
     fishVertexBuffer  = nullptr;
     lightFactorBuffer = nullptr;
-    viewBuffer        = nullptr;
     fishPersBuffer    = nullptr;
 }

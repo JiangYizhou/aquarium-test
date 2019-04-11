@@ -20,7 +20,7 @@ class FishModelGL : public FishModel
   public:
     FishModelGL(const ContextGL *context, Aquarium *aquarium, MODELGROUP type, MODELNAME name, bool blend);
     void preDraw() const override;
-    void updatePerInstanceUniforms(ViewUniforms *viewUniforms) override;
+    void updatePerInstanceUniforms(WorldUniforms *worldUniforms) override;
 
     void init() override;
     void draw() override;

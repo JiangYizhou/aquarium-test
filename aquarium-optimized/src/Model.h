@@ -25,7 +25,7 @@ class Buffer;
 
 enum MODELGROUP : short;
 enum MODELNAME : short;
-struct ViewUniforms;
+struct WorldUniforms;
 
 class Model
 {
@@ -35,7 +35,7 @@ class Model
         : mProgram(nullptr), mBlend(blend), mName(name) {}
     virtual ~Model();
     virtual void preDraw() const     = 0;
-    virtual void updatePerInstanceUniforms(ViewUniforms* viewUniforms) = 0;
+    virtual void updatePerInstanceUniforms(WorldUniforms* worldUniforms) = 0;
     virtual void draw() = 0;
 
     void setProgram(Program *program);

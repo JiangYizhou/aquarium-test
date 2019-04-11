@@ -16,7 +16,7 @@ FishModelGL::FishModelGL(const ContextGL *contextGL,
                          bool blend)
     : FishModel(type, name, blend), contextGL(contextGL)
 {
-    viewInverseUniform.first = aquarium->viewUniforms.viewInverse;
+    viewInverseUniform.first = aquarium->lightWorldPositionUniform.viewInverse;
     lightWorldPosUniform.first = aquarium->lightWorldPositionUniform.lightWorldPos;
     lightColorUniform.first = aquarium->lightUniforms.lightColor;
     specularUniform.first = aquarium->lightUniforms.specular;
@@ -28,7 +28,7 @@ FishModelGL::FishModelGL(const ContextGL *contextGL,
     fogOffsetUniform.first = g_fogOffset;
     fogColorUniform.first = aquarium->fogUniforms.fogColor;
 
-    viewProjectionUniform.first = aquarium->viewUniforms.viewProjection;
+    viewProjectionUniform.first = aquarium->lightWorldPositionUniform.viewProjection;
     scaleUniform.first = 1;
 
     const Fish &fishInfo              = fishTable[name - MODELNAME::MODELSMALLFISHA];
@@ -147,7 +147,7 @@ void FishModelGL::preDraw() const
     }
 }
 
-void FishModelGL::updatePerInstanceUniforms(ViewUniforms *viewUniforms)
+void FishModelGL::updatePerInstanceUniforms(WorldUniforms *WorldUniforms)
 {
     contextGL->setUniform(scaleUniform.second, &scaleUniform.first, GL_FLOAT);
     contextGL->setUniform(timeUniform.second, &timeUniform.first, GL_FLOAT);

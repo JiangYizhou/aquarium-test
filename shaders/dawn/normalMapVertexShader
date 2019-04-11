@@ -2,19 +2,19 @@
 
 layout(std140, set = 1, binding = 0) uniform LightWorldPositionUniform {
     vec3 lightWorldPos;
-} lightWorldPositionUniform;
-
-struct ViewUniforms
-{
     mat4 viewProjection;
     mat4 viewInverse;
+} lightWorldPositionUniform;
+
+struct WorldUniform
+{
     mat4 world;
     mat4 worldInverseTranspose;
     mat4 worldViewProjection;
 };
 
 layout(std140, set = 3, binding = 0) uniform WorldUniforms {
-    ViewUniforms views[20];
+    WorldUniform worlds[20];
 } worldUniforms;
 
 layout(location = 0) in vec4 position;
@@ -31,12 +31,12 @@ layout(location = 5) out vec3 v_surfaceToLight;
 layout(location = 6) out vec3 v_surfaceToView;
 void main() {
   v_texCoord = texCoord;
-  v_position = (worldUniforms.views[gl_InstanceIndex].worldViewProjection * position);
-  v_normal = (worldUniforms.views[gl_InstanceIndex].worldInverseTranspose * vec4(normal, 0)).xyz;
-  v_surfaceToLight = lightWorldPositionUniform.lightWorldPos - (worldUniforms.views[gl_InstanceIndex].world * position).xyz;
-  v_surfaceToView = (worldUniforms.views[gl_InstanceIndex].viewInverse[3] - (worldUniforms.views[gl_InstanceIndex].world * position)).xyz;
-  v_binormal = (worldUniforms.views[gl_InstanceIndex].worldInverseTranspose * vec4(binormal, 0)).xyz;  // #normalMap
-  v_tangent = (worldUniforms.views[gl_InstanceIndex].worldInverseTranspose * vec4(tangent, 0)).xyz;  // #normalMap
+  v_position = (worldUniforms.worlds[gl_InstanceIndex].worldViewProjection * position);
+  v_normal = (worldUniforms.worlds[gl_InstanceIndex].worldInverseTranspose * vec4(normal, 0)).xyz;
+  v_surfaceToLight = lightWorldPositionUniform.lightWorldPos - (worldUniforms.worlds[gl_InstanceIndex].world * position).xyz;
+  v_surfaceToView = (lightWorldPositionUniform.viewInverse[3] - (worldUniforms.worlds[gl_InstanceIndex].world * position)).xyz;
+  v_binormal = (worldUniforms.worlds[gl_InstanceIndex].worldInverseTranspose * vec4(binormal, 0)).xyz;  // #normalMap
+  v_tangent = (worldUniforms.worlds[gl_InstanceIndex].worldInverseTranspose * vec4(tangent, 0)).xyz;  // #normalMap
   v_position.y = -v_position.y;
   gl_Position = v_position;
 }

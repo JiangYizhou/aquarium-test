@@ -84,7 +84,7 @@ void SeaweedModelDawn::init()
         dawn::BufferUsageBit::TransferDst | dawn::BufferUsageBit::Uniform);
     timeBuffer = contextDawn->createBufferFromData(&seaweedPer, sizeof(seaweedPer), dawn::BufferUsageBit::TransferDst | dawn::BufferUsageBit::Uniform);
     viewBuffer = contextDawn->createBufferFromData(
-        &viewUniformPer, sizeof(ViewUniformPer),
+        &worldUniformPer, sizeof(WorldUniformPer),
         dawn::BufferUsageBit::TransferDst | dawn::BufferUsageBit::Uniform);
 
     bindGroupModel = contextDawn->makeBindGroup(groupLayoutModel, {
@@ -94,7 +94,7 @@ void SeaweedModelDawn::init()
     });
 
     bindGroupPer = contextDawn->makeBindGroup(groupLayoutPer, {
-        { 0, viewBuffer, 0, sizeof(ViewUniformPer)},
+        { 0, viewBuffer, 0, sizeof(WorldUniformPer)},
         { 1, timeBuffer, 0, sizeof(SeaweedPer) },
     });
 
@@ -103,7 +103,7 @@ void SeaweedModelDawn::init()
 
 void SeaweedModelDawn::preDraw() const
 {
-    contextDawn->setBufferData(viewBuffer, 0, sizeof(ViewUniformPer), &viewUniformPer);
+    contextDawn->setBufferData(viewBuffer, 0, sizeof(WorldUniformPer), &worldUniformPer);
     contextDawn->setBufferData(timeBuffer, 0, sizeof(SeaweedPer), &seaweedPer);
 }
 
@@ -125,9 +125,9 @@ void SeaweedModelDawn::draw()
     instance = 0;
 }
 
-void SeaweedModelDawn::updatePerInstanceUniforms(ViewUniforms *viewUniforms)
+void SeaweedModelDawn::updatePerInstanceUniforms(WorldUniforms *worldUniforms)
 {
-    viewUniformPer.viewuniforms[instance] = *viewUniforms;
+    worldUniformPer.worldUniforms[instance] = *worldUniforms;
     seaweedPer.time[instance]             = mAquarium->g.mclock + instance;
 
     instance++;

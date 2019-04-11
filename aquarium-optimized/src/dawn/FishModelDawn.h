@@ -30,7 +30,7 @@ class FishModelDawn : public FishModel
     void preDraw() const override;
     void draw() override;
 
-    void updatePerInstanceUniforms(ViewUniforms *viewUniforms) override;
+    void updatePerInstanceUniforms(WorldUniforms *WorldUniforms) override;
     void updateFishPerUniforms(float x,
                                float y,
                                float z,
@@ -61,8 +61,6 @@ class FishModelDawn : public FishModel
         float time;
     }fishPers[100000];
 
-    ViewUniforms viewUniformPer;
-
     TextureDawn *diffuseTexture;
     TextureDawn *normalTexture;
     TextureDawn *reflectionTexture;
@@ -89,7 +87,6 @@ class FishModelDawn : public FishModel
 
     dawn::Buffer fishVertexBuffer;
     dawn::Buffer lightFactorBuffer;
-    dawn::Buffer viewBuffer;
 
     dawn::Buffer fishPersBuffer;
 

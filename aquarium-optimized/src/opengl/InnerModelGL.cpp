@@ -14,12 +14,12 @@ InnerModelGL::InnerModelGL(const ContextGL *context,
                            bool blend)
     : InnerModel(type, name, blend), contextGL(context)
 {
-    viewInverseUniform.first = aquarium->viewUniforms.viewInverse;
+    viewInverseUniform.first   = aquarium->lightWorldPositionUniform.viewInverse;
     lightWorldPosUniform.first = aquarium->lightWorldPositionUniform.lightWorldPos;
 
-    worldUniform.first = aquarium->viewUniforms.world;
-    worldViewProjectionUniform.first = aquarium->viewUniforms.worldViewProjection;
-    worldInverseTransposeUniform.first = aquarium->viewUniforms.worldInverseTranspose;
+    worldUniform.first                 = aquarium->worldUniforms.world;
+    worldViewProjectionUniform.first   = aquarium->worldUniforms.worldViewProjection;
+    worldInverseTransposeUniform.first = aquarium->worldUniforms.worldInverseTranspose;
 
     etaUniform.first = 1.0f;
     tankColorFudgeUniform.first = 0.796f;
@@ -118,7 +118,7 @@ void InnerModelGL::preDraw() const
     contextGL->setTexture(skyboxTexture.first, skyboxTexture.second, 3);
 }
 
-void InnerModelGL::updatePerInstanceUniforms(ViewUniforms* viewUniforms)
+void InnerModelGL::updatePerInstanceUniforms(WorldUniforms* worldUniforms)
 {
     contextGL->setUniform(worldUniform.second, worldUniform.first, GL_FLOAT_MAT4);
     contextGL->setUniform(worldViewProjectionUniform.second, worldViewProjectionUniform.first,
