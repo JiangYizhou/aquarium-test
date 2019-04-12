@@ -85,17 +85,10 @@ void ProgramGL::loadProgram()
     FragmentShaderCode =
         std::regex_replace(FragmentShaderCode, std::regex(R"(// #fogCode)"), fogCode);
 
-#ifdef _WIN32
-    FragmentShaderCode =
-        std::regex_replace(FragmentShaderCode, std::regex(R"(^.*?// #noReflection\n)"), "");
-    FragmentShaderCode =
-        std::regex_replace(FragmentShaderCode, std::regex(R"(^.*?// #noNormalMap\n)"), "");
-#else
     FragmentShaderCode =
         std::regex_replace(FragmentShaderCode, std::regex(R"(\n.*?// #noReflection)"), "");
     FragmentShaderCode =
         std::regex_replace(FragmentShaderCode, std::regex(R"(\n.*?// #noNormalMap)"), "");
-#endif
 
     bool status = context->compileProgram(mProgramId, VertexShaderCode, FragmentShaderCode);
     ASSERT(status);

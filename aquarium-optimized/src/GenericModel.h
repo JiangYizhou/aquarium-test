@@ -14,7 +14,7 @@
 class GenericModel : public Model
 {
   public:
-    GenericModel(MODELGROUP type, MODELNAME name, bool blend) : Model(type, name, blend){};
+    GenericModel(MODELGROUP type, MODELNAME name, bool blend) : Model(type, name, blend){}
 };
 
 #endif

@@ -14,7 +14,7 @@
 class OutsideModel : public Model
 {
   public:
-    OutsideModel(MODELGROUP type, MODELNAME name, bool blend) : Model(type, name, blend){};
+    OutsideModel(MODELGROUP type, MODELNAME name, bool blend) : Model(type, name, blend){}
 };
 
 #endif

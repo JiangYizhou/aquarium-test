@@ -9,22 +9,34 @@ vars = {
   'github_git': 'https://github.com',
   'dawn_git': 'https://dawn.googlesource.com',
   'dawn_revision': '54e4d47db4910ebd1ffce0247b60d4e6f984774f',
+  'angle_root': 'third_party/angle',
+  'angle_revision': 'e6b23e45b380bee1a2dfda06e4728d24d4d4ad8b',
+  'glslang_revision': '0527c9db8148ce37442fa4a9c99a2a23ad50b0b7',
 }
 
 deps = {
   # Dependencies required to use GN/Clang in standalone
+  # This revision should be the same as the one in third_party/angle/DEPS
   'build': {
-    'url': '{chromium_git}/chromium/src/build@e439f6082423106f1fe2afa7e22f8fd4c00691df',
+    'url': '{chromium_git}/chromium/src/build@a660b0b9174e3a808f620222017566e8d1b2669b',
   },
+  # This revision should be the same as the one in third_party/angle/DEPS
   'buildtools': {
-    'url': '{chromium_git}/chromium/buildtools@24ebce4578745db15274e180da1938ebc1358243',
+    'url': '{chromium_git}/chromium/src/buildtools@459baaf66bee809f6eb288e0215cf524f4d2429a',
   },
+  # This revision should be the same as the one in third_party/angle/DEPS
   'tools/clang': {
-    'url': '{chromium_git}/chromium/src/tools/clang@1d879cee563167a2b18baffb096cf9e29f2f9376',
+    'url': '{chromium_git}/chromium/src/tools/clang@3114fbc11f9644c54dd0a4cdbfa867bac50ff983',
   },
+  # This revision should be the same as the one in third_party/angle/DEPS
   'testing': {
-    'url': '{chromium_git}/chromium/src/testing@b07830f6905ce9e33034ad14820bc0a58b6e9e41',
+    'url': '{chromium_git}/chromium/src/testing@083d633e752e7a57cbe62a468a06e51e28c49ee9',
   },
+  # This revision should be the same as the one in third_party/angle/DEPS
+  'third_party/glslang': {
+    'url': '{chromium_git}/external/github.com/KhronosGroup/glslang@{glslang_revision}',
+  },
+
   'third_party/googletest': {
     'url': '{chromium_git}/external/github.com/google/googletest@5ec7f0c4a113e2f18ac2c6cc7df51ad6afc24081',
   },
@@ -41,47 +53,12 @@ deps = {
   'third_party/dawn': {
     'url': '{dawn_git}/dawn.git@{dawn_revision}',
   },
+  'third_party/angle': {
+    'url': '{chromium_git}/angle/angle.git@{angle_revision}',
+  },
 }
 
 hooks = [
-  # Pull GN binaries using checked-in hashes.
-  {
-    'name': 'gn_win',
-    'pattern': '.',
-    'condition': 'host_os == "win"',
-    'action': [ 'download_from_google_storage',
-                '--no_resume',
-                '--platform=win32',
-                '--no_auth',
-                '--bucket', 'chromium-gn',
-                '-s', 'buildtools/win/gn.exe.sha1',
-    ],
-  },
-  {
-    'name': 'gn_mac',
-    'pattern': '.',
-    'condition': 'host_os == "mac"',
-    'action': [ 'download_from_google_storage',
-                '--no_resume',
-                '--platform=darwin',
-                '--no_auth',
-                '--bucket', 'chromium-gn',
-                '-s', 'buildtools/mac/gn.sha1',
-    ],
-  },
-  {
-    'name': 'gn_linux64',
-    'pattern': '.',
-    'condition': 'host_os == "linux"',
-    'action': [ 'download_from_google_storage',
-                '--no_resume',
-                '--platform=linux*',
-                '--no_auth',
-                '--bucket', 'chromium-gn',
-                '-s', 'buildtools/linux64/gn.sha1',
-    ],
-  },
-
   # Pull the compilers and system libraries for hermetic builds
   {
     'name': 'sysroot_x86',
@@ -103,6 +80,13 @@ hooks = [
     'pattern': '.',
     'condition': 'checkout_win',
     'action': ['python', 'build/vs_toolchain.py', 'update', '--force'],
+  },
+  {
+    # Update the Mac toolchain if necessary.
+    'name': 'mac_toolchain',
+    'pattern': '.',
+    'condition': 'checkout_mac',
+    'action': ['python', '{angle_root}/build/mac_toolchain.py'],
   },
   {
     # Note: On Win, this should run after win_toolchain, as it may use it.
@@ -136,4 +120,5 @@ recursedeps = [
   # buildtools provides clang_format, libc++, and libc++abi
   'buildtools',
   'third_party/dawn',
+  'third_party/angle',
 ]

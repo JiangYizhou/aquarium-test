@@ -24,15 +24,18 @@ bld/
 [Bb]in/
 [Oo]bj/
 
+.cipd/
+
 .gclient_entries
+third_party/angle
 third_party/dawn
 third_party/glfw
+third_party/glslang
 third_party/googletest
 third_party/rapidjson
 third_party/stb
 third_party/llvm-build
 
-build_overrides/
 buildtools/
 out/
 testing/

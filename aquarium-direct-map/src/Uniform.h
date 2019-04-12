@@ -15,7 +15,7 @@
 class Uniform
 {
 public:
-  Uniform(){};
+  Uniform(){}
   Uniform(const std::string &name, GLenum type, int length, int size, GLint index);
 
   std::string getName() const { return name; }

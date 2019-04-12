@@ -14,7 +14,7 @@
 class InnerModel : public Model
 {
   public:
-    InnerModel(MODELGROUP type, MODELNAME name, bool blend) : Model(type, name, blend){};
+    InnerModel(MODELGROUP type, MODELNAME name, bool blend) : Model(type, name, blend){}
 };
 
 #endif // !INNERMODEL_H

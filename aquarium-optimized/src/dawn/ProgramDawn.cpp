@@ -33,17 +33,10 @@ void ProgramDawn::loadProgram()
         std::istreambuf_iterator<char>());
     FragmentShaderStream.close();
 
-#ifdef _WIN32
-    FragmentShaderCode =
-        std::regex_replace(FragmentShaderCode, std::regex(R"(^.*?// #noReflection\n)"), "");
-    FragmentShaderCode =
-        std::regex_replace(FragmentShaderCode, std::regex(R"(^.*?// #noNormalMap\n)"), "");
-#else
     FragmentShaderCode =
         std::regex_replace(FragmentShaderCode, std::regex(R"(\n.*?// #noReflection)"), "");
     FragmentShaderCode =
         std::regex_replace(FragmentShaderCode, std::regex(R"(\n.*?// #noNormalMap)"), "");
-#endif
 
     vsModule = context->createShaderModule(dawn::ShaderStage::Vertex, VertexShaderCode);
     fsModule = context->createShaderModule(dawn::ShaderStage::Fragment, FragmentShaderCode);

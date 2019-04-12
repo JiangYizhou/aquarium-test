@@ -6,6 +6,7 @@
 
 declare_args() {
   enable_dawn = true
+  enable_angle = false
 }
 
 executable("aquarium") {
@@ -22,6 +23,7 @@ executable("aquarium") {
     "aquarium-optimized/src/FPSTimer.cpp",
     "aquarium-optimized/src/FPSTimer.h",
     "aquarium-optimized/src/GenericModel.h",
+    "aquarium-optimized/src/InnerModel.h",
     "aquarium-optimized/src/Main.cpp",
     "aquarium-optimized/src/Matrix.h",
     "aquarium-optimized/src/Model.cpp",
@@ -54,20 +56,41 @@ executable("aquarium") {
 
   deps = [
     "third_party:stb",
-    "third_party:glad",
   ]
 
   include_dirs = [
-    "third_party/dawn/src",
-    "third_party/glad/include",
     "third_party/rapidjson/include",
     "third_party/stb",
   ]
 
   defines = []
 
+  if (enable_angle) {
+    enable_dawn = false
+
+    defines += [ "EGL_EGL_PROTOTYPES" ]
+
+    include_dirs += [
+      "third_party/angle/include",
+      "third_party/angle/util",
+    ]
+
+    deps += [
+      "third_party/angle:libANGLE",
+      "third_party/angle:libGLESv2",
+      "third_party/angle:libEGL",
+      "third_party/angle:angle_util_static",
+    ]
+  } else {
+    deps += [ "third_party:glad" ]
+
+    include_dirs += [ "third_party/glad/include" ]
+  }
+
   if (enable_dawn) {
     defines += [ "ENABLE_DAWN_BACKEND" ]
+
+    include_dirs += [ "third_party/dawn/src" ]
 
     sources += [
       "aquarium-optimized/src/dawn/BufferDawn.cpp",
@@ -111,7 +134,8 @@ executable("aquarium") {
   }
 
   cflags_cc = [
-    "-Wno-string-conversion"
+    "-Wno-string-conversion",
+    "-Wno-unused-result",
   ]
 }
 
@@ -153,6 +177,7 @@ executable("aquarium-direct-map") {
   ]
   
   cflags_cc = [
-    "-Wno-string-conversion"
+    "-Wno-string-conversion",
+    "-Wno-unused-result",
   ]
 }
