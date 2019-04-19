@@ -45,24 +45,28 @@ void FishModelDawn::init()
     fishPersBuffer = contextDawn->createBuffer(
         sizeof(FishPer) * 100000, dawn::BufferUsageBit::Vertex | dawn::BufferUsageBit::TransferDst);
 
-    inputState = contextDawn->createInputState(
+    std::vector<dawn::VertexAttributeDescriptor> vertexAttributeDescriptor;
+    std::vector<dawn::VertexInputDescriptor> vertexInputDescriptor;
+    contextDawn->createInputState(
+        &inputState, vertexAttributeDescriptor, vertexInputDescriptor,
         {
-            {0, 0, dawn::VertexFormat::FloatR32G32B32, 0},
-            {1, 1, dawn::VertexFormat::FloatR32G32B32, 0},
-            {2, 2, dawn::VertexFormat::FloatR32G32, 0},
-            {3, 3, dawn::VertexFormat::FloatR32G32B32, 0},
-            {4, 4, dawn::VertexFormat::FloatR32G32B32, 0},
-            {5, 5, dawn::VertexFormat::FloatR32G32B32, offsetof(FishPer, worldPosition)},
-            {6, 5, dawn::VertexFormat::FloatR32, offsetof(FishPer, scale)},
-            {7, 5, dawn::VertexFormat::FloatR32G32B32, offsetof(FishPer, nextPosition)},
-            {8, 5, dawn::VertexFormat::FloatR32, offsetof(FishPer, time)},
+            {0, 0, dawn::VertexFormat::Float3, 0},
+            {1, 1, dawn::VertexFormat::Float3, 0},
+            {2, 2, dawn::VertexFormat::Float2, 0},
+            {3, 3, dawn::VertexFormat::Float3, 0},
+            {4, 4, dawn::VertexFormat::Float3, 0},
+            {5, 5, dawn::VertexFormat::Float3, offsetof(FishPer, worldPosition)},
+            {6, 5, dawn::VertexFormat::Float2, offsetof(FishPer, scale)},
+            {7, 5, dawn::VertexFormat::Float3, offsetof(FishPer, nextPosition)},
+            {8, 5, dawn::VertexFormat::Float, offsetof(FishPer, time)},
         },
-        {{0, positionBuffer->getDataSize(), dawn::InputStepMode::Vertex},
-         {1, normalBuffer->getDataSize(), dawn::InputStepMode::Vertex},
-         {2, texCoordBuffer->getDataSize(), dawn::InputStepMode::Vertex},
-         {3, tangentBuffer->getDataSize(), dawn::InputStepMode::Vertex},
-         {4, binormalBuffer->getDataSize(), dawn::InputStepMode::Vertex},
-         {5, sizeof(FishPer), dawn::InputStepMode::Instance},
+        {
+            {0, positionBuffer->getDataSize(), dawn::InputStepMode::Vertex},
+            {1, normalBuffer->getDataSize(), dawn::InputStepMode::Vertex},
+            {2, texCoordBuffer->getDataSize(), dawn::InputStepMode::Vertex},
+            {3, tangentBuffer->getDataSize(), dawn::InputStepMode::Vertex},
+            {4, binormalBuffer->getDataSize(), dawn::InputStepMode::Vertex},
+            {5, sizeof(FishPer), dawn::InputStepMode::Instance},
         });
 
     if (skyboxTexture && reflectionTexture)
@@ -154,7 +158,7 @@ void FishModelDawn::preDraw() const
 
 void FishModelDawn::draw()
 {
-    uint32_t vertexBufferOffsets[1] = {0};
+    uint64_t vertexBufferOffsets[1] = {0};
 
     contextDawn->setBufferData(fishPersBuffer, 0, sizeof(FishPer) * 100000, fishPers);
 
@@ -204,7 +208,7 @@ void FishModelDawn::updateFishPerUniforms(float x,
 
 FishModelDawn::~FishModelDawn()
 {
-    inputState        = nullptr;
+    inputState        = {};
     pipeline          = nullptr;
     groupLayoutModel  = nullptr;
     groupLayoutPer    = nullptr;

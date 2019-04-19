@@ -22,7 +22,7 @@ GenericModelDawn::GenericModelDawn(const Context *context,
 
 GenericModelDawn::~GenericModelDawn()
 {
-    inputState        = nullptr;
+    inputState        = {};
     pipeline          = nullptr;
     groupLayoutModel  = nullptr;
     groupLayoutPer    = nullptr;
@@ -52,15 +52,18 @@ void GenericModelDawn::init()
     // Generic models use reflection, normal or diffuse shaders, of which groupLayouts are
     // diiferent in texture binding.  MODELGLOBEBASE use diffuse shader though it contains
     // normal and reflection textures.
+    std::vector<dawn::VertexAttributeDescriptor> vertexAttributeDescriptor;
+    std::vector<dawn::VertexInputDescriptor> vertexInputDescriptor;
     if (normalTexture && mName != MODELNAME::MODELGLOBEBASE)
     {
-        inputState = contextDawn->createInputState(
+        contextDawn->createInputState(
+            &inputState, vertexAttributeDescriptor, vertexInputDescriptor,
             {
-                {0, 0, dawn::VertexFormat::FloatR32G32B32, 0},
-                {1, 1, dawn::VertexFormat::FloatR32G32B32, 0},
-                {2, 2, dawn::VertexFormat::FloatR32G32, 0},
-                {3, 3, dawn::VertexFormat::FloatR32G32B32, 0},
-                {4, 4, dawn::VertexFormat::FloatR32G32B32, 0},
+                {0, 0, dawn::VertexFormat::Float3, 0},
+                {1, 1, dawn::VertexFormat::Float3, 0},
+                {2, 2, dawn::VertexFormat::Float2, 0},
+                {3, 3, dawn::VertexFormat::Float3, 0},
+                {4, 4, dawn::VertexFormat::Float3, 0},
             },
             {{0, positionBuffer->getDataSize(), dawn::InputStepMode::Vertex},
              {1, normalBuffer->getDataSize(), dawn::InputStepMode::Vertex},
@@ -70,11 +73,12 @@ void GenericModelDawn::init()
     }
     else
     {
-        inputState = contextDawn->createInputState(
+        contextDawn->createInputState(
+            &inputState, vertexAttributeDescriptor, vertexInputDescriptor,
             {
-                {0, 0, dawn::VertexFormat::FloatR32G32B32, 0},
-                {1, 1, dawn::VertexFormat::FloatR32G32B32, 0},
-                {2, 2, dawn::VertexFormat::FloatR32G32, 0},
+                {0, 0, dawn::VertexFormat::Float3, 0},
+                {1, 1, dawn::VertexFormat::Float3, 0},
+                {2, 2, dawn::VertexFormat::Float2, 0},
             },
             {
                 {0, positionBuffer->getDataSize(), dawn::InputStepMode::Vertex},
@@ -183,7 +187,7 @@ void GenericModelDawn::preDraw() const
 
 void GenericModelDawn::draw()
 {
-    uint32_t vertexBufferOffsets[1] = {0};
+    uint64_t vertexBufferOffsets[1] = {0};
 
     dawn::RenderPassEncoder pass = contextDawn->pass;
     pass.SetPipeline(pipeline);

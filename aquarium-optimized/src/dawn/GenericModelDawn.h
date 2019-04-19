@@ -55,23 +55,23 @@ public:
     ViewUniformPer viewUniformPer;
 
 private:
-    dawn::InputState inputState;
-    dawn::RenderPipeline pipeline;
+  dawn::InputStateDescriptor inputState;
+  dawn::RenderPipeline pipeline;
 
-    dawn::BindGroupLayout groupLayoutModel; 
-    dawn::BindGroupLayout groupLayoutPer;
-    dawn::PipelineLayout pipelineLayout;
+  dawn::BindGroupLayout groupLayoutModel;
+  dawn::BindGroupLayout groupLayoutPer;
+  dawn::PipelineLayout pipelineLayout;
 
-    dawn::BindGroup bindGroupModel;
-    dawn::BindGroup bindGroupPer;
+  dawn::BindGroup bindGroupModel;
+  dawn::BindGroup bindGroupPer;
 
-    dawn::Buffer lightFactorBuffer;
-    dawn::Buffer viewBuffer;
+  dawn::Buffer lightFactorBuffer;
+  dawn::Buffer viewBuffer;
 
-    const ContextDawn *contextDawn;
-    ProgramDawn* programDawn;
+  const ContextDawn *contextDawn;
+  ProgramDawn *programDawn;
 
-    int instance;
+  int instance;
 };
 
 #endif

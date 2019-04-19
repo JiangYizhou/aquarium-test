@@ -19,7 +19,7 @@ SeaweedModelDawn::SeaweedModelDawn(const Context* context, Aquarium* aquarium, M
 
 SeaweedModelDawn::~SeaweedModelDawn()
 {
-    inputState        = nullptr;
+    inputState        = {};
     pipeline          = nullptr;
     groupLayoutModel  = nullptr;
     groupLayoutPer    = nullptr;
@@ -45,15 +45,20 @@ void SeaweedModelDawn::init()
     texCoordBuffer = static_cast<BufferDawn*>(bufferMap["texCoord"]);
     indicesBuffer = static_cast<BufferDawn*>(bufferMap["indices"]);
 
-    inputState = contextDawn->createInputState({
-        { 0, 0, dawn::VertexFormat::FloatR32G32B32, 0 },
-        { 1, 1, dawn::VertexFormat::FloatR32G32B32, 0 },
-        { 2, 2, dawn::VertexFormat::FloatR32G32, 0 },
-    }, {
-        { 0, positionBuffer->getDataSize(), dawn::InputStepMode::Vertex },
-        { 1, normalBuffer->getDataSize(), dawn::InputStepMode::Vertex },
-        { 2, texCoordBuffer->getDataSize(), dawn::InputStepMode::Vertex },
-    });
+    std::vector<dawn::VertexAttributeDescriptor> vertexAttributeDescriptor;
+    std::vector<dawn::VertexInputDescriptor> vertexInputDescriptor;
+    contextDawn->createInputState(
+        &inputState, vertexAttributeDescriptor, vertexInputDescriptor,
+        {
+            {0, 0, dawn::VertexFormat::Float3, 0},
+            {1, 1, dawn::VertexFormat::Float3, 0},
+            {2, 2, dawn::VertexFormat::Float2, 0},
+        },
+        {
+            {0, positionBuffer->getDataSize(), dawn::InputStepMode::Vertex},
+            {1, normalBuffer->getDataSize(), dawn::InputStepMode::Vertex},
+            {2, texCoordBuffer->getDataSize(), dawn::InputStepMode::Vertex},
+        });
 
     groupLayoutModel = contextDawn->MakeBindGroupLayout({
         { 0, dawn::ShaderStageBit::Fragment, dawn::BindingType::UniformBuffer },
@@ -104,7 +109,7 @@ void SeaweedModelDawn::preDraw() const
 
 void SeaweedModelDawn::draw()
 {
-    uint32_t vertexBufferOffsets[1] = { 0 };
+    uint64_t vertexBufferOffsets[1] = {0};
 
     dawn::RenderPassEncoder pass = contextDawn->pass;
     pass.SetPipeline(pipeline);

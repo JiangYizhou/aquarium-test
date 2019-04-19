@@ -251,10 +251,13 @@ dawn::PipelineLayout ContextDawn::MakeBasicPipelineLayout(
     return device.CreatePipelineLayout(&descriptor);
 }
 
-dawn::InputState ContextDawn::createInputState(std::initializer_list<Attribute> attributeInitilizer, std::initializer_list<Input> inputInitilizer) const
+void ContextDawn::createInputState(
+    dawn::InputStateDescriptor *inputStateDescriptor,
+    std::vector<dawn::VertexAttributeDescriptor> &vertexAttributeDescriptor,
+    std::vector<dawn::VertexInputDescriptor> &vertexInputDescriptor,
+    std::initializer_list<Attribute> attributeInitilizer,
+    std::initializer_list<Input> inputInitilizer) const
 {
-    dawn::InputStateBuilder inputStateBuilder = device.CreateInputStateBuilder();
-
     for (auto &attribute : attributeInitilizer)
     {
         dawn::VertexAttributeDescriptor attrib;
@@ -262,7 +265,7 @@ dawn::InputState ContextDawn::createInputState(std::initializer_list<Attribute> 
         attrib.inputSlot      = attribute.bindingSlot;
         attrib.offset         = attribute.offset;
         attrib.format         = attribute.format;
-        inputStateBuilder.SetAttribute(&attrib);
+        vertexAttributeDescriptor.push_back(attrib);
     }
 
     for (auto &input : inputInitilizer)
@@ -271,13 +274,20 @@ dawn::InputState ContextDawn::createInputState(std::initializer_list<Attribute> 
         in.inputSlot = input.bindingSlot;
         in.stride    = input.stride;
         in.stepMode  = input.stepMode;
-        inputStateBuilder.SetInput(&in);
+        vertexInputDescriptor.push_back(in);
     }
 
-    return inputStateBuilder.GetResult();
+    inputStateDescriptor->numAttributes = vertexAttributeDescriptor.size();
+    inputStateDescriptor->attributes    = &vertexAttributeDescriptor[0];
+    inputStateDescriptor->numInputs     = vertexInputDescriptor.size();
+    inputStateDescriptor->inputs        = &vertexInputDescriptor[0];
+    inputStateDescriptor->indexFormat   = dawn::IndexFormat::Uint16;
 }
 
-dawn::RenderPipeline ContextDawn::createRenderPipeline(dawn::PipelineLayout pipelineLayout, ProgramDawn * programDawn, dawn::InputState inputState, bool enableBlend) const
+dawn::RenderPipeline ContextDawn::createRenderPipeline(dawn::PipelineLayout pipelineLayout,
+                                                       ProgramDawn *programDawn,
+                                                       dawn::InputStateDescriptor &inputState,
+                                                       bool enableBlend) const
 {
     const dawn::ShaderModule &vsModule = programDawn->getVSModule();
     const dawn::ShaderModule &fsModule = programDawn->getFSModule();
@@ -306,14 +316,14 @@ dawn::RenderPipeline ContextDawn::createRenderPipeline(dawn::PipelineLayout pipe
     dawn::ColorStateDescriptor ColorStateDescriptor;
     ColorStateDescriptor.colorBlend     = blendDescriptor;
     ColorStateDescriptor.alphaBlend     = blendDescriptor;
-    ColorStateDescriptor.colorWriteMask = dawn::ColorWriteMask::All;
+    ColorStateDescriptor.writeMask      = dawn::ColorWriteMask::All;
 
     // test
     utils::ComboRenderPipelineDescriptor descriptor(device);
     descriptor.layout                               = pipelineLayout;
     descriptor.cVertexStage.module                  = vsModule;
     descriptor.cFragmentStage.module                = fsModule;
-    descriptor.inputState                           = inputState;
+    descriptor.inputState                           = &inputState;
     descriptor.depthStencilState                    = &descriptor.cDepthStencilState;
     descriptor.cDepthStencilState.format            = dawn::TextureFormat::D32FloatS8Uint;
     descriptor.cColorStates[0]                      = &ColorStateDescriptor;
@@ -321,7 +331,6 @@ dawn::RenderPipeline ContextDawn::createRenderPipeline(dawn::PipelineLayout pipe
     descriptor.cDepthStencilState.depthWriteEnabled = true;
     descriptor.cDepthStencilState.depthCompare      = dawn::CompareFunction::Less;
     descriptor.primitiveTopology                    = dawn::PrimitiveTopology::TriangleList;
-    descriptor.indexFormat                          = dawn::IndexFormat::Uint16;
     descriptor.sampleCount                          = 1;
 
     dawn::RenderPipeline pipeline = device.CreateRenderPipeline(&descriptor);
@@ -342,7 +351,7 @@ dawn::TextureView ContextDawn::createDepthStencilView() const
     descriptor.mipLevelCount   = 1;
     descriptor.usage           = dawn::TextureUsageBit::OutputAttachment;
     auto depthStencilTexture   = device.CreateTexture(&descriptor);
-    return depthStencilTexture.CreateDefaultTextureView();
+    return depthStencilTexture.CreateDefaultView();
 }
 
 dawn::Buffer ContextDawn::createBuffer(uint32_t size, dawn::BufferUsageBit bit) const
@@ -459,8 +468,8 @@ void ContextDawn::Terminate() {
 void ContextDawn::preFrame()
 {
     mBackbuffer          = swapchain.GetNextTexture();
-    renderPassDescriptor = utils::ComboRenderPassDescriptor(
-        {mBackbuffer.CreateDefaultTextureView()}, mDepthStencilView);
+    renderPassDescriptor =
+        utils::ComboRenderPassDescriptor({mBackbuffer.CreateDefaultView()}, mDepthStencilView);
     commandEncoder = device.CreateCommandEncoder();
     pass           = commandEncoder.BeginRenderPass(&renderPassDescriptor);
 }

@@ -83,7 +83,7 @@ void TextureDawn::loadTexture()
         viewDescriptor.baseArrayLayer = 0;
         viewDescriptor.arrayLayerCount = 6;
 
-        mTextureView = mTexture.CreateTextureView(&viewDescriptor);
+        mTextureView = mTexture.CreateView(&viewDescriptor);
 
         samplerDesc.addressModeU = dawn::AddressMode::ClampToEdge;
         samplerDesc.addressModeV = dawn::AddressMode::ClampToEdge;
@@ -94,7 +94,6 @@ void TextureDawn::loadTexture()
         samplerDesc.lodMinClamp  = 0.0f;
         samplerDesc.lodMaxClamp  = 1000.0f;
         samplerDesc.compareFunction = dawn::CompareFunction::Never;
-        samplerDesc.borderColor     = dawn::BorderColor::TransparentBlack;
 
         mSampler = context->createSampler(samplerDesc);
     }
@@ -154,7 +153,7 @@ void TextureDawn::loadTexture()
         viewDescriptor.baseArrayLayer = 0;
         viewDescriptor.arrayLayerCount = 1;
 
-        mTextureView = mTexture.CreateTextureView(&viewDescriptor);
+        mTextureView = mTexture.CreateView(&viewDescriptor);
 
         samplerDesc.addressModeU = dawn::AddressMode::ClampToEdge;
         samplerDesc.addressModeV = dawn::AddressMode::ClampToEdge;
@@ -164,7 +163,6 @@ void TextureDawn::loadTexture()
         samplerDesc.lodMinClamp  = 0.0f;
         samplerDesc.lodMaxClamp  = 1000.0f;
         samplerDesc.compareFunction = dawn::CompareFunction::Never;
-        samplerDesc.borderColor     = dawn::BorderColor::TransparentBlack;
 
         if (isPowerOf2(mWidth) && isPowerOf2(mHeight))
         {

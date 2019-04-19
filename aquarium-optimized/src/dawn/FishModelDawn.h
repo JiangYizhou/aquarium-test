@@ -77,7 +77,7 @@ class FishModelDawn : public FishModel
     BufferDawn *indicesBuffer;
 
   private:
-    dawn::InputState inputState;
+    dawn::InputStateDescriptor inputState;
     dawn::RenderPipeline pipeline;
 
     dawn::BindGroupLayout groupLayoutModel;

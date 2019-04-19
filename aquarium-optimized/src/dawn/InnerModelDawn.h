@@ -50,21 +50,21 @@ class InnerModelDawn : public InnerModel
 
 
 private:
-    dawn::InputState inputState;
-    dawn::RenderPipeline pipeline;
+  dawn::InputStateDescriptor inputState;
+  dawn::RenderPipeline pipeline;
 
-    dawn::BindGroupLayout groupLayoutModel;
-    dawn::BindGroupLayout groupLayoutPer;
-    dawn::PipelineLayout pipelineLayout;
+  dawn::BindGroupLayout groupLayoutModel;
+  dawn::BindGroupLayout groupLayoutPer;
+  dawn::PipelineLayout pipelineLayout;
 
-    dawn::BindGroup bindGroupModel;
-    dawn::BindGroup bindGroupPer;
+  dawn::BindGroup bindGroupModel;
+  dawn::BindGroup bindGroupPer;
 
-    dawn::Buffer innerBuffer;
-    dawn::Buffer viewBuffer;
+  dawn::Buffer innerBuffer;
+  dawn::Buffer viewBuffer;
 
-    const ContextDawn *contextDawn;
-    ProgramDawn* programDawn;
+  const ContextDawn *contextDawn;
+  ProgramDawn *programDawn;
 };
 
 #endif // !INNERMODELDAWN_H

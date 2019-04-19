@@ -16,7 +16,7 @@ OutsideModelDawn::OutsideModelDawn(const Context* context, Aquarium* aquarium, M
 
 OutsideModelDawn::~OutsideModelDawn()
 {
-    inputState        = nullptr;
+    inputState        = {};
     pipeline          = nullptr;
     groupLayoutModel  = nullptr;
     groupLayoutPer    = nullptr;
@@ -43,19 +43,22 @@ void OutsideModelDawn::init()
     binormalBuffer = static_cast<BufferDawn*>(bufferMap["binormal"]);
     indicesBuffer = static_cast<BufferDawn*>(bufferMap["indices"]);
 
-    inputState = contextDawn->createInputState({
-        { 0, 0, dawn::VertexFormat::FloatR32G32B32, 0 },
-        { 1, 1, dawn::VertexFormat::FloatR32G32B32, 0 },
-        { 2, 2, dawn::VertexFormat::FloatR32G32, 0 },
-        { 3, 3, dawn::VertexFormat::FloatR32G32B32, 0 },
-        { 4, 4, dawn::VertexFormat::FloatR32G32B32, 0 },
-    }, {
-        { 0, positionBuffer->getDataSize(), dawn::InputStepMode::Vertex },
-        { 1, normalBuffer->getDataSize(), dawn::InputStepMode::Vertex },
-        { 2, texCoordBuffer->getDataSize(), dawn::InputStepMode::Vertex },
-        { 3, tangentBuffer->getDataSize(), dawn::InputStepMode::Vertex },
-        { 4, binormalBuffer->getDataSize(), dawn::InputStepMode::Vertex }
-    });
+    std::vector<dawn::VertexAttributeDescriptor> vertexAttributeDescriptor;
+    std::vector<dawn::VertexInputDescriptor> vertexInputDescriptor;
+    contextDawn->createInputState(
+        &inputState, vertexAttributeDescriptor, vertexInputDescriptor,
+        {
+            {0, 0, dawn::VertexFormat::Float3, 0},
+            {1, 1, dawn::VertexFormat::Float3, 0},
+            {2, 2, dawn::VertexFormat::Float2, 0},
+            {3, 3, dawn::VertexFormat::Float3, 0},
+            {4, 4, dawn::VertexFormat::Float3, 0},
+        },
+        {{0, positionBuffer->getDataSize(), dawn::InputStepMode::Vertex},
+         {1, normalBuffer->getDataSize(), dawn::InputStepMode::Vertex},
+         {2, texCoordBuffer->getDataSize(), dawn::InputStepMode::Vertex},
+         {3, tangentBuffer->getDataSize(), dawn::InputStepMode::Vertex},
+         {4, binormalBuffer->getDataSize(), dawn::InputStepMode::Vertex}});
 
     groupLayoutPer = contextDawn->MakeBindGroupLayout({
         {0, dawn::ShaderStageBit::Vertex, dawn::BindingType::UniformBuffer},
@@ -102,7 +105,7 @@ void OutsideModelDawn::preDraw() const
 
 void OutsideModelDawn::draw()
 {
-    uint32_t vertexBufferOffsets[1] = { 0 };
+    uint64_t vertexBufferOffsets[1] = {0};
 
     dawn::RenderPassEncoder pass = contextDawn->pass;
     pass.SetPipeline(pipeline);

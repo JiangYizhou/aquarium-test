@@ -81,9 +81,15 @@ class ContextDawn : public Context
         std::initializer_list<dawn::BindGroupLayoutBinding> bindingsInitializer) const;
     dawn::PipelineLayout MakeBasicPipelineLayout(
         std::vector<dawn::BindGroupLayout> bindingsInitializer) const;
-    dawn::InputState createInputState(std::initializer_list<Attribute> attributeInitilizer,
-        std::initializer_list<Input> inputInitilizer) const;
-    dawn::RenderPipeline createRenderPipeline(dawn::PipelineLayout pipelineLayout, ProgramDawn* programDawn, dawn::InputState inputState, bool enableBlend) const;
+    void createInputState(dawn::InputStateDescriptor *inputStateDescriptor,
+                          std::vector<dawn::VertexAttributeDescriptor> &vertexAttributeDescriptor,
+                          std::vector<dawn::VertexInputDescriptor> &vertexInputDescriptor,
+                          std::initializer_list<Attribute> attributeInitilizer,
+                          std::initializer_list<Input> inputInitilizer) const;
+    dawn::RenderPipeline createRenderPipeline(dawn::PipelineLayout pipelineLayout,
+                                              ProgramDawn *programDawn,
+                                              dawn::InputStateDescriptor &inputState,
+                                              bool enableBlend) const;
     dawn::TextureView createDepthStencilView() const;
     dawn::Buffer createBuffer(uint32_t size, dawn::BufferUsageBit bit) const;
     void setBufferData(const dawn::Buffer& buffer, uint32_t start, uint32_t size, const void* pixels) const;

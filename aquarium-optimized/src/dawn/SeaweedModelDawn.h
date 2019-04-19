@@ -57,7 +57,7 @@ class SeaweedModelDawn : public SeaweedModel
     ViewUniformPer viewUniformPer;
 
   private:
-    dawn::InputState inputState;
+    dawn::InputStateDescriptor inputState;
     dawn::RenderPipeline pipeline;
 
     dawn::BindGroupLayout groupLayoutModel;
