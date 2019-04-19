@@ -100,8 +100,8 @@ class ContextDawn : public Context
     void initGeneralResources(Aquarium* aquarium) override;
     void updateWorldlUniforms(Aquarium* aquarium) override;
     dawn::Device getDevice() const { return device; }
-
-    dawn::RenderPassEncoder pass;
+    dawn::RenderPassEncoder getRenderPass() const { return mRenderPass; }
+    
     dawn::BindGroupLayout groupLayoutGeneral;
     dawn::BindGroup bindGroupGeneral;
     dawn::BindGroupLayout groupLayoutWorld;
@@ -113,11 +113,13 @@ class ContextDawn : public Context
 
     dawn::Queue queue;
     dawn::SwapChain swapchain;
-    dawn::CommandEncoder commandEncoder;
-    utils::ComboRenderPassDescriptor renderPassDescriptor;
+    dawn::CommandEncoder mCommandEncoder;
+    dawn::RenderPassEncoder mRenderPass;
+    utils::ComboRenderPassDescriptor mRenderPassDescriptor;
 
     dawn::Texture mBackbuffer;
-    dawn::TextureView mDepthStencilView;
+    dawn::TextureView mSceneRenderTargetView;
+    dawn::TextureView mSceneDepthStencilView;
     dawn::RenderPipeline mPipeline;
     dawn::BindGroup mBindGroup;
     dawn::TextureFormat mPreferredSwapChainFormat;
@@ -127,6 +129,8 @@ class ContextDawn : public Context
     dawn::Buffer fogBuffer;
 
     dawn::Device device;
+
+    bool mEnableMSAA;
 };
 
 #endif

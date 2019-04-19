@@ -162,7 +162,7 @@ void FishModelDawn::draw()
 
     contextDawn->setBufferData(fishPersBuffer, 0, sizeof(FishPer) * 100000, fishPers);
 
-    dawn::RenderPassEncoder pass = contextDawn->pass;
+    dawn::RenderPassEncoder pass = contextDawn->getRenderPass();
     pass.SetPipeline(pipeline);
     pass.SetBindGroup(0, contextDawn->bindGroupGeneral, 0, nullptr);
     pass.SetBindGroup(1, contextDawn->bindGroupWorld, 0, nullptr);
