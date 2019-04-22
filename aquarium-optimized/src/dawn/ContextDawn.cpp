@@ -37,38 +37,41 @@ void PrintDeviceError(const char* message, dawn::CallbackUserdata) {
 }
 
 ContextDawn::ContextDawn()
-    : pass(nullptr),
-      mWindow(nullptr),
+    : mWindow(nullptr),
       instance(),
       queue(nullptr),
       swapchain(nullptr),
-      commandEncoder(nullptr),
-      renderPassDescriptor({}),
+      mCommandEncoder(nullptr),
+      mRenderPass(nullptr),
+      mRenderPassDescriptor({}),
       mBackbuffer(nullptr),
-      mDepthStencilView(nullptr),
+      mSceneRenderTargetView(nullptr),
+      mSceneDepthStencilView(nullptr),
       mPipeline(nullptr),
       mBindGroup(nullptr),
       mPreferredSwapChainFormat(dawn::TextureFormat::R8G8B8A8Unorm),
-      device(nullptr)
+      device(nullptr),
+      mEnableMSAA(false)
 {
 }
 
 ContextDawn::~ContextDawn()
 {
-    mDepthStencilView        = nullptr;
+    mSceneRenderTargetView   = nullptr;
+    mSceneDepthStencilView   = nullptr;
     mBackbuffer              = nullptr;
     mPipeline                = nullptr;
     mBindGroup               = nullptr;
     lightWorldPositionBuffer = nullptr;
     lightBuffer              = nullptr;
     fogBuffer                = nullptr;
-    pass                     = nullptr;
+    mCommandEncoder          = nullptr;
+    mRenderPass              = nullptr;
+    mRenderPassDescriptor    = {};
     groupLayoutGeneral       = nullptr;
     bindGroupGeneral         = nullptr;
     groupLayoutWorld         = nullptr;
     bindGroupWorld           = nullptr;
-    commandEncoder           = nullptr;
-    renderPassDescriptor     = {};
     swapchain                = nullptr;
     queue                    = nullptr;
     device                   = nullptr;
@@ -76,8 +79,6 @@ ContextDawn::~ContextDawn()
 
 bool ContextDawn::createContext(std::string backend, bool enableMSAA)
 {
-    // TODO(yizhou): MSAA of Dawn is not supported yet.
-
     dawn_native::BackendType backendType = dawn_native::BackendType::Null;
     if (backend == "dawn_d3d12")
     {
@@ -95,6 +96,8 @@ bool ContextDawn::createContext(std::string backend, bool enableMSAA)
     {
         backendType = dawn_native::BackendType::OpenGL;
     }
+
+    mEnableMSAA = enableMSAA;
 
     // initialise GLFW
     if (!glfwInit())
@@ -165,7 +168,24 @@ bool ContextDawn::createContext(std::string backend, bool enableMSAA)
     swapchain.Configure(mPreferredSwapChainFormat, dawn::TextureUsageBit::OutputAttachment,
                         mClientWidth, mClientHeight);
 
-    mDepthStencilView = createDepthStencilView();
+    // When MSAA is enabled, we create an intermediate multisampled texture to render the scene to.
+    if (mEnableMSAA)
+    {
+        dawn::TextureDescriptor descriptor;
+        descriptor.dimension       = dawn::TextureDimension::e2D;
+        descriptor.size.width      = mClientWidth;
+        descriptor.size.height     = mClientHeight;
+        descriptor.size.depth      = 1;
+        descriptor.arrayLayerCount = 1;
+        descriptor.sampleCount     = 4;
+        descriptor.format          = dawn::TextureFormat::R8G8B8A8Unorm;
+        descriptor.mipLevelCount   = 1;
+        descriptor.usage           = dawn::TextureUsageBit::OutputAttachment;
+
+        mSceneRenderTargetView = device.CreateTexture(&descriptor).CreateDefaultView();
+    }
+
+    mSceneDepthStencilView = createDepthStencilView();
 
     return true;
 }
@@ -331,7 +351,7 @@ dawn::RenderPipeline ContextDawn::createRenderPipeline(dawn::PipelineLayout pipe
     descriptor.cDepthStencilState.depthWriteEnabled = true;
     descriptor.cDepthStencilState.depthCompare      = dawn::CompareFunction::Less;
     descriptor.primitiveTopology                    = dawn::PrimitiveTopology::TriangleList;
-    descriptor.sampleCount                          = 1;
+    descriptor.sampleCount                          = mEnableMSAA ? 4 : 1;
 
     dawn::RenderPipeline pipeline = device.CreateRenderPipeline(&descriptor);
 
@@ -346,7 +366,7 @@ dawn::TextureView ContextDawn::createDepthStencilView() const
     descriptor.size.height     = mClientHeight;
     descriptor.size.depth      = 1;
     descriptor.arrayLayerCount = 1;
-    descriptor.sampleCount     = 1;
+    descriptor.sampleCount     = mEnableMSAA ? 4 : 1;
     descriptor.format          = dawn::TextureFormat::D32FloatS8Uint;
     descriptor.mipLevelCount   = 1;
     descriptor.usage           = dawn::TextureUsageBit::OutputAttachment;
@@ -451,8 +471,8 @@ void ContextDawn::KeyBoardQuit() {
 // Submit commands of the frame
 void ContextDawn::DoFlush() {
 
-    pass.EndPass();
-    dawn::CommandBuffer cmd = commandEncoder.Finish();
+    mRenderPass.EndPass();
+    dawn::CommandBuffer cmd = mCommandEncoder.Finish();
     queue.Submit(1, &cmd);
 
     swapchain.Present(mBackbuffer);
@@ -464,14 +484,27 @@ void ContextDawn::Terminate() {
     glfwTerminate();
 }
 
-// Update backbuffer and renderPassDescriptor
 void ContextDawn::preFrame()
 {
-    mBackbuffer          = swapchain.GetNextTexture();
-    renderPassDescriptor =
-        utils::ComboRenderPassDescriptor({mBackbuffer.CreateDefaultView()}, mDepthStencilView);
-    commandEncoder = device.CreateCommandEncoder();
-    pass           = commandEncoder.BeginRenderPass(&renderPassDescriptor);
+    mCommandEncoder = device.CreateCommandEncoder();
+    mBackbuffer = swapchain.GetNextTexture();
+
+    if (mEnableMSAA)
+    {
+        // If MSAA is enabled, we render to a multisampled texture and then resolve to the backbuffer
+        mRenderPassDescriptor = utils::ComboRenderPassDescriptor({mSceneRenderTargetView},
+                                                                 mSceneDepthStencilView);
+        mRenderPassDescriptor.cColorAttachmentsInfoPtr[0]->resolveTarget =
+            mBackbuffer.CreateDefaultView();
+    }
+    else
+    {
+        // When MSAA is off, we render directly to the backbuffer
+        mRenderPassDescriptor = utils::ComboRenderPassDescriptor({mBackbuffer.CreateDefaultView()},
+                                                                 mSceneDepthStencilView);
+    }
+
+    mRenderPass = mCommandEncoder.BeginRenderPass(&mRenderPassDescriptor);
 }
 
 Model * ContextDawn::createModel(Aquarium* aquarium, MODELGROUP type, MODELNAME name, bool blend)

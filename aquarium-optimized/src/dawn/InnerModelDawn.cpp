@@ -118,7 +118,7 @@ void InnerModelDawn::draw()
 {
     uint64_t vertexBufferOffsets[1] = {0};
 
-    dawn::RenderPassEncoder pass = contextDawn->pass;
+    dawn::RenderPassEncoder pass = contextDawn->getRenderPass();
     pass.SetPipeline(pipeline);
     pass.SetBindGroup(0, contextDawn->bindGroupGeneral, 0, nullptr);
     pass.SetBindGroup(1, contextDawn->bindGroupWorld, 0, nullptr);
