@@ -32,7 +32,8 @@ class FishModelGL : public FishModel
                                float nextY,
                                float nextZ,
                                float scale,
-                               float time) override;
+                               float time,
+                               int index) override;
 
     std::pair<float *, int> viewInverseUniform;
     std::pair<float *, int> lightWorldPosUniform;

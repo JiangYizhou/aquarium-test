@@ -162,7 +162,8 @@ void FishModelGL::updateFishPerUniforms(float x,
                                         float nextY,
                                         float nextZ,
                                         float scale,
-                                        float time)
+                                        float time,
+                                        int index)
 {
     worldPositionUniform.first[0] = x;
     worldPositionUniform.first[1] = y;

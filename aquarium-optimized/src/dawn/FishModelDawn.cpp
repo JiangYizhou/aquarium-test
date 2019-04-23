@@ -24,10 +24,16 @@ FishModelDawn::FishModelDawn(const Context *context,
     fishVertexUniforms.fishLength     = fishInfo.fishLength;
     fishVertexUniforms.fishBendAmount = fishInfo.fishBendAmount;
     fishVertexUniforms.fishWaveLength = fishInfo.fishWaveLength;
+
+    instance = aquarium->fishCount[fishInfo.modelName - MODELNAME::MODELSMALLFISHA];
+    fishPers = new FishPer[instance];
 }
 
 void FishModelDawn::init()
 {
+    if (instance == 0)
+        return;
+
     programDawn = static_cast<ProgramDawn *>(mProgram);
 
     diffuseTexture    = static_cast<TextureDawn *>(textureMap["diffuse"]);
@@ -42,8 +48,9 @@ void FishModelDawn::init()
     binormalBuffer = static_cast<BufferDawn *>(bufferMap["binormal"]);
     indicesBuffer  = static_cast<BufferDawn *>(bufferMap["indices"]);
 
-    fishPersBuffer = contextDawn->createBuffer(
-        sizeof(FishPer) * 100000, dawn::BufferUsageBit::Vertex | dawn::BufferUsageBit::TransferDst);
+    fishPersBuffer =
+        contextDawn->createBuffer(sizeof(FishPer) * instance,
+                                  dawn::BufferUsageBit::Vertex | dawn::BufferUsageBit::TransferDst);
 
     std::vector<dawn::VertexAttributeDescriptor> vertexAttributeDescriptor;
     std::vector<dawn::VertexInputDescriptor> vertexInputDescriptor;
@@ -149,9 +156,12 @@ void FishModelDawn::preDraw() const
 
 void FishModelDawn::draw()
 {
+    if (instance == 0)
+        return;
+
     uint64_t vertexBufferOffsets[1] = {0};
 
-    contextDawn->setBufferData(fishPersBuffer, 0, sizeof(FishPer) * 100000, fishPers);
+    contextDawn->setBufferData(fishPersBuffer, 0, sizeof(FishPer) * instance, fishPers);
 
     dawn::RenderPassEncoder pass = contextDawn->getRenderPass();
     pass.SetPipeline(pipeline);
@@ -166,8 +176,6 @@ void FishModelDawn::draw()
     pass.SetVertexBuffers(5, 1, &fishPersBuffer, vertexBufferOffsets);
     pass.SetIndexBuffer(indicesBuffer->getBuffer(), 0);
     pass.DrawIndexed(indicesBuffer->getTotalComponents(), instance, 0, 0, 0);
-
-    instance = 0;
 }
 
 void FishModelDawn::updatePerInstanceUniforms(WorldUniforms *worldUniforms)
@@ -181,18 +189,17 @@ void FishModelDawn::updateFishPerUniforms(float x,
                                           float nextY,
                                           float nextZ,
                                           float scale,
-                                          float time)
+                                          float time,
+                                          int index)
 {
-    fishPers[instance].worldPosition[0]                     = x;
-    fishPers[instance].worldPosition[1]                     = y;
-    fishPers[instance].worldPosition[2]                     = z;
-    fishPers[instance].nextPosition[0]                      = nextX;
-    fishPers[instance].nextPosition[1]                      = nextY;
-    fishPers[instance].nextPosition[2]                      = nextZ;
-    fishPers[instance].scale                                = scale;
-    fishPers[instance].time                                 = time;
-
-    instance++;
+    fishPers[index].worldPosition[0] = x;
+    fishPers[index].worldPosition[1] = y;
+    fishPers[index].worldPosition[2] = z;
+    fishPers[index].nextPosition[0]  = nextX;
+    fishPers[index].nextPosition[1]  = nextY;
+    fishPers[index].nextPosition[2]  = nextZ;
+    fishPers[index].scale            = scale;
+    fishPers[index].time             = time;
 }
 
 FishModelDawn::~FishModelDawn()
@@ -207,4 +214,5 @@ FishModelDawn::~FishModelDawn()
     fishVertexBuffer  = nullptr;
     lightFactorBuffer = nullptr;
     fishPersBuffer    = nullptr;
+    delete fishPers;
 }

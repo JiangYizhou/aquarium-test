@@ -25,7 +25,8 @@ class FishModel : public Model
                                        float nextY,
                                        float nextZ,
                                        float scale,
-                                       float time)              = 0;
+                                       float time,
+                                       int index) = 0;
 };
 
 #endif

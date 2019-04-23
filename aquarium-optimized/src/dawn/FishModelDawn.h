@@ -38,7 +38,8 @@ class FishModelDawn : public FishModel
                                float nextY,
                                float nextZ,
                                float scale,
-                               float time) override;
+                               float time,
+                               int index) override;
 
     struct FishVertexUniforms
     {
@@ -59,7 +60,8 @@ class FishModelDawn : public FishModel
         float scale;
         float nextPosition[3];
         float time;
-    }fishPers[100000];
+    };
+    FishPer *fishPers;
 
     TextureDawn *diffuseTexture;
     TextureDawn *normalTexture;
