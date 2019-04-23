@@ -518,10 +518,10 @@ void Aquarium::updateGlobalUniforms()
     // set frustm and camera look at
     matrix::frustum(g.projection, left + xOff, right + xOff, bottom + yOff, top + yOff, nearPlane,
                     farPlane);
-    matrix::cameraLookAt(viewUniforms.viewInverse, g.eyePosition, g.target, g.up);
-    matrix::inverse4(g.view, viewUniforms.viewInverse);
-    matrix::mulMatrixMatrix4(viewUniforms.viewProjection, g.view, g.projection);
-    matrix::inverse4(g.viewProjectionInverse, viewUniforms.viewProjection);
+    matrix::cameraLookAt(lightWorldPositionUniform.viewInverse, g.eyePosition, g.target, g.up);
+    matrix::inverse4(g.view, lightWorldPositionUniform.viewInverse);
+    matrix::mulMatrixMatrix4(lightWorldPositionUniform.viewProjection, g.view, g.projection);
+    matrix::inverse4(g.viewProjectionInverse, lightWorldPositionUniform.viewProjection);
 
     memcpy(g.skyView, g.view, 16 * sizeof(float));
     g.skyView[12] = 0.0;
@@ -530,12 +530,15 @@ void Aquarium::updateGlobalUniforms()
     matrix::mulMatrixMatrix4(g.skyViewProjection, g.skyView, g.projection);
     matrix::inverse4(g.skyViewProjectionInverse, g.skyViewProjection);
 
-    matrix::getAxis(g.v3t0, viewUniforms.viewInverse, 0);
-    matrix::getAxis(g.v3t1, viewUniforms.viewInverse, 1);
+    matrix::getAxis(g.v3t0, lightWorldPositionUniform.viewInverse, 0);
+    matrix::getAxis(g.v3t1, lightWorldPositionUniform.viewInverse, 1);
     matrix::mulScalarVector(20.0f, g.v3t0, 3);
     matrix::mulScalarVector(30.0f, g.v3t1, 3);
     matrix::addVector(lightWorldPositionUniform.lightWorldPos, g.eyePosition, g.v3t0, 3);
     matrix::addVector(lightWorldPositionUniform.lightWorldPos, lightWorldPositionUniform.lightWorldPos, g.v3t1, 3);
+
+    // update world uniforms for dawn backend
+    context->updateWorldlUniforms(this);
 }
 
 void Aquarium::render()
@@ -588,7 +591,10 @@ void Aquarium::drawFishes()
         const Fish &fishInfo = fishTable[i - MODELNAME::MODELSMALLFISHA];
         int numFish          = fishInfo.num;
 
-        model->preDraw();
+        if (mBackendpath == "opengl" || mBackendpath == "angle")
+        {
+            model->preDraw();
+        }
 
         float fishBaseClock   = g.mclock * g_fishSpeed;
         float fishRadius      = fishInfo.radius;
@@ -625,9 +631,10 @@ void Aquarium::drawFishes()
                 cos(zClock - 0.04f) * zRadius, scale,
                 fmod((g.mclock + ii * g_tailOffsetMult) * fishTailSpeed * speed,
                      static_cast<float>(M_PI) * 2));
-            model->updatePerInstanceUniforms(&viewUniforms);
+
             if (mBackendpath=="opengl" || mBackendpath == "angle")
             {
+                model->updatePerInstanceUniforms(&worldUniforms);
                 model->draw();
             }
         }
@@ -655,13 +662,11 @@ void Aquarium::drawOutside()
 
 void Aquarium::updateWorldProjections(const float *w)
 {
-    memcpy(viewUniforms.world, w, 16 * sizeof(float));
-    matrix::mulMatrixMatrix4(viewUniforms.worldViewProjection, viewUniforms.world, viewUniforms.viewProjection);
-    matrix::inverse4(g.worldInverse, viewUniforms.world);
-    matrix::transpose4(viewUniforms.worldInverseTranspose, g.worldInverse);
-
-    // update world uniforms for dawn backend
-    context->updateWorldlUniforms(this);
+    memcpy(worldUniforms.world, w, 16 * sizeof(float));
+    matrix::mulMatrixMatrix4(worldUniforms.worldViewProjection, worldUniforms.world,
+                             lightWorldPositionUniform.viewProjection);
+    matrix::inverse4(g.worldInverse, worldUniforms.world);
+    matrix::transpose4(worldUniforms.worldInverseTranspose, g.worldInverse);
 }
 
 void Aquarium::updateWorldMatrixAndDraw(Model *model)
@@ -671,18 +676,18 @@ void Aquarium::updateWorldMatrixAndDraw(Model *model)
         for (auto &world : model->worldmatrices)
         {
             updateWorldProjections(world.data());
-            // Models of dawn keep viewUniforms for every model while opengl models use global
-            // viewUniforms.
-            // Update all viewUniforms on dawn backend.
+            // Models of dawn keep WorldUniforms for every model while opengl models use global
+            // WorldUniforms.
+            // Update all WorldUniforms on dawn backend.
             if (mBackendpath == "opengl")
             {
                 model->preDraw();
-                model->updatePerInstanceUniforms(&viewUniforms);
+                model->updatePerInstanceUniforms(&worldUniforms);
                 model->draw();
             }
             else
             {
-                model->updatePerInstanceUniforms(&viewUniforms);
+                model->updatePerInstanceUniforms(&worldUniforms);
             }
         }
     }

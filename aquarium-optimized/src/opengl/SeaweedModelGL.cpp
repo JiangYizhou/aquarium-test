@@ -14,19 +14,19 @@ SeaweedModelGL::SeaweedModelGL(const ContextGL *context,
                                bool blend)
     : SeaweedModel(type, name, blend), contextGL(context)
 {
-    viewInverseUniform.first = aquarium->viewUniforms.viewInverse;
+    viewInverseUniform.first    = aquarium->lightWorldPositionUniform.viewInverse;
     lightWorldPosUniform.first = aquarium->lightWorldPositionUniform.lightWorldPos;
     lightColorUniform.first = aquarium->lightUniforms.lightColor;
     specularUniform.first = aquarium->lightUniforms.specular;
     shininessUniform.first = 50.0f;
     specularFactorUniform.first = 1.0f;
     ambientUniform.first = aquarium->lightUniforms.ambient;
-    worldUniform.first = aquarium->viewUniforms.world;
+    worldUniform.first = aquarium->worldUniforms.world;
     fogPowerUniform.first = g_fogPower;
     fogMultUniform.first = g_fogMult;
     fogOffsetUniform.first = g_fogOffset;
     fogColorUniform.first = aquarium->fogUniforms.fogColor;
-    viewProjectionUniform.first = aquarium->viewUniforms.viewProjection;
+    viewProjectionUniform.first = aquarium->lightWorldPositionUniform.viewProjection;
 }
 
 void SeaweedModelGL::init()
@@ -103,7 +103,7 @@ void SeaweedModelGL::preDraw() const
     contextGL->setTexture(diffuseTexture.first, diffuseTexture.second, 0);
 }
 
-void SeaweedModelGL::updatePerInstanceUniforms(ViewUniforms *viewUniforms)
+void SeaweedModelGL::updatePerInstanceUniforms(WorldUniforms *worldUniforms)
 {
     contextGL->setUniform(worldUniform.second, worldUniform.first, GL_FLOAT_MAT4);
     contextGL->setUniform(timeUniform.second, &timeUniform.first, GL_FLOAT);

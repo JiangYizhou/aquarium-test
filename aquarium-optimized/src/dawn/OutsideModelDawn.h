@@ -26,7 +26,7 @@ public:
     void preDraw() const override;
     void draw() override;
 
-    void updatePerInstanceUniforms(ViewUniforms *viewUniforms) override;
+    void updatePerInstanceUniforms(WorldUniforms *worldUniforms) override;
 
     TextureDawn *diffuseTexture;
     TextureDawn *normalTexture;
@@ -47,7 +47,7 @@ public:
         float specularFactor;
     } lightFactorUniforms;
 
-    ViewUniforms viewUniformPer;
+    WorldUniforms worldUniformPer;
 
 private:
   dawn::InputStateDescriptor inputState;

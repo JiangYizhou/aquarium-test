@@ -1,20 +1,20 @@
 #version 450
 
 layout(std140, set = 1, binding = 0) uniform LightWorldPositionUniform {
-     vec3 lightWorldPos;
-} lightWorldPositionUniform;
-
-struct ViewUniforms
-{
+    vec3 lightWorldPos;
     mat4 viewProjection;
     mat4 viewInverse;
+} lightWorldPositionUniform;
+
+struct WorldUniform
+{
     mat4 world;
     mat4 worldInverseTranspose;
     mat4 worldViewProjection;
 };
 
 layout(std140, set = 3, binding = 0) uniform WorldUniforms {
-    ViewUniforms views[20];
+    WorldUniform worlds[20];
 } worldUniforms;
 
 layout(std140,set = 3, binding = 1) uniform SeaweedPer {
@@ -30,7 +30,7 @@ layout(location = 2) out vec3 v_normal;
 layout(location = 3) out vec3 v_surfaceToLight;
 layout(location = 4) out vec3 v_surfaceToView;
 void main() {
-  vec3 toCamera = normalize(worldUniforms.views[gl_InstanceIndex].viewInverse[3].xyz - worldUniforms.views[gl_InstanceIndex].world[3].xyz);
+  vec3 toCamera = normalize(lightWorldPositionUniform.viewInverse[3].xyz - worldUniforms.worlds[gl_InstanceIndex].world[3].xyz);
   vec3 yAxis = vec3(0, 1, 0);
   vec3 xAxis = cross(yAxis, toCamera);
   vec3 zAxis = cross(xAxis, yAxis);
@@ -39,7 +39,7 @@ void main() {
       vec4(xAxis, 0),
       vec4(yAxis, 0),
       vec4(xAxis, 0),
-      worldUniforms.views[gl_InstanceIndex].world[3]);
+      worldUniforms.worlds[gl_InstanceIndex].world[3]);
 
   v_texCoord = texCoord;
   v_position = position + vec4(
@@ -47,10 +47,10 @@ void main() {
       -4,  // TODO(gman): remove this hack
       0,
       0);
-  v_position = (worldUniforms.views[gl_InstanceIndex].viewProjection * newWorld) * v_position;
+  v_position = (lightWorldPositionUniform.viewProjection * newWorld) * v_position;
   v_normal = (newWorld * vec4(normal, 0)).xyz;
-  v_surfaceToLight = lightWorldPositionUniform.lightWorldPos - (worldUniforms.views[gl_InstanceIndex].world * position).xyz;
-  v_surfaceToView = (worldUniforms.views[gl_InstanceIndex].viewInverse[3] - (worldUniforms.views[gl_InstanceIndex].world * position)).xyz;
+  v_surfaceToLight = lightWorldPositionUniform.lightWorldPos - (worldUniforms.worlds[gl_InstanceIndex].world * position).xyz;
+  v_surfaceToView = (lightWorldPositionUniform.viewInverse[3] - (worldUniforms.worlds[gl_InstanceIndex].world * position)).xyz;
   v_position.y = -v_position.y;
   gl_Position = v_position;
 }

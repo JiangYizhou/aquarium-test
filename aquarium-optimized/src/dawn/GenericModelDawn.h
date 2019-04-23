@@ -18,16 +18,19 @@
 
 class GenericModelDawn : public GenericModel
 {
-public:
-    GenericModelDawn(const Context* context, Aquarium* aquarium, MODELGROUP type, MODELNAME name, bool blend);
+  public:
+    GenericModelDawn(const Context *context,
+                     Aquarium *aquarium,
+                     MODELGROUP type,
+                     MODELNAME name,
+                     bool blend);
     ~GenericModelDawn();
 
     void init() override;
     void preDraw() const override;
     void draw() override;
 
-    void updatePerInstanceUniforms(ViewUniforms *viewUniforms) override;
-
+    void updatePerInstanceUniforms(WorldUniforms *WorldUniforms) override;
 
     TextureDawn *diffuseTexture;
     TextureDawn *normalTexture;
@@ -48,11 +51,11 @@ public:
         float specularFactor;
     } lightFactorUniforms;
 
-    struct ViewUniformPer
+    struct WorldUniformPer
     {
-        ViewUniforms viewuniforms[20];
+        WorldUniforms WorldUniforms[20];
     };
-    ViewUniformPer viewUniformPer;
+    WorldUniformPer worldUniformPer;
 
 private:
   dawn::InputStateDescriptor inputState;

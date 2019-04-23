@@ -327,12 +327,12 @@ struct LightWorldPositionUniform
 {
     float lightWorldPos[3];
     float padding;
-};
-
-struct ViewUniforms
-{
     float viewProjection[16];
     float viewInverse[16];
+};
+
+struct WorldUniforms
+{
     float world[16];
     float worldInverseTranspose[16];
     float worldViewProjection[16];
@@ -363,7 +363,7 @@ class Aquarium
     void display();
 
     LightWorldPositionUniform lightWorldPositionUniform;
-    ViewUniforms viewUniforms;
+    WorldUniforms worldUniforms;
     LightUniforms lightUniforms;
     FogUniforms fogUniforms;
     Global g;

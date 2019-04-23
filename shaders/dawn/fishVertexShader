@@ -2,15 +2,9 @@
 
 layout(std140, set = 1, binding = 0) uniform LightWorldPositionUniform {
     vec3 lightWorldPos;
-} lightWorldPositionUniform;
-
-layout(std140, set = 3, binding = 0) uniform ViewUniforms {
 	mat4 viewProjection;
 	mat4 viewInverse;
-    mat4 world;
-	mat4 worldInverseTranspose;
-    mat4 worldViewProjection;
-} viewUniforms;
+} lightWorldPositionUniform;
 
 layout(std140, set = 2, binding = 0) uniform FishVertexUniforms {
     float fishLength;
@@ -49,7 +43,7 @@ void main() {
     vec4(0, 0, scale, 0),
     vec4(0, 0, 0, 1));
   mat4 world = orientMat * scaleMat;
-  mat4 worldViewProjection = viewUniforms.viewProjection * world;
+  mat4 worldViewProjection = lightWorldPositionUniform.viewProjection * world;
   mat4 worldInverseTranspose = world;
 
   v_texCoord = texCoord;
@@ -66,7 +60,7 @@ void main() {
        vec4(offset, 0, 0, 0)));
   v_normal = (worldInverseTranspose * vec4(normal, 0)).xyz;
   v_surfaceToLight = lightWorldPositionUniform.lightWorldPos - (world * position).xyz;
-  v_surfaceToView = (viewUniforms.viewInverse[3] - (world * position)).xyz;
+  v_surfaceToView = (lightWorldPositionUniform.viewInverse[3] - (world * position)).xyz;
   v_binormal = (worldInverseTranspose * vec4(binormal, 0)).xyz;  // #normalMap
   v_tangent = (worldInverseTranspose * vec4(tangent, 0)).xyz;  // #normalMap
   v_position.y = -v_position.y;

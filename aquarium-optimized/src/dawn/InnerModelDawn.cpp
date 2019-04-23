@@ -89,7 +89,7 @@ void InnerModelDawn::init()
 
     innerBuffer = contextDawn->createBufferFromData(&innerUniforms, sizeof(innerUniforms), dawn::BufferUsageBit::TransferDst | dawn::BufferUsageBit::Uniform);
     viewBuffer = contextDawn->createBufferFromData(
-        &viewUniformPer, sizeof(ViewUniforms),
+        &worldUniformPer, sizeof(WorldUniforms),
         dawn::BufferUsageBit::TransferDst | dawn::BufferUsageBit::Uniform);
 
     bindGroupModel = contextDawn->makeBindGroup(groupLayoutModel, {
@@ -104,7 +104,7 @@ void InnerModelDawn::init()
 
     bindGroupPer =
         contextDawn->makeBindGroup(groupLayoutPer, {
-                                                       {0, viewBuffer, 0, sizeof(ViewUniforms)},
+                                                       {0, viewBuffer, 0, sizeof(WorldUniforms)},
                                                    });
 
     contextDawn->setBufferData(innerBuffer, 0, sizeof(InnerUniforms), &innerUniforms);
@@ -133,9 +133,9 @@ void InnerModelDawn::draw()
     pass.DrawIndexed(indicesBuffer->getTotalComponents(), 1, 0, 0, 0);
 }
 
-void InnerModelDawn::updatePerInstanceUniforms(ViewUniforms* viewUniforms)
+void InnerModelDawn::updatePerInstanceUniforms(WorldUniforms* worldUniforms)
 {
-    std::memcpy(&viewUniformPer, viewUniforms, sizeof(ViewUniforms));
+    std::memcpy(&worldUniformPer, worldUniforms, sizeof(WorldUniforms));
 
-    contextDawn->setBufferData(viewBuffer, 0, sizeof(ViewUniforms), &viewUniformPer);
+    contextDawn->setBufferData(viewBuffer, 0, sizeof(WorldUniforms), &worldUniformPer);
 }

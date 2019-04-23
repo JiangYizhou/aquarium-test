@@ -83,7 +83,7 @@ void OutsideModelDawn::init()
         &lightFactorUniforms, sizeof(lightFactorUniforms),
         dawn::BufferUsageBit::TransferDst | dawn::BufferUsageBit::Uniform);
     viewBuffer = contextDawn->createBufferFromData(
-        &viewUniformPer, sizeof(ViewUniforms),
+        &worldUniformPer, sizeof(WorldUniforms),
         dawn::BufferUsageBit::TransferDst | dawn::BufferUsageBit::Uniform);
 
     bindGroupModel = contextDawn->makeBindGroup(groupLayoutModel, {
@@ -93,7 +93,7 @@ void OutsideModelDawn::init()
     });
 
     bindGroupPer = contextDawn->makeBindGroup(groupLayoutPer, {
-        {0, viewBuffer, 0, sizeof(ViewUniforms)},
+        {0, viewBuffer, 0, sizeof(WorldUniforms)},
     });
 
     contextDawn->setBufferData(lightFactorBuffer, 0, sizeof(LightFactorUniforms), &lightFactorUniforms);
@@ -125,8 +125,8 @@ void OutsideModelDawn::draw()
     pass.DrawIndexed(indicesBuffer->getTotalComponents(), 1, 0, 0, 0);
 }
 
-void OutsideModelDawn::updatePerInstanceUniforms(ViewUniforms *viewUniforms) {
-    memcpy(&viewUniformPer, viewUniforms, sizeof(ViewUniforms));
+void OutsideModelDawn::updatePerInstanceUniforms(WorldUniforms *worldUniforms) {
+    memcpy(&worldUniformPer, worldUniforms, sizeof(WorldUniforms));
 
-    contextDawn->setBufferData(viewBuffer, 0, sizeof(ViewUniforms), &viewUniformPer);
+    contextDawn->setBufferData(viewBuffer, 0, sizeof(WorldUniforms), &worldUniformPer);
 }

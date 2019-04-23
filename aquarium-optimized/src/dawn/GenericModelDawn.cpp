@@ -134,7 +134,7 @@ void GenericModelDawn::init()
         &lightFactorUniforms, sizeof(lightFactorUniforms),
         dawn::BufferUsageBit::TransferDst | dawn::BufferUsageBit::Uniform);
     viewBuffer = contextDawn->createBufferFromData(
-        &viewUniformPer, sizeof(ViewUniformPer),
+        &worldUniformPer, sizeof(worldUniformPer),
         dawn::BufferUsageBit::TransferDst | dawn::BufferUsageBit::Uniform);
 
     // Generic models use reflection, normal or diffuse shaders, of which grouplayouts are
@@ -173,7 +173,7 @@ void GenericModelDawn::init()
 
     bindGroupPer =
         contextDawn->makeBindGroup(groupLayoutPer, {
-                                                       {0, viewBuffer, 0, sizeof(ViewUniformPer)},
+                                                       {0, viewBuffer, 0, sizeof(WorldUniformPer)},
                                                    });
 
     contextDawn->setBufferData(lightFactorBuffer, 0, sizeof(LightFactorUniforms),
@@ -182,7 +182,7 @@ void GenericModelDawn::init()
 
 void GenericModelDawn::preDraw() const
 {
-    contextDawn->setBufferData(viewBuffer, 0, sizeof(ViewUniformPer), &viewUniformPer);
+    contextDawn->setBufferData(viewBuffer, 0, sizeof(WorldUniformPer), &worldUniformPer);
 }
 
 void GenericModelDawn::draw()
@@ -209,9 +209,9 @@ void GenericModelDawn::draw()
     instance = 0;
 }
 
-void GenericModelDawn::updatePerInstanceUniforms(ViewUniforms *viewUniforms)
+void GenericModelDawn::updatePerInstanceUniforms(WorldUniforms *worldUniforms)
 {
-    viewUniformPer.viewuniforms[instance] = *viewUniforms;
-    //memcpy(viewUniformPer.viewuniforms + sizeof(ViewUniforms) * instance, viewUniforms, sizeof(ViewUniforms));
+    worldUniformPer.WorldUniforms[instance] = *worldUniforms;
+
     instance++;
 }

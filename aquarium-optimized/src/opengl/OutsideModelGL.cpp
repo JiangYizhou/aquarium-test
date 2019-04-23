@@ -14,16 +14,16 @@ OutsideModelGL::OutsideModelGL(const ContextGL *context,
                                bool blend)
     : OutsideModel(type, name, blend), contextGL(context)
 {
-    viewInverseUniform.first = aquarium->viewUniforms.viewInverse;
+    viewInverseUniform.first           = aquarium->lightWorldPositionUniform.viewInverse;
     lightWorldPosUniform.first = aquarium->lightWorldPositionUniform.lightWorldPos;
     lightColorUniform.first = aquarium->lightUniforms.lightColor;
     specularUniform.first = aquarium->lightUniforms.specular;
     shininessUniform.first = 50.0f;
     specularFactorUniform.first = 0.0f;
     ambientUniform.first = aquarium->lightUniforms.ambient;
-    worldUniform.first = aquarium->viewUniforms.world;
-    worldViewProjectionUniform.first = aquarium->viewUniforms.worldViewProjection;
-    worldInverseTransposeUniform.first = aquarium->viewUniforms.worldInverseTranspose;
+    worldUniform.first = aquarium->worldUniforms.world;
+    worldViewProjectionUniform.first = aquarium->worldUniforms.worldViewProjection;
+    worldInverseTransposeUniform.first = aquarium->worldUniforms.worldInverseTranspose;
     fogPowerUniform.first = 0;
     fogMultUniform.first = 0;
     fogOffsetUniform.first = 0;
@@ -103,7 +103,7 @@ void OutsideModelGL::preDraw() const
     contextGL->setTexture(diffuseTexture.first, diffuseTexture.second, 0);
 }
 
-void OutsideModelGL::updatePerInstanceUniforms(ViewUniforms *viewUniforms)
+void OutsideModelGL::updatePerInstanceUniforms(WorldUniforms *worldUniforms)
 {
     contextGL->setUniform(worldUniform.second, worldUniform.first, GL_FLOAT_MAT4);
     contextGL->setUniform(worldViewProjectionUniform.second, worldViewProjectionUniform.first,

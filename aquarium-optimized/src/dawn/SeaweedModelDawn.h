@@ -24,7 +24,7 @@ class SeaweedModelDawn : public SeaweedModel
     void preDraw() const override;
     void draw() override;
 
-    void updatePerInstanceUniforms(ViewUniforms *viewUniforms) override;
+    void updatePerInstanceUniforms(WorldUniforms *worldUniforms) override;
 
 
     TextureDawn *diffuseTexture;
@@ -50,11 +50,11 @@ class SeaweedModelDawn : public SeaweedModel
         float time[20];
     } seaweedPer;
 
-    struct ViewUniformPer
+    struct WorldUniformPer
     {
-        ViewUniforms viewuniforms[20];
+        WorldUniforms worldUniforms[20];
     };
-    ViewUniformPer viewUniformPer;
+    WorldUniformPer worldUniformPer;
 
   private:
     dawn::InputStateDescriptor inputState;

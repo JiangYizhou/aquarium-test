@@ -14,16 +14,16 @@ GenericModelGL::GenericModelGL(const ContextGL *context,
                                bool blend)
     : GenericModel(type, name, blend), contextGL(context)
 {
-    viewInverseUniform.first = aquarium->viewUniforms.viewInverse;
+    viewInverseUniform.first = aquarium->lightWorldPositionUniform.viewInverse;
     lightWorldPosUniform.first = aquarium->lightWorldPositionUniform.lightWorldPos;
     lightColorUniform.first = aquarium->lightUniforms.lightColor;
     specularUniform.first = aquarium->lightUniforms.specular;
     shininessUniform.first = 50.0f;
     specularFactorUniform.first = 1.0f;
     ambientUniform.first = aquarium->lightUniforms.ambient;
-    worldUniform.first = aquarium->viewUniforms.world;
-    worldViewProjectionUniform.first = aquarium->viewUniforms.worldViewProjection;
-    worldInverseTransposeUniform.first = aquarium->viewUniforms.worldInverseTranspose;
+    worldUniform.first = aquarium->worldUniforms.world;
+    worldViewProjectionUniform.first = aquarium->worldUniforms.worldViewProjection;
+    worldInverseTransposeUniform.first = aquarium->worldUniforms.worldInverseTranspose;
     fogPowerUniform.first = g_fogPower;
     fogMultUniform.first = g_fogMult;
     fogOffsetUniform.first = g_fogOffset;
@@ -123,7 +123,7 @@ void GenericModelGL::preDraw() const
     }
 }
 
-void GenericModelGL::updatePerInstanceUniforms(ViewUniforms *viewUniforms)
+void GenericModelGL::updatePerInstanceUniforms(WorldUniforms *worldUniforms)
 {
     contextGL->setUniform(worldUniform.second, worldUniform.first, GL_FLOAT_MAT4);
     contextGL->setUniform(worldViewProjectionUniform.second, worldViewProjectionUniform.first,
