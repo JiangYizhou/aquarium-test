@@ -83,6 +83,8 @@ Aquarium::Aquarium()
     lightUniforms.ambient[1] = g_ambientGreen;
     lightUniforms.ambient[2] = g_ambientBlue;
     lightUniforms.ambient[3] = 0.0f;
+
+    memset(fishCount, 0, 5);
 }
 
 Aquarium::~Aquarium()
@@ -174,9 +176,9 @@ void Aquarium::init(int argc, char **argv)
 
     setupModelEnumMap();
 
-    loadReource();
-
     calculateFishCount();
+
+    loadReource();
 }
 
 void Aquarium::display()
@@ -457,7 +459,7 @@ void Aquarium::calculateFishCount()
                 }
             }
             numLeft      = numLeft - numfloat;
-            fishInfo.num = numfloat;
+            fishCount[fishInfo.modelName - MODELNAME::MODELSMALLFISHA] = numfloat;
         }
         }
 }
@@ -589,7 +591,7 @@ void Aquarium::drawFishes()
         FishModel *model = static_cast<FishModel *>(mAquariumModels[i]);
 
         const Fish &fishInfo = fishTable[i - MODELNAME::MODELSMALLFISHA];
-        int numFish          = fishInfo.num;
+        int numFish          = fishCount[i - MODELNAME::MODELSMALLFISHA];
 
         if (mBackendpath == "opengl" || mBackendpath == "angle")
         {
@@ -630,8 +632,7 @@ void Aquarium::drawFishes()
                 sin(xClock - 0.04f) * xRadius, sin(yClock - 0.01f) * yRadius + fishHeight,
                 cos(zClock - 0.04f) * zRadius, scale,
                 fmod((g.mclock + ii * g_tailOffsetMult) * fishTailSpeed * speed,
-                     static_cast<float>(M_PI) * 2));
-
+                     static_cast<float>(M_PI) * 2), ii);
             if (mBackendpath=="opengl" || mBackendpath == "angle")
             {
                 model->updatePerInstanceUniforms(&worldUniforms);

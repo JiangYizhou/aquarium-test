@@ -190,37 +190,48 @@ struct Fish
     float laserRot;
     float laserOff[3];
     float laserScale[3];
-    int num;
 };
 
-static Fish fishTable[] = {{"SmallFishA", MODELNAME::MODELSMALLFISHA, FISHENUM::SMALL, 1.0f, 1.5f,
-                            30.0f, 25.0f, 10.0f, 0.0f, 16.0f, 10.0f, 1.0f, 2.0f},
-                           {"MediumFishA", MODELNAME::MODELMEDIUMFISHA, FISHENUM::MEDIUM, 1.0f,
-                            2.0f, 10.0f, 20.0f, 1.0f, 0.0f, 16.0f, 10.0f, -2.0f, 2.0f},
-                           {"MediumFishB", MODELNAME::MODELMEDIUMFISHB, FISHENUM::MEDIUM, 0.5f,
-                            4.0f, 10.0f, 20.0f, 3.0f, -8.0f, 5.0f, 10.0f, -2.0f, 2.0f},
-                           {"BigFishA",    MODELNAME::MODELBIGFISHA,
-                            FISHENUM::BIG, 0.5f,
-                            0.5f,          50.0f,
-                            3.0f,          1.5f,
-                            0.0f,          16.0f,
-                            10.0f,         -1.0f,
-                            0.5f,          true,
-                            0.04f,         {0.0f,
-                            0.1f,          9.0f},
-                            {0.3f,          0.3f,
-                            1000.0f}},
-                           {"BigFishB",    MODELNAME::MODELBIGFISHB,
-                            FISHENUM::BIG, 0.5f,
-                            0.5f,          45.0f,
-                            3.0f,          1.0f,
-                            0.0f,          16.0f,
-                            10.0f,         -0.7f,
-                            0.3f,          true,
-                            0.04f,         {0.0f,
-                            -0.3f,         9.0f},
-                            {0.3f,          0.3f,
-                            1000.0f}} };
+const Fish fishTable[] = {{"SmallFishA", MODELNAME::MODELSMALLFISHA, FISHENUM::SMALL, 1.0f, 1.5f,
+                           30.0f, 25.0f, 10.0f, 0.0f, 16.0f, 10.0f, 1.0f, 2.0f},
+                          {"MediumFishA", MODELNAME::MODELMEDIUMFISHA, FISHENUM::MEDIUM, 1.0f, 2.0f,
+                           10.0f, 20.0f, 1.0f, 0.0f, 16.0f, 10.0f, -2.0f, 2.0f},
+                          {"MediumFishB", MODELNAME::MODELMEDIUMFISHB, FISHENUM::MEDIUM, 0.5f, 4.0f,
+                           10.0f, 20.0f, 3.0f, -8.0f, 5.0f, 10.0f, -2.0f, 2.0f},
+                          {"BigFishA",
+                           MODELNAME::MODELBIGFISHA,
+                           FISHENUM::BIG,
+                           0.5f,
+                           0.5f,
+                           50.0f,
+                           3.0f,
+                           1.5f,
+                           0.0f,
+                           16.0f,
+                           10.0f,
+                           -1.0f,
+                           0.5f,
+                           true,
+                           0.04f,
+                           {0.0f, 0.1f, 9.0f},
+                           {0.3f, 0.3f, 1000.0f}},
+                          {"BigFishB",
+                           MODELNAME::MODELBIGFISHB,
+                           FISHENUM::BIG,
+                           0.5f,
+                           0.5f,
+                           45.0f,
+                           3.0f,
+                           1.0f,
+                           0.0f,
+                           16.0f,
+                           10.0f,
+                           -0.7f,
+                           0.3f,
+                           true,
+                           0.04f,
+                           {0.0f, -0.3f, 9.0f},
+                           {0.3f, 0.3f, 1000.0f}}};
 
 constexpr float g_tailOffsetMult      = 1.0f;
 constexpr float g_endOfDome           = static_cast<float>(M_PI / 8);
@@ -367,6 +378,7 @@ class Aquarium
     LightUniforms lightUniforms;
     FogUniforms fogUniforms;
     Global g;
+    int fishCount[5];
 
   private:
     void render();
