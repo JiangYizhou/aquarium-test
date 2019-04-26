@@ -6,8 +6,8 @@
 // FishModelDawn.h: Defnes fish model of Dawn
 
 #pragma once
-#ifndef FISHMODELDAWN_H
-#define FISHMODELDAWN_H 1
+#ifndef FISHMODELINSTANCEDDRAWDAWN_H
+#define FISHMODELINSTANCEDDRAWDAWN_H 1
 
 #include <string>
 
@@ -16,15 +16,15 @@
 #include "ProgramDawn.h"
 #include "dawn/dawncpp.h"
 
-class FishModelDawn : public FishModel
+class FishModelInstancedDrawDawn : public FishModel
 {
   public:
-    FishModelDawn(const Context *context,
-                  Aquarium *aquarium,
-                  MODELGROUP type,
-                  MODELNAME name,
-                  bool blend);
-    ~FishModelDawn();
+    FishModelInstancedDrawDawn(const Context *context,
+                               Aquarium *aquarium,
+                               MODELGROUP type,
+                               MODELNAME name,
+                               bool blend);
+    ~FishModelInstancedDrawDawn();
 
     void init() override;
     void preDraw() const override;
@@ -60,7 +60,6 @@ class FishModelDawn : public FishModel
         float scale;
         float nextPosition[3];
         float time;
-        float padding[56];  // TODO(yizhou): the padding is to align with 256 byte offset.
     };
     FishPer *fishPers;
 
@@ -86,7 +85,7 @@ class FishModelDawn : public FishModel
     dawn::PipelineLayout pipelineLayout;
 
     dawn::BindGroup bindGroupModel;
-    dawn::BindGroup *bindGroupPers;
+    dawn::BindGroup bindGroupPer;
 
     dawn::Buffer fishVertexBuffer;
     dawn::Buffer lightFactorBuffer;

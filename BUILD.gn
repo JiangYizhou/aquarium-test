@@ -99,6 +99,8 @@ executable("aquarium") {
       "aquarium-optimized/src/dawn/ContextDawn.h",
       "aquarium-optimized/src/dawn/FishModelDawn.cpp",
       "aquarium-optimized/src/dawn/FishModelDawn.h",
+      "aquarium-optimized/src/dawn/FishModelInstancedDrawDawn.cpp",
+      "aquarium-optimized/src/dawn/FishModelInstancedDrawDawn.h",
       "aquarium-optimized/src/dawn/GenericModelDawn.cpp",
       "aquarium-optimized/src/dawn/GenericModelDawn.h",
       "aquarium-optimized/src/dawn/InnerModelDawn.cpp",

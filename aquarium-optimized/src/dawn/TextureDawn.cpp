@@ -19,6 +19,8 @@ TextureDawn::~TextureDawn() {
     DestoryImageData(mPixelVec);
     DestoryImageData(mResizedVec);
     mTextureView = nullptr;
+    mTexture     = nullptr;
+    mSampler     = nullptr;
 }
 
 TextureDawn::TextureDawn(ContextDawn *context, std::string name, std::string url)

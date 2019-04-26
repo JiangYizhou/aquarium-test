@@ -127,11 +127,13 @@ make
 
 # Run
 ```sh
-# "--num-fish": specifies how many fishes will be rendered
+# "--num-fish" : specifies how many fishes will be rendered
 # "--backend" : specifies running a certain backend, 'opengl', 'dawn_d3d12', 'dawn_vulkan', 'dawn_metal', 'dawn_opengl'
+# "--allow-instanced-draws" : specifies rendering fishes by instanced draw. By default fishes
+# are rendered by individual draw. Instanced rendering is only supported on dawn backend now.
 # running angle dynamic backend is on todo list. Currently go through angle path by option 'opengl' if angle is linked into the project
 # MSAA is disabled by default. To Enable MSAA of OpenGL backend, "--enable-msaa", 4 samples.
-# MSAA of angle or dawn backend is not supported now.
+# MSAA of angle is not supported now.
 
 # run on Windows
 run it in Visual Studio

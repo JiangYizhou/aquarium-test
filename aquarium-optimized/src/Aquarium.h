@@ -58,12 +58,18 @@ enum MODELNAME : short
     MODELMEDIUMFISHB,
     MODELBIGFISHA,
     MODELBIGFISHB,
+    MODELSMALLFISHAINSTANCEDDRAWS,
+    MODELMEDIUMFISHAINSTANCEDDRAWS,
+    MODELMEDIUMFISHBINSTANCEDDRAWS,
+    MODELBIGFISHAINSTANCEDDRAWS,
+    MODELBIGFISHBINSTANCEDDRAWS,
     MODELMAX
 };
 
 enum MODELGROUP : short
 {
     FISH,
+    FISHINSTANCEDDRAW,
     INNER,
     SEAWEED,
     GENERIC,
@@ -115,6 +121,31 @@ const G_sceneInfo g_sceneInfo[] = {
      {"fishVertexShader", "fishNormalMapFragmentShader"},
      true,
      MODELGROUP::FISH},
+    {"SmallFishA",
+     MODELNAME::MODELSMALLFISHAINSTANCEDDRAWS,
+     {"fishVertexShaderINSTANCEDDRAWS", "fishReflectionFragmentShader"},
+     true,
+     MODELGROUP::FISHINSTANCEDDRAW},
+    {"MediumFishA",
+     MODELNAME::MODELMEDIUMFISHAINSTANCEDDRAWS,
+     {"fishVertexShaderINSTANCEDDRAWS", "fishNormalMapFragmentShader"},
+     true,
+     MODELGROUP::FISHINSTANCEDDRAW},
+    {"MediumFishB",
+     MODELNAME::MODELMEDIUMFISHBINSTANCEDDRAWS,
+     {"fishVertexShaderINSTANCEDDRAWS", "fishReflectionFragmentShader"},
+     true,
+     MODELGROUP::FISHINSTANCEDDRAW},
+    {"BigFishA",
+     MODELNAME::MODELBIGFISHAINSTANCEDDRAWS,
+     {"fishVertexShaderINSTANCEDDRAWS", "fishNormalMapFragmentShader"},
+     true,
+     MODELGROUP::FISHINSTANCEDDRAW},
+    {"BigFishB",
+     MODELNAME::MODELBIGFISHBINSTANCEDDRAWS,
+     {"fishVertexShaderINSTANCEDDRAWS", "fishNormalMapFragmentShader"},
+     true,
+     MODELGROUP::FISHINSTANCEDDRAW},
     {"Arch", MODELNAME::MODELARCH, {"", ""}, true, MODELGROUP::GENERIC},
     {"Coral", MODELNAME::MODELCORAL, {"", ""}, true, MODELGROUP::GENERIC},
     {"CoralStoneA", MODELNAME::MODELCORALSTONEA, {"", ""}, true, MODELGROUP::GENERIC},
@@ -162,8 +193,7 @@ const G_sceneInfo g_sceneInfo[] = {
      false,
      MODELGROUP::OUTSIDE},
     {"SupportBeams", MODELNAME::MODELSUPPORTBEAMS, {"", ""}, false, MODELGROUP::OUTSIDE},
-    {"TreasureChest", MODELNAME::MODELTREASURECHEST, {"", ""}, true, MODELGROUP::GENERIC}
-};
+    {"TreasureChest", MODELNAME::MODELTREASURECHEST, {"", ""}, true, MODELGROUP::GENERIC}};
 
 const std::vector<std::string> g_skyBoxUrls = {
     "GlobeOuter_EM_positive_x.jpg", "GlobeOuter_EM_negative_x.jpg", "GlobeOuter_EM_positive_y.jpg",
@@ -395,6 +425,7 @@ class Aquarium
     std::string mPath;
     ContextFactory *factory;
     bool enableMSAA;
+    bool allowInstancedDraws;
 
     void updateUrls();
     void loadReource();

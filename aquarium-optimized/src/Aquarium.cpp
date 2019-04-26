@@ -54,7 +54,8 @@ Aquarium::Aquarium()
       mShaderVersion(""),
       mPath(""),
       factory(nullptr),
-      enableMSAA(false)
+      enableMSAA(false),
+      allowInstancedDraws(false)
 {
     g.then = 0.0f;
     g.mclock = 0.0f;
@@ -145,6 +146,21 @@ void Aquarium::init(int argc, char **argv)
         else if (cmd == "--enable-msaa")
         {
             enableMSAA = true;
+            if (enableMSAA && mBackendpath == "angle")
+            {
+                std::cerr << "MSAA isn't implemented for angle backend." << std::endl;
+                return;
+            }
+        }
+        else if (cmd == "--allow-instanced-draws")
+        {
+            allowInstancedDraws = true;
+            if (allowInstancedDraws && mBackendpath != "dawn")
+            {
+                std::cerr << "Instanced draw path isn't implemented for " + mBackendpath +
+                                 " backend.";
+                return;
+            }
         }
         else
         {
@@ -296,6 +312,11 @@ void Aquarium::loadModels()
 {
     for (const auto &info : g_sceneInfo)
     {
+        if ((allowInstancedDraws && info.type == MODELGROUP::FISH) ||
+            (!allowInstancedDraws && info.type == MODELGROUP::FISHINSTANCEDDRAW))
+        {
+            continue;
+        }
         loadModel(info);
     }
 }
@@ -586,12 +607,16 @@ void Aquarium::drawSeaweed()
 
 void Aquarium::drawFishes()
 {
-    for (int i = MODELNAME::MODELSMALLFISHA; i <= MODELNAME::MODELBIGFISHB; ++i)
+    int begin =
+        allowInstancedDraws ? MODELNAME::MODELSMALLFISHAINSTANCEDDRAWS : MODELNAME::MODELSMALLFISHA;
+    int end =
+        allowInstancedDraws ? MODELNAME::MODELBIGFISHBINSTANCEDDRAWS : MODELNAME::MODELBIGFISHB;
+    for (int i = begin; i <= end; ++i)
     {
         FishModel *model = static_cast<FishModel *>(mAquariumModels[i]);
 
-        const Fish &fishInfo = fishTable[i - MODELNAME::MODELSMALLFISHA];
-        int numFish          = fishCount[i - MODELNAME::MODELSMALLFISHA];
+        const Fish &fishInfo = fishTable[i - begin];
+        int numFish          = fishCount[i - begin];
 
         if (mBackendpath == "opengl" || mBackendpath == "angle")
         {

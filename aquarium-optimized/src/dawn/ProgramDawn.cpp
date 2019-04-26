@@ -18,6 +18,8 @@ ProgramDawn::ProgramDawn(ContextDawn *context, std::string vId, std::string fId)
 
 ProgramDawn::~ProgramDawn()
 {
+    vsModule = nullptr;
+    fsModule = nullptr;
 }
 
 void ProgramDawn::loadProgram()
