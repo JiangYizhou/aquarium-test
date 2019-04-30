@@ -13,6 +13,7 @@
 #include "BufferDawn.h"
 #include "ContextDawn.h"
 #include "FishModelDawn.h"
+#include "FishModelInstancedDrawDawn.h"
 #include "GenericModelDawn.h"
 #include "InnerModelDawn.h"
 #include "OutsideModelDawn.h"
@@ -514,6 +515,9 @@ Model * ContextDawn::createModel(Aquarium* aquarium, MODELGROUP type, MODELNAME 
     {
     case MODELGROUP::FISH:
         model = new FishModelDawn(this, aquarium, type, name, blend);
+        break;
+    case MODELGROUP::FISHINSTANCEDDRAW:
+        model = new FishModelInstancedDrawDawn(this, aquarium, type, name, blend);
         break;
     case MODELGROUP::GENERIC:
         model = new GenericModelDawn(this, aquarium, type, name, blend);

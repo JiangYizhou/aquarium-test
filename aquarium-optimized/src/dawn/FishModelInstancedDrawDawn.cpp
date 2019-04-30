@@ -5,14 +5,14 @@
 //
 // FishModelDawn.cpp: Implements fish model of Dawn.
 
-#include "FishModelDawn.h"
+#include "FishModelInstancedDrawDawn.h"
 #include "BufferDawn.h"
 
-FishModelDawn::FishModelDawn(const Context *context,
-                             Aquarium *aquarium,
-                             MODELGROUP type,
-                             MODELNAME name,
-                             bool blend)
+FishModelInstancedDrawDawn::FishModelInstancedDrawDawn(const Context *context,
+                                                       Aquarium *aquarium,
+                                                       MODELGROUP type,
+                                                       MODELNAME name,
+                                                       bool blend)
     : FishModel(type, name, blend), instance(0)
 {
     contextDawn = static_cast<const ContextDawn *>(context);
@@ -20,17 +20,16 @@ FishModelDawn::FishModelDawn(const Context *context,
     lightFactorUniforms.shininess      = 5.0f;
     lightFactorUniforms.specularFactor = 0.3f;
 
-    const Fish &fishInfo              = fishTable[name - MODELNAME::MODELSMALLFISHA];
+    const Fish &fishInfo              = fishTable[name - MODELNAME::MODELSMALLFISHAINSTANCEDDRAWS];
     fishVertexUniforms.fishLength     = fishInfo.fishLength;
     fishVertexUniforms.fishBendAmount = fishInfo.fishBendAmount;
     fishVertexUniforms.fishWaveLength = fishInfo.fishWaveLength;
 
-    instance      = aquarium->fishCount[fishInfo.modelName - MODELNAME::MODELSMALLFISHA];
-    fishPers      = new FishPer[instance];
-    bindGroupPers = new dawn::BindGroup[instance];
+    instance = aquarium->fishCount[fishInfo.modelName - MODELNAME::MODELSMALLFISHA];
+    fishPers = new FishPer[instance];
 }
 
-void FishModelDawn::init()
+void FishModelInstancedDrawDawn::init()
 {
     if (instance == 0)
         return;
@@ -49,6 +48,10 @@ void FishModelDawn::init()
     binormalBuffer = static_cast<BufferDawn *>(bufferMap["binormal"]);
     indicesBuffer  = static_cast<BufferDawn *>(bufferMap["indices"]);
 
+    fishPersBuffer =
+        contextDawn->createBuffer(sizeof(FishPer) * instance,
+                                  dawn::BufferUsageBit::Vertex | dawn::BufferUsageBit::TransferDst);
+
     std::vector<dawn::VertexAttributeDescriptor> vertexAttributeDescriptor;
     std::vector<dawn::VertexInputDescriptor> vertexInputDescriptor;
     contextDawn->createInputState(
@@ -59,6 +62,10 @@ void FishModelDawn::init()
             {2, 2, dawn::VertexFormat::Float2, 0},
             {3, 3, dawn::VertexFormat::Float3, 0},
             {4, 4, dawn::VertexFormat::Float3, 0},
+            {5, 5, dawn::VertexFormat::Float3, offsetof(FishPer, worldPosition)},
+            {6, 5, dawn::VertexFormat::Float2, offsetof(FishPer, scale)},
+            {7, 5, dawn::VertexFormat::Float3, offsetof(FishPer, nextPosition)},
+            {8, 5, dawn::VertexFormat::Float, offsetof(FishPer, time)},
         },
         {
             {0, positionBuffer->getDataSize(), dawn::InputStepMode::Vertex},
@@ -66,6 +73,7 @@ void FishModelDawn::init()
             {2, texCoordBuffer->getDataSize(), dawn::InputStepMode::Vertex},
             {3, tangentBuffer->getDataSize(), dawn::InputStepMode::Vertex},
             {4, binormalBuffer->getDataSize(), dawn::InputStepMode::Vertex},
+            {5, sizeof(FishPer), dawn::InputStepMode::Instance},
         });
 
     if (skyboxTexture && reflectionTexture)
@@ -111,9 +119,6 @@ void FishModelDawn::init()
     lightFactorBuffer = contextDawn->createBufferFromData(
         &lightFactorUniforms, sizeof(LightFactorUniforms),
         dawn::BufferUsageBit::TransferDst | dawn::BufferUsageBit::Uniform);
-    fishPersBuffer = contextDawn->createBufferFromData(
-        fishPers, sizeof(FishPer) * instance,
-        dawn::BufferUsageBit::TransferDst | dawn::BufferUsageBit::Uniform);
 
     // Fish models includes small, medium and big. Some of them contains reflection and skybox
     // texture, but some doesn't.
@@ -139,20 +144,15 @@ void FishModelDawn::init()
                                {4, normalTexture->getTextureView()}});
     }
 
-    for (int i = 0; i < instance; i++)
-    {
-        bindGroupPers[i] = contextDawn->makeBindGroup(
-            groupLayoutPer, {{0, fishPersBuffer, sizeof(FishPer) * i, sizeof(FishPer)}});
-    }
     contextDawn->setBufferData(lightFactorBuffer, 0, sizeof(LightFactorUniforms),
                                &lightFactorUniforms);
     contextDawn->setBufferData(fishVertexBuffer, 0, sizeof(FishVertexUniforms),
                                &fishVertexUniforms);
 }
 
-void FishModelDawn::preDraw() const {}
+void FishModelInstancedDrawDawn::preDraw() const {}
 
-void FishModelDawn::draw()
+void FishModelInstancedDrawDawn::draw()
 {
     if (instance == 0)
         return;
@@ -171,26 +171,22 @@ void FishModelDawn::draw()
     pass.SetVertexBuffers(2, 1, &texCoordBuffer->getBuffer(), vertexBufferOffsets);
     pass.SetVertexBuffers(3, 1, &tangentBuffer->getBuffer(), vertexBufferOffsets);
     pass.SetVertexBuffers(4, 1, &binormalBuffer->getBuffer(), vertexBufferOffsets);
+    pass.SetVertexBuffers(5, 1, &fishPersBuffer, vertexBufferOffsets);
     pass.SetIndexBuffer(indicesBuffer->getBuffer(), 0);
-
-    for (int i = 0; i < instance; i++)
-    {
-        pass.SetBindGroup(3, bindGroupPers[i], 0, nullptr);
-        pass.DrawIndexed(indicesBuffer->getTotalComponents(), 1, 0, 0, 0);
-    }
+    pass.DrawIndexed(indicesBuffer->getTotalComponents(), instance, 0, 0, 0);
 }
 
-void FishModelDawn::updatePerInstanceUniforms(WorldUniforms *worldUniforms) {}
+void FishModelInstancedDrawDawn::updatePerInstanceUniforms(WorldUniforms *worldUniforms) {}
 
-void FishModelDawn::updateFishPerUniforms(float x,
-                                          float y,
-                                          float z,
-                                          float nextX,
-                                          float nextY,
-                                          float nextZ,
-                                          float scale,
-                                          float time,
-                                          int index)
+void FishModelInstancedDrawDawn::updateFishPerUniforms(float x,
+                                                       float y,
+                                                       float z,
+                                                       float nextX,
+                                                       float nextY,
+                                                       float nextZ,
+                                                       float scale,
+                                                       float time,
+                                                       int index)
 {
     fishPers[index].worldPosition[0] = x;
     fishPers[index].worldPosition[1] = y;
@@ -202,7 +198,7 @@ void FishModelDawn::updateFishPerUniforms(float x,
     fishPers[index].time             = time;
 }
 
-FishModelDawn::~FishModelDawn()
+FishModelInstancedDrawDawn::~FishModelInstancedDrawDawn()
 {
     inputState        = {};
     pipeline          = nullptr;
@@ -210,13 +206,9 @@ FishModelDawn::~FishModelDawn()
     groupLayoutPer    = nullptr;
     pipelineLayout    = nullptr;
     bindGroupModel    = nullptr;
+    bindGroupPer      = nullptr;
     fishVertexBuffer  = nullptr;
     lightFactorBuffer = nullptr;
     fishPersBuffer    = nullptr;
     delete fishPers;
-    for (int i = 0; i < instance; i++)
-    {
-        bindGroupPers[i] = nullptr;
-    }
-    bindGroupPers = nullptr;
 }
