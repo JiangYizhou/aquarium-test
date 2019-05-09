@@ -120,7 +120,7 @@ bool ContextDawn::createContext(std::string backend, bool enableMSAA)
     // mClientWidth  = 1024;
     // mClientHeight = 768;
     // Minus the height of title bar
-    mClientHeight = 1060;
+    mClientHeight -= 20;
 
     mWindow = glfwCreateWindow(mClientWidth, mClientHeight, "Aquarium", NULL, NULL);
     if (mWindow == NULL)

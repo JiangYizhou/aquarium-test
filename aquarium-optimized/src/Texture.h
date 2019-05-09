@@ -22,14 +22,15 @@ class Texture
     std::string getName() { return mName; }
     virtual void loadTexture() = 0;
     void generateMipmap(uint8_t *input_pixels,
-                      int input_w,
-                      int input_h,
-                      int input_stride_in_bytes,
-                      std::vector<uint8_t *> &output_pixels,
-                      int output_w,
-                      int output_h,
-                      int output_stride_in_bytes,
-                      int num_channels);
+                        int input_w,
+                        int input_h,
+                        int input_stride_in_bytes,
+                        std::vector<uint8_t *> &output_pixels,
+                        int output_w,
+                        int output_h,
+                        int output_stride_in_bytes,
+                        int num_channels,
+                        bool is256padding);
 
   protected:
     bool isPowerOf2(int);

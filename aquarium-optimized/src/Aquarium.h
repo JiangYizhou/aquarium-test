@@ -402,6 +402,7 @@ class Aquarium
     ~Aquarium();
     void init(int argc, char **argv);
     void display();
+    Texture *getSkybox() { return mTextureMap["skybox"]; }
 
     LightWorldPositionUniform lightWorldPositionUniform;
     WorldUniforms worldUniforms;
@@ -426,6 +427,7 @@ class Aquarium
     ContextFactory *factory;
     bool enableMSAA;
     bool allowInstancedDraws;
+    std::vector<std::string> skyUrls;
 
     void updateUrls();
     void loadReource();

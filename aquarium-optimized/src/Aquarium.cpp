@@ -155,7 +155,7 @@ void Aquarium::init(int argc, char **argv)
         else if (cmd == "--allow-instanced-draws")
         {
             allowInstancedDraws = true;
-            if (allowInstancedDraws && mBackendpath != "dawn")
+            if (allowInstancedDraws && mBackendpath != "dawn" && mBackendpath != "d3d12")
             {
                 std::cerr << "Instanced draw path isn't implemented for " + mBackendpath +
                                  " backend.";
@@ -187,14 +187,17 @@ void Aquarium::init(int argc, char **argv)
         return;
     }
 
+    calculateFishCount();
+    updateUrls();
+
+    mTextureMap["skybox"] = context->createTexture("skybox", skyUrls);
+
     // Init general buffer and binding groups for dawn backend.
     context->initGeneralResources(this);
 
     setupModelEnumMap();
-
-    calculateFishCount();
-
     loadReource();
+    context->FlushInit();
 }
 
 void Aquarium::display()
@@ -234,6 +237,9 @@ void Aquarium::updateUrls()
     int nPos = mPath.find_last_of(slash);
     mPath = mPath.substr(0, nPos) + slash + ".." + slash + ".." + slash;
     #endif
+
+    // set up skybox url
+    setUpSkyBox(&skyUrls);
 }
 
 void Aquarium::setUpSkyBox(std::vector<std::string> *skyUrls)
@@ -250,13 +256,6 @@ void Aquarium::setUpSkyBox(std::vector<std::string> *skyUrls)
 
 void Aquarium::loadReource()
 {
-    updateUrls();
-
-    // set up skybox
-    std::vector<std::string> skyUrls;
-    setUpSkyBox(&skyUrls);
-    mTextureMap["skybox"] = context->createTexture("skybox", skyUrls);
-
     loadModels();
     loadPlacement();
 }
@@ -345,7 +344,7 @@ void Aquarium::loadModel(const G_sceneInfo &info)
     Model *model               = context->createModel(this, info.type, info.name, info.blend);
     mAquariumModels[info.name] = model;
 
-    for (auto &value : models.GetArray())
+    auto &value = models.GetArray()[models.GetArray().Size() - 1];
     {
         // set up textures
         const rapidjson::Value &textures = value["textures"];
@@ -581,7 +580,6 @@ void Aquarium::render()
     drawSeaweed();
 
     drawOutside();
-
 }
 
 void Aquarium::drawBackground()
@@ -664,10 +662,10 @@ void Aquarium::drawFishes()
                 model->draw();
             }
         }
-        // TODO(yizhou): If backend is dawn, draw only once for every type of fish by drawInstance.
-        // If backend is opengl or angle, draw for exery fish. Update the logic the same as Dawn if
-        // uniform blocks are implemented for OpenGL.
-        if (mBackendpath == "dawn")
+        // TODO(yizhou): If backend is dawn or d3d12, draw only once for every type of fish by
+        // drawInstance. If backend is opengl or angle, draw for exery fish. Update the logic the
+        // same as Dawn if uniform blocks are implemented for OpenGL.
+        if (mBackendpath == "dawn" || mBackendpath == "d3d12")
         {
             model->draw();
         }
@@ -721,7 +719,7 @@ void Aquarium::updateWorldMatrixAndDraw(Model *model)
     // TODO(yizhou): If backend is dawn, draw only once for every model. If
     // backend is opengl or angle, draw for exery instance.
     // Update the logic the same as Dawn if uniform blocks are implemented for OpenGL.
-    if (mBackendpath == "dawn" || mBackendpath == "angle")
+    if (mBackendpath == "dawn" || mBackendpath == "angle" || mBackendpath == "d3d12")
     {
         model->preDraw();
         model->draw();

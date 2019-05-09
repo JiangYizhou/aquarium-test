@@ -7,4 +7,4 @@ void Context::initGeneralResources(Aquarium * aquarium)
 void Context::updateWorldlUniforms(Aquarium * aquarium)
 {
 }
-
+void Context::FlushInit() {}

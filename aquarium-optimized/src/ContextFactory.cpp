@@ -8,6 +8,9 @@
 #ifdef ENABLE_DAWN_BACKEND
 #include "dawn/ContextDawn.h"
 #endif
+#ifdef ENABLE_D3D12_BACKEND
+#include "d3d12/ContextD3D12.h"
+#endif
 
 ContextFactory::ContextFactory()
     :context(nullptr)
@@ -28,6 +31,12 @@ Context *ContextFactory::createContext(std::string str)
     {
 #ifdef ENABLE_DAWN_BACKEND
        context = new ContextDawn();
+#endif
+    }
+    else if (str == "d3d12")
+    {
+#ifdef ENABLE_D3D12_BACKEND
+        context = new ContextD3D12();
 #endif
     }
 

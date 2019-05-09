@@ -40,7 +40,7 @@ class Context
     virtual void KeyBoardQuit()                                                            = 0;
     virtual void DoFlush()                                                                 = 0;
     virtual void Terminate()                                                               = 0;
-
+    virtual void FlushInit();
     virtual void preFrame() = 0;
 
     int getClientWidth() const { return mClientWidth; }
