@@ -110,7 +110,8 @@ void TextureDawn::loadTexture()
         {
             resizedWidth = (mWidth / 256 + 1) * 256;
         }
-        generateMipmap(mPixelVec[0], mWidth, mHeight, 0, mResizedVec, resizedWidth, mHeight, 0, 4);
+        generateMipmap(mPixelVec[0], mWidth, mHeight, 0, mResizedVec, resizedWidth, mHeight, 0, 4,
+                       true);
 
         dawn::TextureDescriptor descriptor;
         descriptor.dimension = mTextureDimension;

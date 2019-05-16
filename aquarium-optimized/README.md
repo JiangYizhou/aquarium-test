@@ -44,9 +44,9 @@ Native Aquarium is a native implementation of [WebGL Aquarium](https://github.co
     <td>Y</td>
   </tr>
   <tr align=left>
-    <td>*</td>
-    <td>D3D</td>
-    <td>N</td>
+    <td>Windows</td>
+    <td>D3D12</td>
+    <td>Y</td>
   </tr>
   <tr align=left>
     <td>*</td>
@@ -64,7 +64,13 @@ Native Aquarium is a native implementation of [WebGL Aquarium](https://github.co
 ## Build Aquarium by GN
 
 Native Aquarium uses gn to build on Linux, macOS and Windows.
+
 ```sh
+# To build release version, --args="is_debug=false"
+# Enable different backend, by default dawn and d3d12 backend is enabled.
+# To change other backends, --args="enable_d3d12=false enable_dawn=false enable_angle=true", if angle backend is enabled, the opengl
+# backend will go through angle.
+
 # cd the repo
 cd aquarium-test
 
@@ -72,7 +78,6 @@ cd aquarium-test
 gclient sync
 
 # Build on Windows
-# To build release version, --args="is_debug=false"
 gn gen out/build --ide=vs
 open out/build/all.sln using visual studio.
 
@@ -92,15 +97,9 @@ build aquarium by xcode
 ```
 
 ## Build Angle version
-TODO: Replace cmake build by gn
 
-First build angle by gn, then link libs to Aquarium and build by cmake.
+First build angle by gn, then link libs to Aquarium and build by gn.
 ```sh
-# cd the repo
-cd aquarium-optimized
-
-# get submodules
-git submodule init && git submodule update
 
 #build angle
 cd thirdparty/angle
@@ -112,17 +111,12 @@ ninja -C out/Release libEGL libGLESv2
 ```
 #build aquarium
 ```sh
-# make build directory
-mkdir build && cd build
+# Build on Windows
+gn gen out/Debug --ide=vs --args="enable_angle=true enable_dawn=false enable_d3d12=false"
+open out/Debug/all.sln using visual studio.
 
 # build on Windows
-cmake -G "Visual Studio 15 2017 Win64" .. -Dangle=true -Ddawn=false
-open build/Aquarium.sln using visual studio, set Aquarium as StartUp project and build
-copy libEGL.dll libGLESv2.dll to folder build
-
-# build on Linux or macOS
-cmake .. -Dangle=true -Ddawn=false
-make
+build aquarium by vs
 ```
 
 # Run

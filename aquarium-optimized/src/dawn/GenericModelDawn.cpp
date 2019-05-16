@@ -30,7 +30,7 @@ GenericModelDawn::~GenericModelDawn()
     bindGroupModel    = nullptr;
     bindGroupPer      = nullptr;
     lightFactorBuffer = nullptr;
-    viewBuffer        = nullptr;
+    worldBuffer       = nullptr;
 }
 
 void GenericModelDawn::init()
@@ -133,7 +133,7 @@ void GenericModelDawn::init()
     lightFactorBuffer = contextDawn->createBufferFromData(
         &lightFactorUniforms, sizeof(lightFactorUniforms),
         dawn::BufferUsageBit::TransferDst | dawn::BufferUsageBit::Uniform);
-    viewBuffer = contextDawn->createBufferFromData(
+    worldBuffer = contextDawn->createBufferFromData(
         &worldUniformPer, sizeof(worldUniformPer),
         dawn::BufferUsageBit::TransferDst | dawn::BufferUsageBit::Uniform);
 
@@ -173,7 +173,7 @@ void GenericModelDawn::init()
 
     bindGroupPer =
         contextDawn->makeBindGroup(groupLayoutPer, {
-                                                       {0, viewBuffer, 0, sizeof(WorldUniformPer)},
+                                                       {0, worldBuffer, 0, sizeof(WorldUniformPer)},
                                                    });
 
     contextDawn->setBufferData(lightFactorBuffer, 0, sizeof(LightFactorUniforms),
@@ -182,7 +182,7 @@ void GenericModelDawn::init()
 
 void GenericModelDawn::preDraw() const
 {
-    contextDawn->setBufferData(viewBuffer, 0, sizeof(WorldUniformPer), &worldUniformPer);
+    contextDawn->setBufferData(worldBuffer, 0, sizeof(WorldUniformPer), &worldUniformPer);
 }
 
 void GenericModelDawn::draw()

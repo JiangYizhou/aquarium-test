@@ -28,13 +28,14 @@
 
 class BufferGL;
 class TextureGL;
+enum BACKENDTYPE: short;
 
 class ContextGL : public Context
 {
   public:
     ContextGL();
     ~ContextGL();
-    bool createContext(std::string backend, bool enableMSAA) override;
+    bool createContext(BACKENDTYPE backend, bool enableMSAA) override;
     void setWindowTitle(const std::string &text) override;
     bool ShouldQuit() override;
     void KeyBoardQuit() override;

@@ -1,11 +1,4 @@
-cbuffer fishPerUniform : register(b48, space3)
-{
-    float3 fishPerUniform_worldPosition : packoffset(c0);
-    float3 fishPerUniform_nextPosition : packoffset(c1);
-    float fishPerUniform_scale : packoffset(c1.w);
-    float fishPerUniform_time : packoffset(c2);
-};
-cbuffer viewUniforms : register(b16, space1)
+cbuffer viewUniforms : register(b0, space3)
 {
     row_major float4x4 viewUniforms_viewProjection : packoffset(c0);
     row_major float4x4 viewUniforms_viewInverse : packoffset(c4);
@@ -13,21 +6,25 @@ cbuffer viewUniforms : register(b16, space1)
     row_major float4x4 viewUniforms_worldInverseTranspose : packoffset(c12);
     row_major float4x4 viewUniforms_worldViewProjection : packoffset(c16);
 };
-cbuffer fishVertexUnifoms : register(b32, space2)
+cbuffer fishVertexUnifoms : register(b0, space2)
 {
     float fishVertexUnifoms_fishLength : packoffset(c0);
     float fishVertexUnifoms_fishWaveLength : packoffset(c0.y);
     float fishVertexUnifoms_fishBendAmount : packoffset(c0.z);
 };
-cbuffer lightWorldPositionUniform : register(b0, space0)
+cbuffer lightWorldPositionUniform : register(b0, space1)
 {
     float3 lightWorldPositionUniform_lightWorldPos : packoffset(c0);
 };
 
 static float4 gl_Position;
+static float3 worldPosition;
+static float3 nextPosition;
+static float scale;
 static float2 v_texCoord;
 static float2 texCoord;
 static float4 position;
+static float time;
 static float4 v_position;
 static float3 v_normal;
 static float3 normal;
@@ -45,6 +42,10 @@ struct SPIRV_Cross_Input
     float2 texCoord : TEXCOORD2;
     float3 tangent : TEXCOORD3;
     float3 binormal : TEXCOORD4;
+    float3 worldPosition : TEXCOORD5;
+    float scale : TEXCOORD6;
+    float3 nextPosition : TEXCOORD7;
+    float time : TEXCOORD8;
 };
 
 struct SPIRV_Cross_Output
@@ -61,26 +62,26 @@ struct SPIRV_Cross_Output
 
 void vert_main()
 {
-    float3 vz = normalize(fishPerUniform_worldPosition - fishPerUniform_nextPosition);
+    float3 vz = normalize(worldPosition - nextPosition);
     float3 vx = normalize(cross(float3(0.0f, 1.0f, 0.0f), vz));
     float3 vy = cross(vz, vx);
-    float4x4 orientMat = float4x4(float4(float4(vx, 0.0f)), float4(float4(vy, 0.0f)), float4(float4(vz, 0.0f)), float4(float4(fishPerUniform_worldPosition, 1.0f)));
-    float4x4 scaleMat = float4x4(float4(float4(fishPerUniform_scale, 0.0f, 0.0f, 0.0f)), float4(float4(0.0f, fishPerUniform_scale, 0.0f, 0.0f)), float4(float4(0.0f, 0.0f, fishPerUniform_scale, 0.0f)), float4(float4(0.0f, 0.0f, 0.0f, 1.0f)));
+    float4x4 orientMat = float4x4(float4(float4(vx, 0.0f)), float4(float4(vy, 0.0f)), float4(float4(vz, 0.0f)), float4(float4(worldPosition, 1.0f)));
+    float4x4 scaleMat = float4x4(float4(float4(scale, 0.0f, 0.0f, 0.0f)), float4(float4(0.0f, scale, 0.0f, 0.0f)), float4(float4(0.0f, 0.0f, scale, 0.0f)), float4(float4(0.0f, 0.0f, 0.0f, 1.0f)));
     float4x4 world = mul(scaleMat, orientMat);
     float4x4 worldViewProjection = mul(world, viewUniforms_viewProjection);
     float4x4 worldInverseTranspose = world;
     v_texCoord = texCoord;
-    float _146;
+    float _137;
     if (position.z > 0.0f)
     {
-        _146 = position.z / fishVertexUnifoms_fishLength;
+        _137 = position.z / fishVertexUnifoms_fishLength;
     }
     else
     {
-        _146 = ((-position.z) / fishVertexUnifoms_fishLength) * 2.0f;
+        _137 = ((-position.z) / fishVertexUnifoms_fishLength) * 2.0f;
     }
-    float mult = _146;
-    float s = sin(fishPerUniform_time + (mult * fishVertexUnifoms_fishWaveLength));
+    float mult = _137;
+    float s = sin(time + (mult * fishVertexUnifoms_fishWaveLength));
     float a = sign(s);
     float offset = (pow(mult, 2.0f) * s) * fishVertexUnifoms_fishBendAmount;
     v_position = mul(position + float4(offset, 0.0f, 0.0f, 0.0f), worldViewProjection);
@@ -89,6 +90,7 @@ void vert_main()
     v_surfaceToView = (viewUniforms_viewInverse[3] - mul(position, world)).xyz;
     v_binormal = mul(float4(binormal, 0.0f), worldInverseTranspose).xyz;
     v_tangent = mul(float4(tangent, 0.0f), worldInverseTranspose).xyz;
+    v_position.y = -v_position.y;
     gl_Position = v_position;
     gl_Position.y = -gl_Position.y;
     gl_Position.z = (gl_Position.z + gl_Position.w) * 0.5;
@@ -96,8 +98,12 @@ void vert_main()
 
 SPIRV_Cross_Output main(SPIRV_Cross_Input stage_input)
 {
+    worldPosition = stage_input.worldPosition;
+    nextPosition = stage_input.nextPosition;
+    scale = stage_input.scale;
     texCoord = stage_input.texCoord;
     position = stage_input.position;
+    time = stage_input.time;
     normal = stage_input.normal;
     binormal = stage_input.binormal;
     tangent = stage_input.tangent;

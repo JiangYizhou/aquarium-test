@@ -11,13 +11,14 @@
 #include "Context.h"
 
 class Context;
+enum BACKENDTYPE : short;
 
 class ContextFactory
 {
   public:
     ContextFactory();
     ~ContextFactory();
-    Context *createContext(std::string str);
+    Context *createContext(BACKENDTYPE backendType);
 
   private:
     Context *context;

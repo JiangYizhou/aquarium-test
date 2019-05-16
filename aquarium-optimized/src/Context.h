@@ -18,6 +18,7 @@ class Buffer;
 class Texture;
 class Model;
 
+enum BACKENDTYPE : short;
 enum MODELGROUP : short;
 enum MODELNAME : short;
 struct Global;
@@ -26,7 +27,7 @@ class Context
 {
   public:
     Context(){}
-    virtual bool createContext(std::string backend, bool enableMSAA) = 0;
+    virtual bool createContext(BACKENDTYPE backend, bool enableMSAA) = 0;
     virtual ~Context() {}
     virtual Texture *createTexture(std::string name, std::string url)                      = 0;
     virtual Texture *createTexture(std::string name, const std::vector<std::string> &urls) = 0;
@@ -40,7 +41,7 @@ class Context
     virtual void KeyBoardQuit()                                                            = 0;
     virtual void DoFlush()                                                                 = 0;
     virtual void Terminate()                                                               = 0;
-
+    virtual void FlushInit();
     virtual void preFrame() = 0;
 
     int getClientWidth() const { return mClientWidth; }

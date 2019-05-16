@@ -30,7 +30,7 @@ class GenericModelDawn : public GenericModel
     void preDraw() const override;
     void draw() override;
 
-    void updatePerInstanceUniforms(WorldUniforms *WorldUniforms) override;
+    void updatePerInstanceUniforms(WorldUniforms *worldUniforms) override;
 
     TextureDawn *diffuseTexture;
     TextureDawn *normalTexture;
@@ -69,7 +69,7 @@ private:
   dawn::BindGroup bindGroupPer;
 
   dawn::Buffer lightFactorBuffer;
-  dawn::Buffer viewBuffer;
+  dawn::Buffer worldBuffer;
 
   const ContextDawn *contextDawn;
   ProgramDawn *programDawn;

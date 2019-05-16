@@ -28,6 +28,18 @@ const std::string slash = "/";
 #include "math.h"
 #endif
 
+enum BACKENDTYPE : short
+{
+    BACKENDTYPEFIRST,
+    BACKENDTYPEANGLE,
+    BACKENDTYPEDAWND3D12,
+    BACKENDTYPEDAWNMETAL,
+    BACKENDTYPEDAWNVULKAN,
+    BACKENDTYPED3D12,
+    BACKENDTYPEOPENGL,
+    BACKENDTYPELAST
+};
+
 enum MODELNAME : short
 {
     MODELFIRST,
@@ -402,6 +414,7 @@ class Aquarium
     ~Aquarium();
     void init(int argc, char **argv);
     void display();
+    Texture *getSkybox() { return mTextureMap["skybox"]; }
 
     LightWorldPositionUniform lightWorldPositionUniform;
     WorldUniforms worldUniforms;
@@ -419,13 +432,14 @@ class Aquarium
     Context *context;
     FPSTimer fpsTimer;  // object to measure frames per second;
     int mFishCount;
-    std::string mBackendpath;
+    BACKENDTYPE mBackendType;
     std::string mBackendFullpath;
     std::string mShaderVersion;
     std::string mPath;
     ContextFactory *factory;
     bool enableMSAA;
     bool allowInstancedDraws;
+    std::vector<std::string> skyUrls;
 
     void updateUrls();
     void loadReource();
@@ -444,6 +458,7 @@ class Aquarium
     void drawInner();
     void drawOutside();
     void updateWorldProjections(const float *world);
+    BACKENDTYPE getBackendType(std::string &backendPath);
 };
 
 #endif

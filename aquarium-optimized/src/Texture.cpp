@@ -76,35 +76,57 @@ void Texture::copyPaddingBuffer(unsigned char *dst, unsigned char *src, int widt
 }
 
 void Texture::generateMipmap(uint8_t *input_pixels,
-                           int input_w,
-                           int input_h,
-                           int input_stride_in_bytes,
-                           std::vector<uint8_t *> &output_pixels,
-                           int output_w,
-                           int output_h,
-                           int output_stride_in_bytes,
-                           int num_channels)
+                             int input_w,
+                             int input_h,
+                             int input_stride_in_bytes,
+                             std::vector<uint8_t *> &output_pixels,
+                             int output_w,
+                             int output_h,
+                             int output_stride_in_bytes,
+                             int num_channels,
+                             bool is256padding)
 {
     int mipmapLevel =
         static_cast<uint32_t>(floor(log2(std::max(output_w, output_h)))) + 1;
     output_pixels.resize(mipmapLevel);
     int height      = output_h;
     int width  = output_w;
-    uint8_t *pixels = (unsigned char *)malloc(output_w * height * 4 * sizeof(char));
 
-    for (int i = 0; i < mipmapLevel; ++i)
+    if (!is256padding)
     {
-        output_pixels[i] = (unsigned char *)malloc(output_w * height * 4 * sizeof(char));
-        stbir_resize_uint8(input_pixels, input_w, input_h, input_stride_in_bytes, pixels, width,
-                           height, output_stride_in_bytes, num_channels);
-        copyPaddingBuffer(output_pixels[i], pixels, width, height, output_w);
-
-        height >>= 1;
-        width >>= 1;
-        if (height == 0)
+        for (int i = 0; i < mipmapLevel; ++i)
         {
-            height = 1;
+            output_pixels[i] = (unsigned char *)malloc(output_w * height * 4 * sizeof(char));
+            stbir_resize_uint8(input_pixels, input_w, input_h, input_stride_in_bytes,
+                               output_pixels[i], width, height, output_stride_in_bytes,
+                               num_channels);
+
+            height >>= 1;
+            width >>= 1;
+            if (height == 0)
+            {
+                height = 1;
+            }
         }
     }
-    free(pixels);
+    else
+    {
+        uint8_t *pixels = (unsigned char *)malloc(output_w * height * 4 * sizeof(char));
+
+        for (int i = 0; i < mipmapLevel; ++i)
+        {
+            output_pixels[i] = (unsigned char *)malloc(output_w * height * 4 * sizeof(char));
+            stbir_resize_uint8(input_pixels, input_w, input_h, input_stride_in_bytes, pixels, width,
+                               height, output_stride_in_bytes, num_channels);
+            copyPaddingBuffer(output_pixels[i], pixels, width, height, output_w);
+
+            height >>= 1;
+            width >>= 1;
+            if (height == 0)
+            {
+                height = 1;
+            }
+        }
+        free(pixels);
+    }
 }
