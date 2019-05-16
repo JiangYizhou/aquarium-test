@@ -34,6 +34,10 @@ void OutsideModelD3D12::init()
     binormalBuffer = static_cast<BufferD3D12 *>(bufferMap["binormal"]);
     indicesBuffer  = static_cast<BufferD3D12 *>(bufferMap["indices"]);
 
+    vertexBufferView[0] = positionBuffer->mVertexBufferView;
+    vertexBufferView[1] = normalBuffer->mVertexBufferView;
+    vertexBufferView[2] = texCoordBuffer->mVertexBufferView;
+
     inputElementDescs = {
         {"TEXCOORD", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0,
          D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0},
@@ -105,9 +109,7 @@ void OutsideModelD3D12::draw()
     commandList->SetGraphicsRootConstantBufferView(4, worldBufferView.BufferLocation);
 
     commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-    commandList->IASetVertexBuffers(0, 1, &positionBuffer->mVertexBufferView);
-    commandList->IASetVertexBuffers(1, 1, &normalBuffer->mVertexBufferView);
-    commandList->IASetVertexBuffers(2, 1, &texCoordBuffer->mVertexBufferView);
+    commandList->IASetVertexBuffers(0, 3, vertexBufferView);
 
     commandList->IASetIndexBuffer(&indicesBuffer->mIndexBufferView);
 

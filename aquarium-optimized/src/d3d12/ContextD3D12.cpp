@@ -52,7 +52,7 @@ ContextD3D12::ContextD3D12()
 
 ContextD3D12::~ContextD3D12() {}
 
-bool ContextD3D12::createContext(std::string backend, bool enableMSAA)
+bool ContextD3D12::createContext(BACKENDTYPE backend, bool enableMSAA)
 {
     // initialise GLFW
     if (!glfwInit())
@@ -270,7 +270,7 @@ void ContextD3D12::DoFlush()
 
     // Present the frame.
     ThrowIfFailed(m_swapChain->Present(1, 0));
-    m_frameIndex = m_swapChain->GetCurrentBackBufferIndex();
+
     WaitForPreviousFrame();
 
     glfwPollEvents();

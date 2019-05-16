@@ -33,7 +33,7 @@ ContextGL::ContextGL()
 
 ContextGL::~ContextGL() {}
 
-bool ContextGL::createContext(std::string backend, bool enableMSAA)
+bool ContextGL::createContext(BACKENDTYPE backend, bool enableMSAA)
 {
     // initialise GLFW
     if (!glfwInit())

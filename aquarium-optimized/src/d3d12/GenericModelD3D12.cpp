@@ -29,6 +29,12 @@ void GenericModelD3D12::init()
     binormalBuffer = static_cast<BufferD3D12 *>(bufferMap["binormal"]);
     indicesBuffer  = static_cast<BufferD3D12 *>(bufferMap["indices"]);
 
+    vertexBufferView[0] = positionBuffer->mVertexBufferView;
+    vertexBufferView[1] = normalBuffer->mVertexBufferView;
+    vertexBufferView[2] = texCoordBuffer->mVertexBufferView;
+    vertexBufferView[3] = tangentBuffer->mVertexBufferView;
+    vertexBufferView[4] = binormalBuffer->mVertexBufferView;
+
     // create input layout
     // Generic models use reflection, normal or diffuse shaders, of which groupLayouts are
     // different in texture binding.  MODELGLOBEBASE use diffuse shader though it contains
@@ -157,14 +163,14 @@ void GenericModelD3D12::draw()
     commandList->SetGraphicsRootConstantBufferView(4, worldBufferView.BufferLocation);
 
     commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-    commandList->IASetVertexBuffers(0, 1, &positionBuffer->mVertexBufferView);
-    commandList->IASetVertexBuffers(1, 1, &normalBuffer->mVertexBufferView);
-    commandList->IASetVertexBuffers(2, 1, &texCoordBuffer->mVertexBufferView);
+
     // diffuseShader doesn't have to input tangent buffer or binormal buffer.
     if (tangentBuffer && binormalBuffer && mName != MODELNAME::MODELGLOBEBASE)
     {
-        commandList->IASetVertexBuffers(3, 1, &tangentBuffer->mVertexBufferView);
-        commandList->IASetVertexBuffers(4, 1, &binormalBuffer->mVertexBufferView);
+        commandList->IASetVertexBuffers(0, 5, vertexBufferView);
+    } else
+    {
+        commandList->IASetVertexBuffers(0, 3, vertexBufferView);
     }
     commandList->IASetIndexBuffer(&indicesBuffer->mIndexBufferView);
 

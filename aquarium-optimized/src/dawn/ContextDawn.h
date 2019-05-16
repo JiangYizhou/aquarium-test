@@ -20,6 +20,7 @@
 class TextureDawn;
 class BufferDawn;
 class ProgramDawn;
+enum BACKENDTYPE: short;
 
 class ContextDawn : public Context
 {
@@ -41,7 +42,7 @@ class ContextDawn : public Context
 
     ContextDawn();
     ~ContextDawn();
-    bool createContext(std::string backend, bool enableMSAA) override;
+    bool createContext(BACKENDTYPE backend, bool enableMSAA) override;
     void setWindowTitle(const std::string &text) override;
     bool ShouldQuit() override;
     void KeyBoardQuit() override;

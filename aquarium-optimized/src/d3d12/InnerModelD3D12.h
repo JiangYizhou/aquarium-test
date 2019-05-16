@@ -63,6 +63,8 @@ class InnerModelD3D12 : public InnerModel
 
     std::vector<D3D12_INPUT_ELEMENT_DESC> inputElementDescs;
 
+    D3D12_VERTEX_BUFFER_VIEW vertexBufferView[5];
+
     ComPtr<ID3D12RootSignature> m_rootSignature;
 
     ComPtr<ID3D12PipelineState> m_pipelineState;

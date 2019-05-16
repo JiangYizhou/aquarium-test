@@ -39,7 +39,7 @@
 #include "rapidjson/stringbuffer.h"
 #include "rapidjson/writer.h"
 
-static const char *shaderFolder = "shaders";
+static const char *shaderFolder   = "shaders";
 static const char *resourceFolder = "assets";
 
 Aquarium::Aquarium()
@@ -50,15 +50,15 @@ Aquarium::Aquarium()
       context(nullptr),
       fpsTimer(),
       mFishCount(1),
-      mBackendpath(""),
+      mBackendType(BACKENDTYPE::BACKENDTYPEOPENGL),
       mShaderVersion(""),
       mPath(""),
       factory(nullptr),
       enableMSAA(false),
       allowInstancedDraws(false)
 {
-    g.then = 0.0f;
-    g.mclock = 0.0f;
+    g.then     = 0.0f;
+    g.mclock   = 0.0f;
     g.eyeClock = 0.0f;
 
     lightUniforms.lightColor[0] = 1.0f;
@@ -76,9 +76,9 @@ Aquarium::Aquarium()
     fogUniforms.fogColor[2] = g_fogBlue;
     fogUniforms.fogColor[3] = 1.0f;
 
-    fogUniforms.fogPower    = g_fogPower;
-    fogUniforms.fogMult     = g_fogMult;
-    fogUniforms.fogOffset   = g_fogOffset;
+    fogUniforms.fogPower  = g_fogPower;
+    fogUniforms.fogMult   = g_fogMult;
+    fogUniforms.fogOffset = g_fogOffset;
 
     lightUniforms.ambient[0] = g_ambientRed;
     lightUniforms.ambient[1] = g_ambientGreen;
@@ -116,6 +116,37 @@ Aquarium::~Aquarium()
     delete factory;
 }
 
+BACKENDTYPE Aquarium::getBackendType(std::string& backendPath)
+{
+    if (backendPath == "opengl")
+    {
+        return BACKENDTYPE::BACKENDTYPEOPENGL;
+    }
+    else if (backendPath == "dawn_d3d12")
+    {
+        return BACKENDTYPE::BACKENDTYPEDAWND3D12;
+    }
+    else if (backendPath == "dawn_metal")
+    {
+        return BACKENDTYPE::BACKENDTYPEDAWNMETAL;
+    }
+    else if (backendPath == "dawn_vulkan")
+    {
+        return BACKENDTYPE::BACKENDTYPEDAWNVULKAN;
+    }
+    else if (backendPath == "angle")
+    {
+        return BACKENDTYPE::BACKENDTYPEANGLE;
+    }
+    else if (backendPath == "d3d12")
+    {
+        return BACKENDTYPED3D12;
+    } else
+    {
+        return BACKENDTYPELAST;
+    }
+}
+
 void Aquarium::init(int argc, char **argv)
 {
     factory = new ContextFactory();
@@ -123,7 +154,7 @@ void Aquarium::init(int argc, char **argv)
     // Create context of different backends through the cmd args.
     // "--backend" {backend}: create different backends. currently opengl is supported.
     // "--num-fish" {numfish}: imply rendering fish count.
-    char* pNext;
+    char *pNext;
     for (int i = 1; i < argc; ++i)
     {
         std::string cmd(argv[i]);
@@ -134,19 +165,18 @@ void Aquarium::init(int argc, char **argv)
         else if (cmd == "--backend")
         {
             mBackendFullpath = argv[i++ + 1];
+            mBackendType = getBackendType(mBackendFullpath);
             if (mBackendFullpath.find("dawn") != std::string::npos)
             {
-                mBackendpath = "dawn";
-            } else
-            {
-                mBackendpath = mBackendFullpath;
+                mBackendFullpath = "dawn";
             }
-            context      = factory->createContext(mBackendpath);
+
+            context = factory->createContext(mBackendType);
         }
         else if (cmd == "--enable-msaa")
         {
             enableMSAA = true;
-            if (enableMSAA && mBackendpath == "angle")
+            if (enableMSAA && mBackendType == BACKENDTYPE::BACKENDTYPEANGLE)
             {
                 std::cerr << "MSAA isn't implemented for angle backend." << std::endl;
                 return;
@@ -155,9 +185,9 @@ void Aquarium::init(int argc, char **argv)
         else if (cmd == "--allow-instanced-draws")
         {
             allowInstancedDraws = true;
-            if (allowInstancedDraws && mBackendpath != "dawn" && mBackendpath != "d3d12")
+            if (allowInstancedDraws && (mBackendType == BACKENDTYPE::BACKENDTYPEANGLE || mBackendType == BACKENDTYPE::BACKENDTYPEOPENGL))
             {
-                std::cerr << "Instanced draw path isn't implemented for " + mBackendpath +
+                std::cerr << "Instanced draw path isn't implemented for " + mBackendFullpath +
                                  " backend.";
                 return;
             }
@@ -169,20 +199,20 @@ void Aquarium::init(int argc, char **argv)
 
     if (context == nullptr)
     {
-        mBackendpath = "opengl";
-        context      = factory->createContext(mBackendFullpath);
+        mBackendType = BACKENDTYPE::BACKENDTYPEOPENGL;
+        context      = factory->createContext(mBackendType);
     }
 
-    if (mBackendpath == "opengl")
+    if (mBackendType == BACKENDTYPE::BACKENDTYPEOPENGL)
     {
-        #ifndef EGL_EGL_PROTOTYPES
+#ifndef EGL_EGL_PROTOTYPES
         mShaderVersion = "450";
-        #else
+#else
         mShaderVersion = "100";
-        #endif
+#endif
     }
 
-    if (!context->createContext(mBackendFullpath, enableMSAA))
+    if (!context->createContext(mBackendType, enableMSAA))
     {
         return;
     }
@@ -215,28 +245,28 @@ void Aquarium::display()
 
 void Aquarium::updateUrls()
 {
-    // Get path of current build.
-    #if defined(WIN32) || defined(_WIN32) || defined(__WIN32)
+// Get path of current build.
+#if defined(WIN32) || defined(_WIN32) || defined(__WIN32)
     TCHAR temp[200];
     GetModuleFileName(NULL, temp, MAX_PATH);
     std::wstring ws(temp);
-    mPath = std::string(ws.begin(), ws.end());
+    mPath       = std::string(ws.begin(), ws.end());
     size_t nPos = mPath.find_last_of(slash);
-    mPath = mPath.substr(0, nPos) + slash + ".." + slash + ".." + slash;
-    #elif __APPLE__
+    mPath       = mPath.substr(0, nPos) + slash + ".." + slash + ".." + slash;
+#elif __APPLE__
     char temp[200];
     uint32_t size = sizeof(temp);
     _NSGetExecutablePath(temp, &size);
-    mPath             = std::string(temp);
+    mPath = std::string(temp);
     int nPos = mPath.find_last_of(slash);
     mPath = mPath.substr(0, nPos) + slash + ".." + slash + ".." + slash;
-    #else
+#else
     char temp[200];
     readlink("/proc/self/exe", temp, sizeof(temp));
-    mPath             = std::string(temp);
+    mPath    = std::string(temp);
     int nPos = mPath.find_last_of(slash);
-    mPath = mPath.substr(0, nPos) + slash + ".." + slash + ".." + slash;
-    #endif
+    mPath    = mPath.substr(0, nPos) + slash + ".." + slash + ".." + slash;
+#endif
 
     // set up skybox url
     setUpSkyBox(&skyUrls);
@@ -247,8 +277,7 @@ void Aquarium::setUpSkyBox(std::vector<std::string> *skyUrls)
     for (const auto v : g_skyBoxUrls)
     {
         std::ostringstream url;
-        url << mPath << resourceFolder << slash
-        << v;
+        url << mPath << resourceFolder << slash << v;
 
         skyUrls->push_back(url.str());
     }
@@ -272,8 +301,7 @@ void Aquarium::setupModelEnumMap()
 void Aquarium::loadPlacement()
 {
     std::ostringstream oss;
-    oss << mPath <<  resourceFolder << slash
-        << "PropPlacement.js";
+    oss << mPath << resourceFolder << slash << "PropPlacement.js";
     std::string proppath = oss.str();
     std::ifstream PlacementStream(proppath, std::ios::in);
     rapidjson::IStreamWrapper isPlacement(PlacementStream);
@@ -329,8 +357,7 @@ void Aquarium::loadModel(const G_sceneInfo &info)
     oss << info.namestr << ".js";
     std::string modelPath = oss.str();
     oss.str("");
-    oss << mPath << shaderFolder << slash
-        << mBackendpath << slash << mShaderVersion << slash;
+    oss << mPath << shaderFolder << slash << mBackendFullpath << slash << mShaderVersion << slash;
     std::string programPath = oss.str();
 
     std::ifstream ModelStream(modelPath, std::ios::in);
@@ -478,10 +505,10 @@ void Aquarium::calculateFishCount()
                     numfloat = std::min(numLeft, g_numFishLeftBig);
                 }
             }
-            numLeft      = numLeft - numfloat;
+            numLeft                                                    = numLeft - numfloat;
             fishCount[fishInfo.modelName - MODELNAME::MODELSMALLFISHA] = numfloat;
         }
-        }
+    }
 }
 
 float Aquarium::degToRad(float degrees)
@@ -557,7 +584,8 @@ void Aquarium::updateGlobalUniforms()
     matrix::mulScalarVector(20.0f, g.v3t0, 3);
     matrix::mulScalarVector(30.0f, g.v3t1, 3);
     matrix::addVector(lightWorldPositionUniform.lightWorldPos, g.eyePosition, g.v3t0, 3);
-    matrix::addVector(lightWorldPositionUniform.lightWorldPos, lightWorldPositionUniform.lightWorldPos, g.v3t1, 3);
+    matrix::addVector(lightWorldPositionUniform.lightWorldPos,
+                      lightWorldPositionUniform.lightWorldPos, g.v3t1, 3);
 
     // update world uniforms for dawn backend
     context->updateWorldlUniforms(this);
@@ -597,7 +625,7 @@ void Aquarium::drawSeaweed()
     SeaweedModel *model = static_cast<SeaweedModel *>(mAquariumModels[MODELNAME::MODELSEAWEEDA]);
     for (int i = MODELNAME::MODELSEAWEEDA; i <= MODELNAME::MODELSEAWEEDB; ++i)
     {
-        //model->updateSeaweedModelTime(g.mclock);
+        // model->updateSeaweedModelTime(g.mclock);
         model = static_cast<SeaweedModel *>(mAquariumModels[i]);
         updateWorldMatrixAndDraw(model);
     }
@@ -616,7 +644,7 @@ void Aquarium::drawFishes()
         const Fish &fishInfo = fishTable[i - begin];
         int numFish          = fishCount[i - begin];
 
-        if (mBackendpath == "opengl" || mBackendpath == "angle")
+        if (mBackendType == BACKENDTYPE::BACKENDTYPEOPENGL || mBackendType == BACKENDTYPE::BACKENDTYPEANGLE)
         {
             model->preDraw();
         }
@@ -628,7 +656,7 @@ void Aquarium::drawFishes()
         float fishSpeedRange  = fishInfo.speedRange;
         float fishTailSpeed   = fishInfo.tailSpeed * g_fishTailSpeed;
         float fishOffset      = g_fishOffset;
-        //float fishClockSpeed  = g_fishSpeed;
+        // float fishClockSpeed  = g_fishSpeed;
         float fishHeight      = g_fishHeight + fishInfo.heightOffset;
         float fishHeightRange = g_fishHeightRange * fishInfo.heightRange;
         float fishXClock      = g_fishXClock;
@@ -655,8 +683,9 @@ void Aquarium::drawFishes()
                 sin(xClock - 0.04f) * xRadius, sin(yClock - 0.01f) * yRadius + fishHeight,
                 cos(zClock - 0.04f) * zRadius, scale,
                 fmod((g.mclock + ii * g_tailOffsetMult) * fishTailSpeed * speed,
-                     static_cast<float>(M_PI) * 2), ii);
-            if (mBackendpath=="opengl" || mBackendpath == "angle")
+                     static_cast<float>(M_PI) * 2),
+                ii);
+            if (mBackendType == BACKENDTYPEOPENGL || mBackendType == BACKENDTYPEANGLE)
             {
                 model->updatePerInstanceUniforms(&worldUniforms);
                 model->draw();
@@ -665,7 +694,8 @@ void Aquarium::drawFishes()
         // TODO(yizhou): If backend is dawn or d3d12, draw only once for every type of fish by
         // drawInstance. If backend is opengl or angle, draw for exery fish. Update the logic the
         // same as Dawn if uniform blocks are implemented for OpenGL.
-        if (mBackendpath == "dawn" || mBackendpath == "d3d12")
+        if (mBackendType == BACKENDTYPEDAWND3D12 || mBackendType == BACKENDTYPED3D12 ||
+            mBackendType == BACKENDTYPEDAWNVULKAN || mBackendType == BACKENDTYPEDAWNMETAL)
         {
             model->draw();
         }
@@ -703,7 +733,8 @@ void Aquarium::updateWorldMatrixAndDraw(Model *model)
             // Models of dawn keep WorldUniforms for every model while opengl models use global
             // WorldUniforms.
             // Update all WorldUniforms on dawn backend.
-            if (mBackendpath == "opengl")
+            if (mBackendType == BACKENDTYPE::BACKENDTYPEOPENGL ||
+                mBackendType == BACKENDTYPE::BACKENDTYPEANGLE)
             {
                 model->preDraw();
                 model->updatePerInstanceUniforms(&worldUniforms);
@@ -719,7 +750,8 @@ void Aquarium::updateWorldMatrixAndDraw(Model *model)
     // TODO(yizhou): If backend is dawn, draw only once for every model. If
     // backend is opengl or angle, draw for exery instance.
     // Update the logic the same as Dawn if uniform blocks are implemented for OpenGL.
-    if (mBackendpath == "dawn" || mBackendpath == "angle" || mBackendpath == "d3d12")
+    if (mBackendType == BACKENDTYPEDAWND3D12 || mBackendType == BACKENDTYPED3D12 ||
+        mBackendType == BACKENDTYPEDAWNVULKAN || mBackendType == BACKENDTYPEDAWNMETAL)
     {
         model->preDraw();
         model->draw();

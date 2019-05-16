@@ -35,6 +35,10 @@ void SeaweedModelD3D12::init()
     texCoordBuffer = static_cast<BufferD3D12 *>(bufferMap["texCoord"]);
     indicesBuffer  = static_cast<BufferD3D12 *>(bufferMap["indices"]);
 
+    vertexBufferView[0] = positionBuffer->mVertexBufferView;
+    vertexBufferView[1] = normalBuffer->mVertexBufferView;
+    vertexBufferView[2] = texCoordBuffer->mVertexBufferView;
+
     // create input layout
     inputElementDescs = {
         {"TEXCOORD", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0,
@@ -125,9 +129,7 @@ void SeaweedModelD3D12::draw()
     commandList->SetGraphicsRootConstantBufferView(5, seaweedBufferView.BufferLocation);
 
     commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-    commandList->IASetVertexBuffers(0, 1, &positionBuffer->mVertexBufferView);
-    commandList->IASetVertexBuffers(1, 1, &normalBuffer->mVertexBufferView);
-    commandList->IASetVertexBuffers(2, 1, &texCoordBuffer->mVertexBufferView);
+    commandList->IASetVertexBuffers(0, 3, vertexBufferView);
 
     commandList->IASetIndexBuffer(&indicesBuffer->mIndexBufferView);
 

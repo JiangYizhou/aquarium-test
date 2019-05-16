@@ -17,6 +17,8 @@
 #include "stdafx.h"
 using Microsoft::WRL::ComPtr;
 
+enum BACKENDTYPE : short;
+
 // TODO(yizhou): Check the heap number
 const int cbvsrvCount = 500;
 
@@ -25,7 +27,7 @@ class ContextD3D12 : public Context
   public:
     ContextD3D12();
     ~ContextD3D12();
-    bool createContext(std::string backend, bool enableMSAA) override;
+    bool createContext(BACKENDTYPE backend, bool enableMSAA) override;
     void setWindowTitle(const std::string &text) override;
     bool ShouldQuit() override;
     void KeyBoardQuit() override;

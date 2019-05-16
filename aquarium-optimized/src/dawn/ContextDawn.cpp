@@ -78,22 +78,22 @@ ContextDawn::~ContextDawn()
     device                   = nullptr;
 }
 
-bool ContextDawn::createContext(std::string backend, bool enableMSAA)
+bool ContextDawn::createContext(BACKENDTYPE backend, bool enableMSAA)
 {
     dawn_native::BackendType backendType = dawn_native::BackendType::Null;
-    if (backend == "dawn_d3d12")
+    if (backend == BACKENDTYPE::BACKENDTYPEDAWND3D12)
     {
         backendType = dawn_native::BackendType::D3D12;
     }
-    else if (backend == "dawn_vulkan")
+    else if (backend == BACKENDTYPE::BACKENDTYPEDAWNVULKAN)
     {
         backendType = dawn_native::BackendType::Vulkan;
     }
-    else if (backend == "dawn_metal")
+    else if (backend == BACKENDTYPE::BACKENDTYPEDAWNMETAL)
     {
         backendType = dawn_native::BackendType::Metal;
     }
-    else if (backend == "dawn_opengl")
+    else if (backend == BACKENDTYPE::BACKENDTYPEOPENGL)
     {
         backendType = dawn_native::BackendType::OpenGL;
     }
