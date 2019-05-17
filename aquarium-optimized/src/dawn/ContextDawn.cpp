@@ -245,9 +245,9 @@ dawn::CommandBuffer ContextDawn::copyBufferToTexture(const dawn::BufferCopyView 
     return copy;
 }
 
-void ContextDawn::submit(int numCommands, const dawn::CommandBuffer& commands) const
+void ContextDawn::submit(int numCommands, const dawn::CommandBuffer *commands) const
 {
-    queue.Submit(numCommands, &commands);
+    queue.Submit(numCommands, commands);
 }
 
 dawn::ShaderModule ContextDawn::createShaderModule(dawn::ShaderStage stage,

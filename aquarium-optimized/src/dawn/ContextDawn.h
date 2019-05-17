@@ -71,7 +71,7 @@ class ContextDawn : public Context
     dawn::CommandBuffer copyBufferToTexture(const dawn::BufferCopyView &bufferCopyView,
                                             const dawn::TextureCopyView &textureCopyView,
                                             const dawn::Extent3D &ext3D) const;
-    void submit(int numCommands, const dawn::CommandBuffer& commands) const;
+    void submit(int numCommands, const dawn::CommandBuffer *commands) const;
 
     dawn::TextureCopyView createTextureCopyView(dawn::Texture texture,
                                                 uint32_t level,
