@@ -19,8 +19,7 @@ using Microsoft::WRL::ComPtr;
 
 enum BACKENDTYPE : short;
 
-// TODO(yizhou): Check the heap number
-const int cbvsrvCount = 500;
+const int cbvsrvCount = 86;
 
 class ContextD3D12 : public Context
 {
