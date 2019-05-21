@@ -3,11 +3,11 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
-// FishModelD3D12InstancedDraw.h: Defnes fish model of D3D12
+// FishModelD3D12.h: Defnes fish model of D3D12
 
 #pragma once
-#ifndef FISHMODELD3D12INSTANCEDDRAW_H
-#define FISHMODELD3D12INSTANCEDDRAW_H 1
+#ifndef FISHMODELD3D12_H
+#define FISHMODELD3D12_H 1
 
 #include <string>
 
@@ -17,15 +17,15 @@
 #include "ProgramD3D12.h"
 #include "TextureD3D12.h"
 
-class FishModelInstancedDrawD3D12 : public FishModel
+class FishModelD3D12 : public FishModel
 {
   public:
-    FishModelInstancedDrawD3D12(Context *context,
-                                Aquarium *aquarium,
-                                MODELGROUP type,
-                                MODELNAME name,
-                                bool blend);
-    ~FishModelInstancedDrawD3D12();
+    FishModelD3D12(Context *context,
+                   Aquarium *aquarium,
+                   MODELGROUP type,
+                   MODELNAME name,
+                   bool blend);
+    ~FishModelD3D12();
 
     void init() override;
     void preDraw() const override;
@@ -61,6 +61,7 @@ class FishModelInstancedDrawD3D12 : public FishModel
         float scale;
         float nextPosition[3];
         float time;
+        float padding[56];  // TODO(yizhou): the padding is to align with 256 byte offset.
     };
     FishPer *fishPers;
 
@@ -78,7 +79,7 @@ class FishModelInstancedDrawD3D12 : public FishModel
     BufferD3D12 *indicesBuffer;
 
   private:
-    D3D12_VERTEX_BUFFER_VIEW fishPersBufferView;
+    D3D12_CONSTANT_BUFFER_VIEW_DESC fishPersBufferView;
     ComPtr<ID3D12Resource> fishPersBuffer;
 
     D3D12_CONSTANT_BUFFER_VIEW_DESC lightFactorView;
@@ -93,7 +94,7 @@ class FishModelInstancedDrawD3D12 : public FishModel
 
     std::vector<D3D12_INPUT_ELEMENT_DESC> inputElementDescs;
 
-    D3D12_VERTEX_BUFFER_VIEW vertexBufferView[6];
+    D3D12_VERTEX_BUFFER_VIEW vertexBufferView[5];
 
     ComPtr<ID3D12RootSignature> m_rootSignature;
 

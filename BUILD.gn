@@ -156,6 +156,8 @@ executable("aquarium") {
       "aquarium-optimized/src/d3d12/BufferD3D12.h",
       "aquarium-optimized/src/d3d12/ContextD3D12.cpp",
       "aquarium-optimized/src/d3d12/ContextD3D12.h",
+      "aquarium-optimized/src/d3d12/FishModelD3D12.cpp",
+      "aquarium-optimized/src/d3d12/FishModelD3D12.h",
       "aquarium-optimized/src/d3d12/FishModelInstancedDrawD3D12.cpp",
       "aquarium-optimized/src/d3d12/FishModelInstancedDrawD3D12.h",
       "aquarium-optimized/src/d3d12/GenericModelD3D12.cpp",
