@@ -84,9 +84,9 @@ void SeaweedModelD3D12::init()
     rootParameters[2].InitAsDescriptorTable(1, &ranges[0], D3D12_SHADER_VISIBILITY_PIXEL);
     rootParameters[3].InitAsDescriptorTable(1, &ranges[1], D3D12_SHADER_VISIBILITY_PIXEL);
 
-    rootParameters[4].InitAsConstantBufferView(0, 3, D3D12_ROOT_DESCRIPTOR_FLAG_DATA_VOLATILE,
+    rootParameters[4].InitAsConstantBufferView(0, 3, D3D12_ROOT_DESCRIPTOR_FLAG_DATA_STATIC,
                                                D3D12_SHADER_VISIBILITY_VERTEX);
-    rootParameters[5].InitAsConstantBufferView(1, 3, D3D12_ROOT_DESCRIPTOR_FLAG_DATA_VOLATILE,
+    rootParameters[5].InitAsConstantBufferView(1, 3, D3D12_ROOT_DESCRIPTOR_FLAG_DATA_STATIC,
                                                D3D12_SHADER_VISIBILITY_VERTEX);
 
     rootSignatureDesc.Init_1_1(_countof(rootParameters), rootParameters, 2u,
