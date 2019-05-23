@@ -88,7 +88,6 @@ class ContextD3D12 : public Context
     void buildCbvDescriptor(const D3D12_CONSTANT_BUFFER_VIEW_DESC &cbvDesc,
                             OUT D3D12_GPU_DESCRIPTOR_HANDLE *hGpuDescriptor);
     UINT CalcConstantBufferByteSize(UINT byteSize);
-    void resetCommandList();
     void createTexture(const D3D12_RESOURCE_DESC &textureDesc,
                        OUT ComPtr<ID3D12Resource> &m_texture,
                        OUT ComPtr<ID3D12Resource> &textureUploadHeap,
@@ -100,7 +99,6 @@ class ContextD3D12 : public Context
                        int arraySize);
 
     Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList> mCommandList;
-    ComPtr<ID3D12CommandAllocator> m_commandAllocator;
 
     CD3DX12_DESCRIPTOR_RANGE1 rangeGeneral[2];
     CD3DX12_ROOT_PARAMETER1 rootParameterGeneral;
@@ -123,10 +121,12 @@ class ContextD3D12 : public Context
     ComPtr<ID3D12CommandQueue> m_commandQueue;
     ComPtr<IDXGISwapChain3> m_swapChain;
     DXGI_FORMAT mPreferredSwapChainFormat;
+    UINT compileFlags;
 
     static const UINT FrameCount = 3;
     UINT m_frameIndex;
-    UINT compileFlags;
+    UINT mBufferSerias[FrameCount];
+    ComPtr<ID3D12CommandAllocator> m_commandAllocators[FrameCount];
 
     ComPtr<ID3D12DescriptorHeap> m_rtvHeap;
     ComPtr<ID3D12DescriptorHeap> m_dsvHeap;

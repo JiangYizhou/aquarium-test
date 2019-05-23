@@ -35,20 +35,24 @@ ContextD3D12::ContextD3D12()
       m_commandQueue(nullptr),
       m_swapChain(nullptr),
       mPreferredSwapChainFormat(DXGI_FORMAT_R8G8B8A8_UNORM),
-      m_frameIndex(0),
       compileFlags(0),
+      m_frameIndex(0),
       m_rtvHeap(nullptr),
       m_dsvHeap(nullptr),
       m_cbvsrvHeap(nullptr),
       m_rtvDescriptorSize(0),
       m_cbvsrvDescriptorSize(0),
-      m_fenceValue(1),
+      m_fenceValue(0),
       rootSignature({}),
       m_viewport(0.0f, 0.0f, 0.0f, 0.0f),
       m_scissorRect(0.0f, 0.0f, 0.0f, 0.0f),
       lightView({}),
       fogView({})
 {
+    for (UINT n = 0; n < FrameCount; n++)
+    {
+        mBufferSerias[n] = 0;
+    }
 }
 
 ContextD3D12::~ContextD3D12() {}
@@ -69,6 +73,7 @@ bool ContextD3D12::createContext(BACKENDTYPE backend, bool enableMSAA)
     const GLFWvidmode *mode = glfwGetVideoMode(pMonitor);
     mClientWidth            = mode->width;
     mClientHeight           = mode->height;
+
     mWindow                 = glfwCreateWindow(mClientWidth, mClientHeight, "Aquarium", NULL, NULL);
     if (mWindow == NULL)
     {
@@ -181,16 +186,17 @@ bool ContextD3D12::createContext(BACKENDTYPE backend, bool enableMSAA)
 
     m_cbvsrvDescriptorSize =
         m_device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
-    // cbvsrvCPUHandle.InitOffsetted(m_cbvsrvHeap->GetCPUDescriptorHandleForHeapStart(),
-    // cbvsrvCount,
-    //                 m_cbvsrvDescriptorSize);
+
     cbvsrvCPUHandle = m_cbvsrvHeap->GetCPUDescriptorHandleForHeapStart();
     cbvsrvGPUHandle = m_cbvsrvHeap->GetGPUDescriptorHandleForHeapStart();
 
-    ThrowIfFailed(m_device->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT,
-                                                   IID_PPV_ARGS(&m_commandAllocator)));
-    // create a command list to init buffers during initialization and record commands in render
-    // iteration.
+    // Init 3 command allocators for 3 back buffers
+    for (UINT n = 0; n < FrameCount; n++)
+    {
+        ThrowIfFailed(m_device->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT,
+                                                       IID_PPV_ARGS(&m_commandAllocators[n])));
+    }
+
     createCommandList(NULL, mCommandList);
 
     // Check highest version of root signature.
@@ -288,7 +294,6 @@ void ContextD3D12::FlushInit()
     {
         ThrowIfFailed(
             m_device->CreateFence(m_fenceValue, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&m_fence)));
-        m_fenceValue = 1;
 
         // Create an event handle to use for frame synchronization.
         m_fenceEvent = CreateEvent(nullptr, FALSE, FALSE, nullptr);
@@ -306,6 +311,22 @@ void ContextD3D12::FlushInit()
 
 void ContextD3D12::Terminate()
 {
+    UINT lastSerias = 0;
+    if (m_frameIndex == 0)
+    {
+        lastSerias = mBufferSerias[2];
+    }
+    else
+    {
+        lastSerias = mBufferSerias[m_frameIndex - 1];
+    }
+
+    if (m_fence->GetCompletedValue() < lastSerias)
+    {
+        ThrowIfFailed(m_fence->SetEventOnCompletion(lastSerias, m_fenceEvent));
+        WaitForSingleObject(m_fenceEvent, INFINITE);
+    }
+
     glfwTerminate();
 }
 
@@ -313,12 +334,12 @@ void ContextD3D12::preFrame()
 {
     // Reuse the memory associated with command recording.
     // We can only reset when the associated command lists have finished execution on the GPU.
-    ThrowIfFailed(m_commandAllocator->Reset());
+    ThrowIfFailed(m_commandAllocators[m_frameIndex]->Reset());
 
     // A command list can be reset after it has been added to the command queue via
     // ExecuteCommandList.
     // Reusing the command list reuses memory.
-    ThrowIfFailed(mCommandList->Reset(m_commandAllocator.Get(), NULL));
+    ThrowIfFailed(mCommandList->Reset(m_commandAllocators[m_frameIndex].Get(), NULL));
 
     // Set descriptor heaps related to command list.
     ID3D12DescriptorHeap *mDescriptorHeaps[] = {m_cbvsrvHeap.Get()};
@@ -550,18 +571,23 @@ void ContextD3D12::executeCommandLists(UINT NumCommandLists,
 
 void ContextD3D12::WaitForPreviousFrame()
 {
+    m_fenceValue++;
     // Signal and increment the fence value.
     const UINT64 fence = m_fenceValue;
     ThrowIfFailed(m_commandQueue->Signal(m_fence.Get(), fence));
-    m_fenceValue++;
+    mBufferSerias[m_frameIndex] = m_fenceValue;
 
-    // Wait until the previous frame is finished.
-    if (m_fence->GetCompletedValue() < fence)
+    // Aquarium uses 3 back buffers for better performance.
+    // Wait until the previous before previous frame is finished.
+    int prepreIndex   = (m_frameIndex + 1) % 3;
+    UINT prepreSerias = mBufferSerias[prepreIndex];
+    if (m_fence->GetCompletedValue() < prepreSerias)
     {
         ThrowIfFailed(m_fence->SetEventOnCompletion(fence, m_fenceEvent));
         WaitForSingleObject(m_fenceEvent, INFINITE);
     }
 
+    // Get frame index for the next frame
     m_frameIndex = m_swapChain->GetCurrentBackBufferIndex();
 }
 
@@ -603,7 +629,7 @@ void ContextD3D12::createCommandList(ID3D12PipelineState *pInitialState,
                                      ComPtr<ID3D12GraphicsCommandList> &commandList)
 {
     ThrowIfFailed(m_device->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_DIRECT,
-                                              m_commandAllocator.Get(), pInitialState,
+                                              m_commandAllocators[0].Get(), pInitialState,
                                               IID_PPV_ARGS(&commandList)));
 }
 
@@ -847,9 +873,4 @@ UINT ContextD3D12::CalcConstantBufferByteSize(UINT byteSize)
     // 0x0200
     // 512
     return (byteSize + 255) & ~255;
-}
-
-void ContextD3D12::resetCommandList()
-{
-    ThrowIfFailed(mCommandList->Reset(m_commandAllocator.Get(), nullptr));
 }
