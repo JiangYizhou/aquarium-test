@@ -129,6 +129,7 @@ bool ContextDawn::createContext(BACKENDTYPE backend, bool enableMSAA)
         glfwTerminate();
         return false;
     }
+    glfwHideWindow(mWindow);
 
     instance = std::make_unique<dawn_native::Instance>();
     utils::DiscoverAdapter(instance.get(), mWindow, backendType);
@@ -483,6 +484,11 @@ void ContextDawn::DoFlush() {
 
 void ContextDawn::Terminate() {
     glfwTerminate();
+}
+
+void ContextDawn::showWindow()
+{
+    glfwShowWindow(mWindow);
 }
 
 void ContextDawn::preFrame()

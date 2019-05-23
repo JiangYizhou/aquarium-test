@@ -41,6 +41,7 @@ class ContextGL : public Context
     void KeyBoardQuit() override;
     void DoFlush() override;
     void Terminate() override;
+    void showWindow() override;
 
     void preFrame() override;
     void enableBlend(bool flag) const;

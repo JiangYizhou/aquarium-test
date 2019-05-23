@@ -43,6 +43,7 @@ class Context
     virtual void Terminate()                                                               = 0;
     virtual void FlushInit();
     virtual void preFrame() = 0;
+    virtual void showWindow() = 0;
 
     int getClientWidth() const { return mClientWidth; }
     int getclientHeight() const { return mClientHeight; }

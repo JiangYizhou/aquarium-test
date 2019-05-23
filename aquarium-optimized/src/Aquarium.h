@@ -459,6 +459,7 @@ class Aquarium
     void drawOutside();
     void updateWorldProjections(const float *world);
     BACKENDTYPE getBackendType(std::string &backendPath);
+    float getElapsedTime();
 };
 
 #endif

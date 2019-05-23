@@ -81,6 +81,7 @@ bool ContextD3D12::createContext(BACKENDTYPE backend, bool enableMSAA)
         glfwTerminate();
         return false;
     }
+    glfwHideWindow(mWindow);
 
     HWND hwnd = glfwGetWin32Window(mWindow);
 
@@ -328,6 +329,11 @@ void ContextD3D12::Terminate()
     }
 
     glfwTerminate();
+}
+
+void ContextD3D12::showWindow()
+{
+    glfwShowWindow(mWindow);
 }
 
 void ContextD3D12::preFrame()

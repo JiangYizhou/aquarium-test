@@ -32,6 +32,8 @@ class ContextD3D12 : public Context
     void KeyBoardQuit() override;
     void DoFlush() override;
     void Terminate() override;
+    void showWindow() override;
+
     void FlushInit() override;
     void preFrame() override;
 

@@ -76,6 +76,7 @@ bool ContextGL::createContext(BACKENDTYPE backend, bool enableMSAA)
         glfwTerminate();
         return false;
     }
+    glfwHideWindow(mWindow);
 
 #ifndef GL_GLES_PROTOTYPES 
     glfwWindowHint(GLFW_DECORATED, GL_FALSE);
@@ -402,6 +403,11 @@ void ContextGL::Terminate()
     glfwTerminate();
 }
 
+void ContextGL::showWindow()
+{
+    glfwShowWindow(mWindow);
+}
+
 int ContextGL::getUniformLocation(unsigned int programId, std::string name) const
 {
     GLint index = glGetUniformLocation(programId, name.c_str());
@@ -641,8 +647,6 @@ bool ContextGL::compileProgram(unsigned int programId,
     }
 
     // Link the program
-    std::cout << stdout << "Linking program" << std::endl;
-
     glAttachShader(programId, VertexShaderID);
     glAttachShader(programId, FragmentShaderID);
     glLinkProgram(programId);

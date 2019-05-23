@@ -48,6 +48,7 @@ class ContextDawn : public Context
     void KeyBoardQuit() override;
     void DoFlush() override;
     void Terminate() override;
+    void showWindow() override;
 
     void preFrame() override;
 

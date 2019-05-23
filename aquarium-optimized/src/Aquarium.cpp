@@ -220,6 +220,9 @@ void Aquarium::init(int argc, char **argv)
     calculateFishCount();
     updateUrls();
 
+    std::cout << "Init resources ..." << std::endl;
+    getElapsedTime();
+
     mTextureMap["skybox"] = context->createTexture("skybox", skyUrls);
 
     // Init general buffer and binding groups for dawn backend.
@@ -228,6 +231,9 @@ void Aquarium::init(int argc, char **argv)
     setupModelEnumMap();
     loadReource();
     context->FlushInit();
+
+    std::cout << "End loading.\nCost " << getElapsedTime() << "s totally." << std::endl;
+    context->showWindow();
 }
 
 void Aquarium::display()
@@ -385,10 +391,7 @@ void Aquarium::loadModel(const G_sceneInfo &info)
             {
                 mTextureMap[image] = context->createTexture(name, imagePath + image);
             }
-            else
-            {
-                std::cout << "the texture is loaded." << std::endl;
-            }
+
             model->textureMap[name] = mTextureMap[image];
         }
 
@@ -516,7 +519,7 @@ float Aquarium::degToRad(float degrees)
     return static_cast<float>(degrees * M_PI / 180.0);
 }
 
-void Aquarium::updateGlobalUniforms()
+float Aquarium::getElapsedTime()
 {
     // Update our time
 #ifdef _WIN32
@@ -535,6 +538,13 @@ void Aquarium::updateGlobalUniforms()
     }
     g.then = now;
 
+    return elapsedTime;
+}
+
+void Aquarium::updateGlobalUniforms()
+{
+
+    float elapsedTime = getElapsedTime();
     fpsTimer.update(elapsedTime);
 
     std::string text =
