@@ -1,11 +1,3 @@
-cbuffer viewUniforms : register(b0, space3)
-{
-    row_major float4x4 viewUniforms_viewProjection : packoffset(c0);
-    row_major float4x4 viewUniforms_viewInverse : packoffset(c4);
-    row_major float4x4 viewUniforms_world : packoffset(c8);
-    row_major float4x4 viewUniforms_worldInverseTranspose : packoffset(c12);
-    row_major float4x4 viewUniforms_worldViewProjection : packoffset(c16);
-};
 cbuffer fishVertexUnifoms : register(b0, space2)
 {
     float fishVertexUnifoms_fishLength : packoffset(c0);
@@ -15,16 +7,22 @@ cbuffer fishVertexUnifoms : register(b0, space2)
 cbuffer lightWorldPositionUniform : register(b0, space1)
 {
     float3 lightWorldPositionUniform_lightWorldPos : packoffset(c0);
+    row_major float4x4 viewUniforms_viewProjection : packoffset(c1);
+    row_major float4x4 viewUniforms_viewInverse : packoffset(c5);
 };
 
+cbuffer fishPer : register(b0, space3)
+{
+    float3 worldPosition : packoffset(c0);
+    float scale: packoffset(c0.w);
+    float3 nextPosition : packoffset(c1);
+    float time : packoffset(c1.w);
+}
+
 static float4 gl_Position;
-static float3 worldPosition;
-static float3 nextPosition;
-static float scale;
 static float2 v_texCoord;
 static float2 texCoord;
 static float4 position;
-static float time;
 static float4 v_position;
 static float3 v_normal;
 static float3 normal;
@@ -42,10 +40,6 @@ struct SPIRV_Cross_Input
     float2 texCoord : TEXCOORD2;
     float3 tangent : TEXCOORD3;
     float3 binormal : TEXCOORD4;
-    float3 worldPosition : TEXCOORD5;
-    float scale : TEXCOORD6;
-    float3 nextPosition : TEXCOORD7;
-    float time : TEXCOORD8;
 };
 
 struct SPIRV_Cross_Output
@@ -98,12 +92,8 @@ void vert_main()
 
 SPIRV_Cross_Output main(SPIRV_Cross_Input stage_input)
 {
-    worldPosition = stage_input.worldPosition;
-    nextPosition = stage_input.nextPosition;
-    scale = stage_input.scale;
     texCoord = stage_input.texCoord;
     position = stage_input.position;
-    time = stage_input.time;
     normal = stage_input.normal;
     binormal = stage_input.binormal;
     tangent = stage_input.tangent;

@@ -6,6 +6,7 @@
 #include <GLFW/glfw3native.h>
 
 #include "BufferD3D12.h"
+#include "FishModelD3D12.h"
 #include "FishModelInstancedDrawD3D12.h"
 #include "GenericModelD3D12.h"
 #include "InnerModelD3D12.h"
@@ -350,6 +351,9 @@ Model *ContextD3D12::createModel(Aquarium *aquarium, MODELGROUP type, MODELNAME 
     Model *model;
     switch (type)
     {
+        case MODELGROUP::FISH:
+            model = new FishModelD3D12(this, aquarium, type, name, blend);
+            break;
         case MODELGROUP::FISHINSTANCEDDRAW:
             model = new FishModelInstancedDrawD3D12(this, aquarium, type, name, blend);
             break;
