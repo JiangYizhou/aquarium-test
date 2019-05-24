@@ -147,13 +147,15 @@ BACKENDTYPE Aquarium::getBackendType(std::string& backendPath)
     }
 }
 
-void Aquarium::init(int argc, char **argv)
+bool Aquarium::init(int argc, char **argv)
 {
     factory = new ContextFactory();
 
     // Create context of different backends through the cmd args.
     // "--backend" {backend}: create different backends. currently opengl is supported.
     // "--num-fish" {numfish}: imply rendering fish count.
+    // "--enable-msaa": enable 4 times MSAA.
+    // "--allow-instanced-draws": use instanced draw. By default, it's individual draw.
     char *pNext;
     for (int i = 1; i < argc; ++i)
     {
@@ -161,6 +163,11 @@ void Aquarium::init(int argc, char **argv)
         if (cmd == "--num-fish")
         {
             mFishCount = strtol(argv[i++ + 1], &pNext, 10);
+            if (mFishCount < 0)
+            {
+                std::cerr << "Fish count should larger or equal to 0." << std::endl;
+                return false;
+            }
         }
         else if (cmd == "--backend")
         {
@@ -179,17 +186,20 @@ void Aquarium::init(int argc, char **argv)
             if (enableMSAA && mBackendType == BACKENDTYPE::BACKENDTYPEANGLE)
             {
                 std::cerr << "MSAA isn't implemented for angle backend." << std::endl;
-                return;
+                return false;
             }
         }
         else if (cmd == "--allow-instanced-draws")
         {
             allowInstancedDraws = true;
-            if (allowInstancedDraws && (mBackendType == BACKENDTYPE::BACKENDTYPEANGLE || mBackendType == BACKENDTYPE::BACKENDTYPEOPENGL))
+            if (allowInstancedDraws && (mBackendType == BACKENDTYPE::BACKENDTYPEANGLE ||
+                                        mBackendType == BACKENDTYPE::BACKENDTYPEOPENGL ||
+                                        mBackendType == BACKENDTYPE::BACKENDTYPEFIRST ||
+                                        mBackendType == BACKENDTYPE::BACKENDTYPELAST))
             {
                 std::cerr << "Instanced draw path isn't implemented for " + mBackendFullpath +
                                  " backend.";
-                return;
+                return false;
             }
         }
         else
@@ -200,6 +210,7 @@ void Aquarium::init(int argc, char **argv)
     if (context == nullptr)
     {
         mBackendType = BACKENDTYPE::BACKENDTYPEOPENGL;
+        mBackendFullpath = "opengl";
         context      = factory->createContext(mBackendType);
     }
 
@@ -214,7 +225,7 @@ void Aquarium::init(int argc, char **argv)
 
     if (!context->createContext(mBackendType, enableMSAA))
     {
-        return;
+        return false;
     }
 
     calculateFishCount();
@@ -234,6 +245,8 @@ void Aquarium::init(int argc, char **argv)
 
     std::cout << "End loading.\nCost " << getElapsedTime() << "s totally." << std::endl;
     context->showWindow();
+
+    return true;
 }
 
 void Aquarium::display()

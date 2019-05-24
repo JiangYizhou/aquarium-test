@@ -412,7 +412,7 @@ class Aquarium
   public:
     Aquarium();
     ~Aquarium();
-    void init(int argc, char **argv);
+    bool init(int argc, char **argv);
     void display();
     Texture *getSkybox() { return mTextureMap["skybox"]; }
 

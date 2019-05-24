@@ -9,7 +9,11 @@
 
 int main(int argc, char **argv) {
     Aquarium aquarium;
-    aquarium.init(argc, argv);
+    if (!aquarium.init(argc, argv))
+    {
+        return -1;
+    }
+
     aquarium.display();
 
     return 0;
