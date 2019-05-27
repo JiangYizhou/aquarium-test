@@ -53,9 +53,9 @@ void FishModelInstancedDrawDawn::init()
                                   dawn::BufferUsageBit::Vertex | dawn::BufferUsageBit::TransferDst);
 
     std::vector<dawn::VertexAttributeDescriptor> vertexAttributeDescriptor;
-    std::vector<dawn::VertexInputDescriptor> vertexInputDescriptor;
+    std::vector<dawn::VertexBufferDescriptor> vertexBufferDescriptor;
     contextDawn->createInputState(
-        &inputState, vertexAttributeDescriptor, vertexInputDescriptor,
+        &vertexInputDescriptor, vertexAttributeDescriptor, vertexBufferDescriptor,
         {
             {0, 0, dawn::VertexFormat::Float3, 0},
             {1, 1, dawn::VertexFormat::Float3, 0},
@@ -111,7 +111,8 @@ void FishModelInstancedDrawDawn::init()
         groupLayoutPer,
     });
 
-    pipeline = contextDawn->createRenderPipeline(pipelineLayout, programDawn, inputState, mBlend);
+    pipeline = contextDawn->createRenderPipeline(pipelineLayout, programDawn, vertexInputDescriptor,
+                                                 mBlend);
 
     fishVertexBuffer = contextDawn->createBufferFromData(
         &fishVertexUniforms, sizeof(FishVertexUniforms),
@@ -200,7 +201,6 @@ void FishModelInstancedDrawDawn::updateFishPerUniforms(float x,
 
 FishModelInstancedDrawDawn::~FishModelInstancedDrawDawn()
 {
-    inputState        = {};
     pipeline          = nullptr;
     groupLayoutModel  = nullptr;
     groupLayoutPer    = nullptr;

@@ -16,7 +16,6 @@ OutsideModelDawn::OutsideModelDawn(const Context* context, Aquarium* aquarium, M
 
 OutsideModelDawn::~OutsideModelDawn()
 {
-    inputState        = {};
     pipeline          = nullptr;
     groupLayoutModel  = nullptr;
     groupLayoutPer    = nullptr;
@@ -44,9 +43,9 @@ void OutsideModelDawn::init()
     indicesBuffer = static_cast<BufferDawn*>(bufferMap["indices"]);
 
     std::vector<dawn::VertexAttributeDescriptor> vertexAttributeDescriptor;
-    std::vector<dawn::VertexInputDescriptor> vertexInputDescriptor;
+    std::vector<dawn::VertexBufferDescriptor> vertexBufferDescriptor;
     contextDawn->createInputState(
-        &inputState, vertexAttributeDescriptor, vertexInputDescriptor,
+        &vertexInputDescriptor, vertexAttributeDescriptor, vertexBufferDescriptor,
         {
             {0, 0, dawn::VertexFormat::Float3, 0},
             {1, 1, dawn::VertexFormat::Float3, 0},
@@ -77,7 +76,8 @@ void OutsideModelDawn::init()
         groupLayoutPer,
     });
 
-    pipeline = contextDawn->createRenderPipeline(pipelineLayout, programDawn, inputState, mBlend);
+    pipeline = contextDawn->createRenderPipeline(pipelineLayout, programDawn, vertexInputDescriptor,
+                                                 mBlend);
 
     lightFactorBuffer = contextDawn->createBufferFromData(
         &lightFactorUniforms, sizeof(lightFactorUniforms),

@@ -22,7 +22,6 @@ GenericModelDawn::GenericModelDawn(const Context *context,
 
 GenericModelDawn::~GenericModelDawn()
 {
-    inputState        = {};
     pipeline          = nullptr;
     groupLayoutModel  = nullptr;
     groupLayoutPer    = nullptr;
@@ -53,11 +52,11 @@ void GenericModelDawn::init()
     // diiferent in texture binding.  MODELGLOBEBASE use diffuse shader though it contains
     // normal and reflection textures.
     std::vector<dawn::VertexAttributeDescriptor> vertexAttributeDescriptor;
-    std::vector<dawn::VertexInputDescriptor> vertexInputDescriptor;
+    std::vector<dawn::VertexBufferDescriptor> vertexBufferDescriptor;
     if (normalTexture && mName != MODELNAME::MODELGLOBEBASE)
     {
         contextDawn->createInputState(
-            &inputState, vertexAttributeDescriptor, vertexInputDescriptor,
+            &vertexInputDescriptor, vertexAttributeDescriptor, vertexBufferDescriptor,
             {
                 {0, 0, dawn::VertexFormat::Float3, 0},
                 {1, 1, dawn::VertexFormat::Float3, 0},
@@ -74,7 +73,7 @@ void GenericModelDawn::init()
     else
     {
         contextDawn->createInputState(
-            &inputState, vertexAttributeDescriptor, vertexInputDescriptor,
+            &vertexInputDescriptor, vertexAttributeDescriptor, vertexBufferDescriptor,
             {
                 {0, 0, dawn::VertexFormat::Float3, 0},
                 {1, 1, dawn::VertexFormat::Float3, 0},
@@ -128,7 +127,8 @@ void GenericModelDawn::init()
         groupLayoutPer,
     });
 
-    pipeline = contextDawn->createRenderPipeline(pipelineLayout, programDawn, inputState, mBlend);
+    pipeline = contextDawn->createRenderPipeline(pipelineLayout, programDawn, vertexInputDescriptor,
+                                                 mBlend);
 
     lightFactorBuffer = contextDawn->createBufferFromData(
         &lightFactorUniforms, sizeof(lightFactorUniforms),

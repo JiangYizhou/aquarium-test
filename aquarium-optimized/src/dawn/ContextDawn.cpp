@@ -274,9 +274,9 @@ dawn::PipelineLayout ContextDawn::MakeBasicPipelineLayout(
 }
 
 void ContextDawn::createInputState(
-    dawn::InputStateDescriptor *inputStateDescriptor,
+    dawn::VertexInputDescriptor *vertexInputDescriptor,
     std::vector<dawn::VertexAttributeDescriptor> &vertexAttributeDescriptor,
-    std::vector<dawn::VertexInputDescriptor> &vertexInputDescriptor,
+    std::vector<dawn::VertexBufferDescriptor> &vertexBufferDescriptor,
     std::initializer_list<Attribute> attributeInitilizer,
     std::initializer_list<Input> inputInitilizer) const
 {
@@ -292,24 +292,25 @@ void ContextDawn::createInputState(
 
     for (auto &input : inputInitilizer)
     {
-        dawn::VertexInputDescriptor in;
+        dawn::VertexBufferDescriptor in;
         in.inputSlot = input.bindingSlot;
         in.stride    = input.stride;
         in.stepMode  = input.stepMode;
-        vertexInputDescriptor.push_back(in);
+        vertexBufferDescriptor.push_back(in);
     }
 
-    inputStateDescriptor->numAttributes = vertexAttributeDescriptor.size();
-    inputStateDescriptor->attributes    = &vertexAttributeDescriptor[0];
-    inputStateDescriptor->numInputs     = vertexInputDescriptor.size();
-    inputStateDescriptor->inputs        = &vertexInputDescriptor[0];
-    inputStateDescriptor->indexFormat   = dawn::IndexFormat::Uint16;
+    vertexInputDescriptor->numAttributes = vertexAttributeDescriptor.size();
+    vertexInputDescriptor->attributes    = &vertexAttributeDescriptor[0];
+    vertexInputDescriptor->numBuffers    = vertexBufferDescriptor.size();
+    vertexInputDescriptor->buffers       = &vertexBufferDescriptor[0];
+    vertexInputDescriptor->indexFormat   = dawn::IndexFormat::Uint16;
 }
 
-dawn::RenderPipeline ContextDawn::createRenderPipeline(dawn::PipelineLayout pipelineLayout,
-                                                       ProgramDawn *programDawn,
-                                                       dawn::InputStateDescriptor &inputState,
-                                                       bool enableBlend) const
+dawn::RenderPipeline ContextDawn::createRenderPipeline(
+    dawn::PipelineLayout pipelineLayout,
+    ProgramDawn *programDawn,
+    dawn::VertexInputDescriptor &vertexInputDescriptor,
+    bool enableBlend) const
 {
     const dawn::ShaderModule &vsModule = programDawn->getVSModule();
     const dawn::ShaderModule &fsModule = programDawn->getFSModule();
@@ -345,7 +346,7 @@ dawn::RenderPipeline ContextDawn::createRenderPipeline(dawn::PipelineLayout pipe
     descriptor.layout                               = pipelineLayout;
     descriptor.cVertexStage.module                  = vsModule;
     descriptor.cFragmentStage.module                = fsModule;
-    descriptor.inputState                           = &inputState;
+    descriptor.vertexInput                          = &vertexInputDescriptor;
     descriptor.depthStencilState                    = &descriptor.cDepthStencilState;
     descriptor.cDepthStencilState.format            = dawn::TextureFormat::D32FloatS8Uint;
     descriptor.cColorStates[0]                      = &ColorStateDescriptor;

@@ -21,7 +21,6 @@ InnerModelDawn::InnerModelDawn(const Context* context, Aquarium* aquarium, MODEL
 
 InnerModelDawn::~InnerModelDawn()
 {
-    inputState       = {};
     pipeline         = nullptr;
     groupLayoutModel = nullptr;
     groupLayoutPer   = nullptr;
@@ -49,9 +48,9 @@ void InnerModelDawn::init()
     indicesBuffer = static_cast<BufferDawn*>(bufferMap["indices"]);
 
     std::vector<dawn::VertexAttributeDescriptor> vertexAttributeDescriptor;
-    std::vector<dawn::VertexInputDescriptor> vertexInputDescriptor;
+    std::vector<dawn::VertexBufferDescriptor> vertexBufferDescriptor;
     contextDawn->createInputState(
-        &inputState, vertexAttributeDescriptor, vertexInputDescriptor,
+        &vertexInputDescriptor, vertexAttributeDescriptor, vertexBufferDescriptor,
         {
             {0, 0, dawn::VertexFormat::Float3, 0},
             {1, 1, dawn::VertexFormat::Float3, 0},
@@ -85,7 +84,8 @@ void InnerModelDawn::init()
         groupLayoutPer,
     });
 
-    pipeline = contextDawn->createRenderPipeline(pipelineLayout, programDawn, inputState, mBlend);
+    pipeline = contextDawn->createRenderPipeline(pipelineLayout, programDawn, vertexInputDescriptor,
+                                                 mBlend);
 
     innerBuffer = contextDawn->createBufferFromData(&innerUniforms, sizeof(innerUniforms), dawn::BufferUsageBit::TransferDst | dawn::BufferUsageBit::Uniform);
     viewBuffer = contextDawn->createBufferFromData(

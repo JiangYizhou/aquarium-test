@@ -50,7 +50,7 @@ class InnerModelDawn : public InnerModel
 
 
 private:
-  dawn::InputStateDescriptor inputState;
+  dawn::VertexInputDescriptor vertexInputDescriptor;
   dawn::RenderPipeline pipeline;
 
   dawn::BindGroupLayout groupLayoutModel;
