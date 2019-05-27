@@ -35,7 +35,6 @@ void TextureD3D12::loadTexture()
 
     if (mTextureViewDimension == D3D12_SRV_DIMENSION_TEXTURECUBE)
     {
-
         D3D12_RESOURCE_DESC textureDesc = {};
         textureDesc.MipLevels           = 1;
         textureDesc.Format              = mFormat;

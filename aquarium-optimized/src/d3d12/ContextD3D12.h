@@ -117,6 +117,9 @@ class ContextD3D12 : public Context
     void GetHardwareAdapter(IDXGIFactory2 *pFactory, IDXGIAdapter1 **ppAdapter);
     void WaitForPreviousFrame();
     void createDepthStencilView();
+    void stateTransition(ComPtr<ID3D12Resource> &resource,
+                         D3D12_RESOURCE_STATES preState,
+                         D3D12_RESOURCE_STATES transferState) const;
 
     GLFWwindow *mWindow;
     ComPtr<ID3D12Device> m_device;
@@ -157,6 +160,11 @@ class ContextD3D12 : public Context
     D3D12_CONSTANT_BUFFER_VIEW_DESC fogView;
     ComPtr<ID3D12Resource> fogBuffer;
     ComPtr<ID3D12Resource> fogUploadBuffer;
+
+    ComPtr<ID3D12Resource> mSceneRenderTargetTexture;
+    D3D12_RENDER_TARGET_VIEW_DESC mSceneRenderTargetView;
+
+    bool mEnableMSAA;
 };
 
 #endif

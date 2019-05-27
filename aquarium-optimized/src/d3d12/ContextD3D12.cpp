@@ -47,7 +47,9 @@ ContextD3D12::ContextD3D12()
       m_viewport(0.0f, 0.0f, 0.0f, 0.0f),
       m_scissorRect(0.0f, 0.0f, 0.0f, 0.0f),
       lightView({}),
-      fogView({})
+      fogView({}),
+      mSceneRenderTargetView({}),
+      mEnableMSAA(false)
 {
     for (UINT n = 0; n < FrameCount; n++)
     {
@@ -59,6 +61,8 @@ ContextD3D12::~ContextD3D12() {}
 
 bool ContextD3D12::createContext(BACKENDTYPE backend, bool enableMSAA)
 {
+    mEnableMSAA = enableMSAA;
+
     // initialise GLFW
     if (!glfwInit())
     {
@@ -74,7 +78,7 @@ bool ContextD3D12::createContext(BACKENDTYPE backend, bool enableMSAA)
     mClientWidth            = mode->width;
     mClientHeight           = mode->height;
 
-    mWindow                 = glfwCreateWindow(mClientWidth, mClientHeight, "Aquarium", NULL, NULL);
+    mWindow = glfwCreateWindow(mClientWidth, mClientHeight, "Aquarium", NULL, NULL);
     if (mWindow == NULL)
     {
         std::cout << "Failed to open GLFW window." << std::endl;
@@ -148,7 +152,7 @@ bool ContextD3D12::createContext(BACKENDTYPE backend, bool enableMSAA)
 
     // Describe and create a render target view (RTV) descriptor heap.
     D3D12_DESCRIPTOR_HEAP_DESC rtvHeapDesc = {};
-    rtvHeapDesc.NumDescriptors             = FrameCount;
+    rtvHeapDesc.NumDescriptors             = mEnableMSAA ? FrameCount + 1 : FrameCount;
     rtvHeapDesc.Type                       = D3D12_DESCRIPTOR_HEAP_TYPE_RTV;
     rtvHeapDesc.Flags                      = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
     ThrowIfFailed(m_device->CreateDescriptorHeap(&rtvHeapDesc, IID_PPV_ARGS(&m_rtvHeap)));
@@ -156,9 +160,10 @@ bool ContextD3D12::createContext(BACKENDTYPE backend, bool enableMSAA)
     m_rtvDescriptorSize =
         m_device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
 
+    CD3DX12_CPU_DESCRIPTOR_HANDLE rtvHandle;
     // Create frame resources.
     {
-        CD3DX12_CPU_DESCRIPTOR_HANDLE rtvHandle(m_rtvHeap->GetCPUDescriptorHandleForHeapStart());
+        rtvHandle = m_rtvHeap->GetCPUDescriptorHandleForHeapStart();
 
         // Create a RTV for each frame.
         for (UINT n = 0; n < FrameCount; n++)
@@ -209,6 +214,30 @@ bool ContextD3D12::createContext(BACKENDTYPE backend, bool enableMSAA)
         rootSignature.HighestVersion = D3D_ROOT_SIGNATURE_VERSION_1_0;
     }
 
+    if (mEnableMSAA)
+    {
+        D3D12_RESOURCE_DESC textureDesc = {};
+        textureDesc.MipLevels           = 1;
+        textureDesc.Format              = mPreferredSwapChainFormat;
+        textureDesc.Width               = mClientWidth;
+        textureDesc.Height              = mClientHeight;
+        textureDesc.Flags               = D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET;
+        textureDesc.DepthOrArraySize    = 1;
+        textureDesc.SampleDesc.Count    = 4u;
+        textureDesc.SampleDesc.Quality  = 0;
+        textureDesc.Dimension           = D3D12_RESOURCE_DIMENSION_TEXTURE2D;
+
+        ThrowIfFailed(m_device->CreateCommittedResource(
+            &defaultheapProperties, D3D12_HEAP_FLAG_NONE, &textureDesc,
+            D3D12_RESOURCE_STATE_RENDER_TARGET, nullptr, IID_PPV_ARGS(&mSceneRenderTargetTexture)));
+
+        mSceneRenderTargetView.Format             = mPreferredSwapChainFormat;
+        mSceneRenderTargetView.ViewDimension      = D3D12_RTV_DIMENSION_TEXTURE2DMS;
+        mSceneRenderTargetView.Texture2D.MipSlice = 1;
+
+        m_device->CreateRenderTargetView(mSceneRenderTargetTexture.Get(), &mSceneRenderTargetView,
+                                         rtvHandle);
+    }
     createDepthStencilView();
 
     return true;
@@ -262,13 +291,39 @@ void ContextD3D12::KeyBoardQuit()
         glfwSetWindowShouldClose(mWindow, GL_TRUE);
 }
 
+void ContextD3D12::stateTransition(ComPtr<ID3D12Resource> &resource,
+                                   D3D12_RESOURCE_STATES preState,
+                                   D3D12_RESOURCE_STATES transferState) const
+{
+    CD3DX12_RESOURCE_BARRIER barrier =
+        CD3DX12_RESOURCE_BARRIER::Transition(resource.Get(), preState, transferState);
+    mCommandList->ResourceBarrier(1, &barrier);
+}
+
 void ContextD3D12::DoFlush()
 {
-    // Indicate that the back buffer will now be used to present.
-    CD3DX12_RESOURCE_BARRIER barrier = CD3DX12_RESOURCE_BARRIER::Transition(
-        m_renderTargets[m_frameIndex].Get(), D3D12_RESOURCE_STATE_RENDER_TARGET,
-        D3D12_RESOURCE_STATE_COMMON);
-    mCommandList->ResourceBarrier(1, &barrier);
+    // Resolve MSAA texture to non MSAA texture, and then present.
+    if (mEnableMSAA)
+    {
+        stateTransition(mSceneRenderTargetTexture, D3D12_RESOURCE_STATE_RENDER_TARGET,
+                        D3D12_RESOURCE_STATE_RESOLVE_SOURCE);
+        stateTransition(m_renderTargets[m_frameIndex], D3D12_RESOURCE_STATE_COMMON,
+                        D3D12_RESOURCE_STATE_RESOLVE_DEST);
+
+        mCommandList->ResolveSubresource(m_renderTargets[m_frameIndex].Get(), 0,
+                                         mSceneRenderTargetTexture.Get(), 0,
+                                         mPreferredSwapChainFormat);
+
+        stateTransition(mSceneRenderTargetTexture, D3D12_RESOURCE_STATE_RESOLVE_SOURCE,
+                        D3D12_RESOURCE_STATE_RENDER_TARGET);
+        stateTransition(m_renderTargets[m_frameIndex], D3D12_RESOURCE_STATE_RESOLVE_DEST,
+                        D3D12_RESOURCE_STATE_COMMON);
+    }
+    else
+    {
+        stateTransition(m_renderTargets[m_frameIndex], D3D12_RESOURCE_STATE_RENDER_TARGET,
+                        D3D12_RESOURCE_STATE_COMMON);
+    }
 
     ThrowIfFailed(mCommandList->Close());
 
@@ -354,21 +409,27 @@ void ContextD3D12::preFrame()
     mCommandList->RSSetViewports(1, &m_viewport);
     mCommandList->RSSetScissorRects(1, &m_scissorRect);
 
-    CD3DX12_CPU_DESCRIPTOR_HANDLE rtvHandle(m_rtvHeap->GetCPUDescriptorHandleForHeapStart(),
-                                            m_frameIndex, m_rtvDescriptorSize);
-    CD3DX12_CPU_DESCRIPTOR_HANDLE dsvHandle(m_dsvHeap->GetCPUDescriptorHandleForHeapStart());
+    CD3DX12_CPU_DESCRIPTOR_HANDLE rtvHandle;
+    CD3DX12_CPU_DESCRIPTOR_HANDLE dsvHandle;
+    if (mEnableMSAA)
+    {
+        rtvHandle = CD3DX12_CPU_DESCRIPTOR_HANDLE(m_rtvHeap->GetCPUDescriptorHandleForHeapStart(),
+                                                  FrameCount, m_rtvDescriptorSize);
+    }
+    else
+    {
+        rtvHandle = CD3DX12_CPU_DESCRIPTOR_HANDLE(m_rtvHeap->GetCPUDescriptorHandleForHeapStart(),
+                                                  m_frameIndex, m_rtvDescriptorSize);
 
-    // Indicate that the back buffer will be used as a render target.
-    CD3DX12_RESOURCE_BARRIER barrier = CD3DX12_RESOURCE_BARRIER::Transition(
-        m_renderTargets[m_frameIndex].Get(), D3D12_RESOURCE_STATE_COMMON,
-        D3D12_RESOURCE_STATE_RENDER_TARGET);
-    mCommandList->ResourceBarrier(1, &barrier);
+        stateTransition(m_renderTargets[m_frameIndex], D3D12_RESOURCE_STATE_COMMON,
+                        D3D12_RESOURCE_STATE_RENDER_TARGET);
+    }
+
+    dsvHandle = m_dsvHeap->GetCPUDescriptorHandleForHeapStart();
 
     mCommandList->ClearDepthStencilView(m_dsvHeap->GetCPUDescriptorHandleForHeapStart(),
                                         D3D12_CLEAR_FLAG_DEPTH | D3D12_CLEAR_FLAG_STENCIL, 1.0f, 0,
                                         0, nullptr);
-    const float clearColor[] = {0.0f, 0.8f, 1.0f, 0.0f};
-    mCommandList->ClearRenderTargetView(rtvHandle, clearColor, 0, nullptr);
 
     mCommandList->OMSetRenderTargets(1, &rtvHandle, true, &dsvHandle);
 }
@@ -601,8 +662,9 @@ void ContextD3D12::createDepthStencilView()
 {
     D3D12_DEPTH_STENCIL_VIEW_DESC depthStencilViewDesc = {};
     depthStencilViewDesc.Format                        = DXGI_FORMAT_D24_UNORM_S8_UINT;
-    depthStencilViewDesc.ViewDimension                 = D3D12_DSV_DIMENSION_TEXTURE2D;
-    depthStencilViewDesc.Flags                         = D3D12_DSV_FLAG_NONE;
+    depthStencilViewDesc.ViewDimension =
+        mEnableMSAA ? D3D12_DSV_DIMENSION_TEXTURE2DMS : D3D12_DSV_DIMENSION_TEXTURE2D;
+    depthStencilViewDesc.Flags = D3D12_DSV_FLAG_NONE;
 
     D3D12_CLEAR_VALUE depthOptimizedClearValue    = {};
     depthOptimizedClearValue.Format               = DXGI_FORMAT_D24_UNORM_S8_UINT;
@@ -617,7 +679,7 @@ void ContextD3D12::createDepthStencilView()
     depthStencilDesc.DepthOrArraySize   = 1;
     depthStencilDesc.MipLevels          = 1;
     depthStencilDesc.Format             = DXGI_FORMAT_D24_UNORM_S8_UINT;
-    depthStencilDesc.SampleDesc.Count   = 1;
+    depthStencilDesc.SampleDesc.Count   = mEnableMSAA ? 4 : 1;
     depthStencilDesc.SampleDesc.Quality = 0;
     depthStencilDesc.Layout             = D3D12_TEXTURE_LAYOUT_UNKNOWN;
     depthStencilDesc.Flags              = D3D12_RESOURCE_FLAG_ALLOW_DEPTH_STENCIL;
@@ -665,15 +727,13 @@ ComPtr<ID3D12Resource> ContextD3D12::createDefaultBuffer(const void *initData,
     subResourceData.SlicePitch             = subResourceData.RowPitch;
 
     // Schedule to copy the data to the default buffer resource.
-    CD3DX12_RESOURCE_BARRIER barrierC2D = CD3DX12_RESOURCE_BARRIER::Transition(
-        defaultBuffer.Get(), D3D12_RESOURCE_STATE_COMMON, D3D12_RESOURCE_STATE_COPY_DEST);
-    mCommandList->ResourceBarrier(1, &barrierC2D);
+    stateTransition(defaultBuffer, D3D12_RESOURCE_STATE_COMMON, D3D12_RESOURCE_STATE_COPY_DEST);
+
     UpdateSubresources<1>(mCommandList.Get(), defaultBuffer.Get(), uploadBuffer.Get(), 0, 0, 1,
                           &subResourceData);
-    CD3DX12_RESOURCE_BARRIER barrierC2R =
-        CD3DX12_RESOURCE_BARRIER::Transition(defaultBuffer.Get(), D3D12_RESOURCE_STATE_COPY_DEST,
-                                             D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER);
-    mCommandList->ResourceBarrier(1, &barrierC2R);
+
+    stateTransition(defaultBuffer, D3D12_RESOURCE_STATE_COPY_DEST,
+                    D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER);
 
     return defaultBuffer;
 }
@@ -764,10 +824,8 @@ void ContextD3D12::createTexture(const D3D12_RESOURCE_DESC &textureDesc,
     UpdateSubresources(mCommandList.Get(), m_texture.Get(), textureUploadHeap.Get(), 0, 0,
                        num2DSubresources, &textureData[0]);
 
-    CD3DX12_RESOURCE_BARRIER barrier =
-        CD3DX12_RESOURCE_BARRIER::Transition(m_texture.Get(), D3D12_RESOURCE_STATE_COPY_DEST,
-                                             D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE);
-    mCommandList->ResourceBarrier(1, &barrier);
+    stateTransition(m_texture, D3D12_RESOURCE_STATE_COPY_DEST,
+                    D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE);
 }
 
 void ContextD3D12::createGraphicsPipelineState(
@@ -815,7 +873,7 @@ void ContextD3D12::createGraphicsPipelineState(
     psoDesc.RasterizerState.DepthBiasClamp        = D3D12_DEFAULT_DEPTH_BIAS_CLAMP;
     psoDesc.RasterizerState.SlopeScaledDepthBias  = D3D12_DEFAULT_SLOPE_SCALED_DEPTH_BIAS;
     psoDesc.RasterizerState.DepthClipEnable       = TRUE;
-    psoDesc.RasterizerState.MultisampleEnable     = FALSE;
+    psoDesc.RasterizerState.MultisampleEnable     = mEnableMSAA;
     psoDesc.RasterizerState.AntialiasedLineEnable = FALSE;
     psoDesc.RasterizerState.ForcedSampleCount     = 0;
     psoDesc.RasterizerState.ConservativeRaster    = D3D12_CONSERVATIVE_RASTERIZATION_MODE_OFF;
@@ -833,7 +891,8 @@ void ContextD3D12::createGraphicsPipelineState(
     psoDesc.PrimitiveTopologyType                 = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
     psoDesc.NumRenderTargets                      = 1u;
     psoDesc.RTVFormats[0]                         = mPreferredSwapChainFormat;
-    psoDesc.SampleDesc.Count                      = 1u;
+    psoDesc.SampleDesc.Count                      = mEnableMSAA ? 4u : 1u;
+    psoDesc.SampleDesc.Quality                    = 0;
 
     ThrowIfFailed(m_device->CreateGraphicsPipelineState(&psoDesc, IID_PPV_ARGS(&pipelineState)));
 }
