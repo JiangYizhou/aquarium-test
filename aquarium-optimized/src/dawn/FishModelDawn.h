@@ -97,6 +97,8 @@ class FishModelDawn : public FishModel
 
     ProgramDawn *programDawn;
     const ContextDawn *contextDawn;
+
+    bool enableDynamicBufferOffset;
 };
 
 #endif

@@ -128,6 +128,8 @@ build aquarium by vs
 # running angle dynamic backend is on todo list. Currently go through angle path by option 'opengl' if angle is linked into the project
 # MSAA is disabled by default. To Enable MSAA of OpenGL backend, "--enable-msaa", 4 samples.
 # MSAA of angle is not supported now.
+# “--disable-dynamic-buffer-offset” ：The path is to test individual draw by creating many binding groups on dawn backend.
+# By default, dynamic buffer offset is enabled. The arg is only supported on dawn backend.
 
 # run on Windows
 run it in Visual Studio
