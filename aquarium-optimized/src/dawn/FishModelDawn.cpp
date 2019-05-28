@@ -13,7 +13,9 @@ FishModelDawn::FishModelDawn(const Context *context,
                              MODELGROUP type,
                              MODELNAME name,
                              bool blend)
-    : FishModel(type, name, blend), instance(0)
+    : FishModel(type, name, blend),
+      instance(0),
+      enableDynamicBufferOffset(aquarium->getEnableDynamicBufferOffset())
 {
     contextDawn = static_cast<const ContextDawn *>(context);
 
@@ -27,7 +29,14 @@ FishModelDawn::FishModelDawn(const Context *context,
 
     instance      = aquarium->fishCount[fishInfo.modelName - MODELNAME::MODELSMALLFISHA];
     fishPers      = new FishPer[instance];
-    bindGroupPers = new dawn::BindGroup[instance];
+    if (enableDynamicBufferOffset)
+    {
+        bindGroupPers = new dawn::BindGroup[1];
+    }
+    else
+    {
+        bindGroupPers = new dawn::BindGroup[instance];
+    }
 }
 
 void FishModelDawn::init()
@@ -92,9 +101,18 @@ void FishModelDawn::init()
         });
     }
 
-    groupLayoutPer = contextDawn->MakeBindGroupLayout({
-        {0, dawn::ShaderStageBit::Vertex, dawn::BindingType::UniformBuffer},
-    });
+    if (enableDynamicBufferOffset)
+    {
+        groupLayoutPer = contextDawn->MakeBindGroupLayout({
+            {0, dawn::ShaderStageBit::Vertex, dawn::BindingType::DynamicUniformBuffer},
+        });
+    }
+    else
+    {
+        groupLayoutPer = contextDawn->MakeBindGroupLayout({
+            {0, dawn::ShaderStageBit::Vertex, dawn::BindingType::UniformBuffer},
+        });
+    }
 
     pipelineLayout = contextDawn->MakeBasicPipelineLayout({
         contextDawn->groupLayoutGeneral,
@@ -140,11 +158,20 @@ void FishModelDawn::init()
                                {4, normalTexture->getTextureView()}});
     }
 
-    for (int i = 0; i < instance; i++)
+    if (enableDynamicBufferOffset)
     {
-        bindGroupPers[i] = contextDawn->makeBindGroup(
-            groupLayoutPer, {{0, fishPersBuffer, sizeof(FishPer) * i, sizeof(FishPer)}});
+        bindGroupPers[0] = contextDawn->makeBindGroup(
+            groupLayoutPer, {{0, fishPersBuffer, 0, sizeof(FishPer) * instance}});
     }
+    else
+    {
+        for (int i = 0; i < instance; i++)
+        {
+            bindGroupPers[i] = contextDawn->makeBindGroup(
+                groupLayoutPer, {{0, fishPersBuffer, sizeof(FishPer) * i, sizeof(FishPer)}});
+        }
+    }
+
     contextDawn->setBufferData(lightFactorBuffer, 0, sizeof(LightFactorUniforms),
                                &lightFactorUniforms);
     contextDawn->setBufferData(fishVertexBuffer, 0, sizeof(FishVertexUniforms),
@@ -174,10 +201,22 @@ void FishModelDawn::draw()
     pass.SetVertexBuffers(4, 1, &binormalBuffer->getBuffer(), vertexBufferOffsets);
     pass.SetIndexBuffer(indicesBuffer->getBuffer(), 0);
 
-    for (int i = 0; i < instance; i++)
+    if (enableDynamicBufferOffset)
     {
-        pass.SetBindGroup(3, bindGroupPers[i], 0, nullptr);
-        pass.DrawIndexed(indicesBuffer->getTotalComponents(), 1, 0, 0, 0);
+        for (int i = 0; i < instance; i++)
+        {
+            uint64_t offset = 256u * i;
+            pass.SetBindGroup(3, bindGroupPers[0], 1, &offset);
+            pass.DrawIndexed(indicesBuffer->getTotalComponents(), 1, 0, 0, 0);
+        }
+    }
+    else
+    {
+        for (int i = 0; i < instance; i++)
+        {
+            pass.SetBindGroup(3, bindGroupPers[i], 0, nullptr);
+            pass.DrawIndexed(indicesBuffer->getTotalComponents(), 1, 0, 0, 0);
+        }
     }
 }
 
@@ -214,9 +253,17 @@ FishModelDawn::~FishModelDawn()
     lightFactorBuffer = nullptr;
     fishPersBuffer    = nullptr;
     delete fishPers;
-    for (int i = 0; i < instance; i++)
+    if (enableDynamicBufferOffset)
     {
-        bindGroupPers[i] = nullptr;
+        bindGroupPers[0] = nullptr;
     }
+    else
+    {
+        for (int i = 0; i < instance; i++)
+        {
+            bindGroupPers[i] = nullptr;
+        }
+    }
+
     bindGroupPers = nullptr;
 }

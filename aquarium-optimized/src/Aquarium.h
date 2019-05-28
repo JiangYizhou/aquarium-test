@@ -5,7 +5,6 @@
 //
 // Aquarium.h: Define global variables, enums, constant variables and Class Aquarium.
 
-
 #ifndef AQUARIUM_H
 #define AQUARIUM_H
 
@@ -415,6 +414,7 @@ class Aquarium
     bool init(int argc, char **argv);
     void display();
     Texture *getSkybox() { return mTextureMap["skybox"]; }
+    bool getEnableDynamicBufferOffset() { return enableDynamicBufferOffset; }
 
     LightWorldPositionUniform lightWorldPositionUniform;
     WorldUniforms worldUniforms;
@@ -439,6 +439,7 @@ class Aquarium
     ContextFactory *factory;
     bool enableMSAA;
     bool allowInstancedDraws;
+    bool enableDynamicBufferOffset;
     std::vector<std::string> skyUrls;
 
     void updateUrls();

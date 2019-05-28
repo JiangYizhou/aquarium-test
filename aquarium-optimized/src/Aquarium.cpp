@@ -55,7 +55,8 @@ Aquarium::Aquarium()
       mPath(""),
       factory(nullptr),
       enableMSAA(false),
-      allowInstancedDraws(false)
+      allowInstancedDraws(false),
+      enableDynamicBufferOffset(true)
 {
     g.then     = 0.0f;
     g.mclock   = 0.0f;
@@ -198,7 +199,21 @@ bool Aquarium::init(int argc, char **argv)
                                         mBackendType == BACKENDTYPE::BACKENDTYPELAST))
             {
                 std::cerr << "Instanced draw path isn't implemented for " + mBackendFullpath +
-                                 " backend.";
+                                 " backend."
+                          << std::endl;
+                return false;
+            }
+        }
+        else if (cmd == "--disable-dynamic-buffer-offset")
+        {
+            enableDynamicBufferOffset = false;
+            if (allowInstancedDraws || (mBackendType != BACKENDTYPE::BACKENDTYPEDAWND3D12 &&
+                                        mBackendType != BACKENDTYPE::BACKENDTYPEDAWNVULKAN &&
+                                        mBackendType != BACKENDTYPE::BACKENDTYPEDAWNMETAL))
+            {
+                std::cerr << "Non dynamic buffer offset individual draw is only implemented for "
+                             "dawn backend."
+                          << std::endl;
                 return false;
             }
         }
