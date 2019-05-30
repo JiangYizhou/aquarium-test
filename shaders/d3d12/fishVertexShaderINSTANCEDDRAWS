@@ -76,7 +76,6 @@ void vert_main()
     }
     float mult = _137;
     float s = sin(time + (mult * fishVertexUnifoms_fishWaveLength));
-    float a = sign(s);
     float offset = (pow(mult, 2.0f) * s) * fishVertexUnifoms_fishBendAmount;
     v_position = mul(position + float4(offset, 0.0f, 0.0f, 0.0f), worldViewProjection);
     v_normal = mul(float4(normal, 0.0f), worldInverseTranspose).xyz;

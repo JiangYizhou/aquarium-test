@@ -55,7 +55,6 @@ void main() {
       (position.z / fishVertexUnifoms.fishLength) :
       (-position.z / fishVertexUnifoms.fishLength * 2.0);
   float s = sin(fishPer.time + mult * fishVertexUnifoms.fishWaveLength);
-  float a = sign(s);
   float offset = pow(mult, 2.0) * s * fishVertexUnifoms.fishBendAmount;
   v_position = (
       worldViewProjection *

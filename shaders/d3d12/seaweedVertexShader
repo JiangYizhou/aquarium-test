@@ -54,7 +54,6 @@ void vert_main()
     float3 toCamera = normalize(viewInverse[3].xyz - worlds[gl_InstanceIndex].world[3].xyz);
     float3 yAxis = float3(0.0f, 1.0f, 0.0f);
     float3 xAxis = cross(yAxis, toCamera);
-    float3 zAxis = cross(xAxis, yAxis);
     float4x4 newWorld = float4x4(float4(float4(xAxis, 0.0f)), float4(float4(yAxis, 0.0f)), float4(float4(xAxis, 0.0f)), float4(worlds[gl_InstanceIndex].world[3]));
     v_texCoord = texCoord;
     v_position = position + float4((sin(seaweedPer_time[gl_InstanceIndex] * 0.5f) * pow(position.y * 0.070000000298023223876953125f, 2.0f)) * 1.0f, -4.0f, 0.0f, 0.0f);

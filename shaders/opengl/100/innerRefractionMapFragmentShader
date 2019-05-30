@@ -41,7 +41,6 @@ void main() {
   normal = normalize(normal);  // #normalMap
   vec3 normal = normalize(v_normal);   // #noNormalMap
 
-  vec3 surfaceToLight = normalize(v_surfaceToLight);
   vec3 surfaceToView = normalize(v_surfaceToView);
 
   vec3 refractionVec = refract(surfaceToView, normal, eta);

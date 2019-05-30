@@ -17,7 +17,6 @@ void main() {
   vec3 toCamera = normalize(viewInverse[3].xyz - world[3].xyz);
   vec3 yAxis = vec3(0, 1, 0);
   vec3 xAxis = cross(yAxis, toCamera);
-  vec3 zAxis = cross(xAxis, yAxis);
 
   mat4 newWorld = mat4(
       vec4(xAxis, 0),

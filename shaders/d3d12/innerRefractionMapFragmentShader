@@ -61,7 +61,6 @@ void frag_main()
     tangentNormal = normalize(tangentNormal + float3(0.0f, 0.0f, innerUniforms_refractionFudge));
     float3 normal = mul(tangentNormal, tangentToWorld);
     normal = normalize(normal);
-    float3 surfaceToLight = normalize(v_surfaceToLight);
     float3 surfaceToView = normalize(v_surfaceToView);
     float3 refractionVec = refract(surfaceToView, normal, innerUniforms_eta);
     float4 skyColor = skybox.Sample(samplerSkybox, refractionVec);
