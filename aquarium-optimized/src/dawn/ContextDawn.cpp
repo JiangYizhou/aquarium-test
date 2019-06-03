@@ -116,10 +116,7 @@ bool ContextDawn::createContext(BACKENDTYPE backend, bool enableMSAA)
     mClientWidth            = mode->width;
     mClientHeight           = mode->height;
     // If we show the window bar on the top, max width and height will be 1916 x 1053.
-    // Use a window mode currently
-    // mClientWidth  = 1024;
-    // mClientHeight = 768;
-    // Minus the height of title bar
+    // Minus the height of title bar, or dawn vulkan backend cannot work.
     mClientHeight -= 20;
 
     mWindow = glfwCreateWindow(mClientWidth, mClientHeight, "Aquarium", NULL, NULL);
