@@ -67,6 +67,7 @@ ContextDawn::~ContextDawn()
     lightBuffer              = nullptr;
     fogBuffer                = nullptr;
     mCommandEncoder          = nullptr;
+    mCommandBuffers.clear();
     mRenderPass              = nullptr;
     mRenderPassDescriptor    = {};
     groupLayoutGeneral       = nullptr;
@@ -241,11 +242,6 @@ dawn::CommandBuffer ContextDawn::copyBufferToTexture(const dawn::BufferCopyView 
     encoder.CopyBufferToTexture(&bufferCopyView, &textureCopyView, &ext3D);
     dawn::CommandBuffer copy = encoder.Finish();
     return copy;
-}
-
-void ContextDawn::submit(int numCommands, const dawn::CommandBuffer *commands) const
-{
-    queue.Submit(numCommands, commands);
 }
 
 dawn::ShaderModule ContextDawn::createShaderModule(dawn::ShaderStage stage,
@@ -459,17 +455,20 @@ void ContextDawn::setWindowTitle(const std::string &text)
     glfwSetWindowTitle(mWindow, text.c_str());
 }
 
-bool ContextDawn::ShouldQuit() {
+bool ContextDawn::ShouldQuit()
+{
     return glfwWindowShouldClose(mWindow);
 }
 
-void ContextDawn::KeyBoardQuit() {
+void ContextDawn::KeyBoardQuit()
+{
     if (glfwGetKey(mWindow, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(mWindow, GL_TRUE);
 }
 
 // Submit commands of the frame
-void ContextDawn::DoFlush() {
+void ContextDawn::DoFlush()
+{
 
     mRenderPass.EndPass();
     dawn::CommandBuffer cmd = mCommandEncoder.Finish();
@@ -480,7 +479,13 @@ void ContextDawn::DoFlush() {
     glfwPollEvents();
 }
 
-void ContextDawn::Terminate() {
+void ContextDawn::FlushInit()
+{
+    queue.Submit(mCommandBuffers.size(), mCommandBuffers.data());
+}
+
+void ContextDawn::Terminate()
+{
     glfwTerminate();
 }
 

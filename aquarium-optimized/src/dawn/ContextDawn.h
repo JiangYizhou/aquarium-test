@@ -47,6 +47,7 @@ class ContextDawn : public Context
     bool ShouldQuit() override;
     void KeyBoardQuit() override;
     void DoFlush() override;
+    void FlushInit() override;
     void Terminate() override;
     void showWindow() override;
 
@@ -72,7 +73,6 @@ class ContextDawn : public Context
     dawn::CommandBuffer copyBufferToTexture(const dawn::BufferCopyView &bufferCopyView,
                                             const dawn::TextureCopyView &textureCopyView,
                                             const dawn::Extent3D &ext3D) const;
-    void submit(int numCommands, const dawn::CommandBuffer *commands) const;
 
     dawn::TextureCopyView createTextureCopyView(dawn::Texture texture,
                                                 uint32_t level,
@@ -103,7 +103,8 @@ class ContextDawn : public Context
     void updateWorldlUniforms(Aquarium* aquarium) override;
     dawn::Device getDevice() const { return device; }
     dawn::RenderPassEncoder getRenderPass() const { return mRenderPass; }
-    
+    std::vector<dawn::CommandBuffer> mCommandBuffers;
+
     dawn::BindGroupLayout groupLayoutGeneral;
     dawn::BindGroup bindGroupGeneral;
     dawn::BindGroupLayout groupLayoutWorld;
