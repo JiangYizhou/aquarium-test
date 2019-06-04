@@ -66,16 +66,15 @@ void TextureDawn::loadTexture()
         descriptor.usage = dawn::TextureUsageBit::TransferDst | dawn::TextureUsageBit::Sampled;
         mTexture = context->createTexture(descriptor);
 
-        dawn::CommandBuffer cmd[6];
         for (unsigned int i = 0; i < 6; i++)
         {
             dawn::Buffer stagingBuffer = context->createBufferFromData(mPixelVec[i], mWidth * mHeight * 4, dawn::BufferUsageBit::TransferSrc);
             dawn::BufferCopyView bufferCopyView = context->createBufferCopyView(stagingBuffer, 0, mWidth * 4, mHeight);
             dawn::TextureCopyView textureCopyView = context->createTextureCopyView(mTexture, 0, i, { 0, 0, 0 });
             dawn::Extent3D copySize = { static_cast<uint32_t>(mWidth), static_cast<uint32_t>(mHeight), 1 };
-            cmd[i] = context->copyBufferToTexture(bufferCopyView, textureCopyView, copySize);
+            context->mCommandBuffers.emplace_back(
+                context->copyBufferToTexture(bufferCopyView, textureCopyView, copySize));
         }
-        context->submit(6, &cmd[0]);
 
         dawn::TextureViewDescriptor viewDescriptor;
         viewDescriptor.nextInChain = nullptr;
@@ -128,7 +127,6 @@ void TextureDawn::loadTexture()
         descriptor.usage = dawn::TextureUsageBit::TransferDst | dawn::TextureUsageBit::Sampled;
         mTexture = context->createTexture(descriptor);
 
-        std::vector<dawn::CommandBuffer> cmds;
         int count = 0;
         for (unsigned int i = 0; i < descriptor.mipLevelCount; ++i, ++count)
         {
@@ -142,9 +140,9 @@ void TextureDawn::loadTexture()
             dawn::Extent3D copySize = {static_cast<uint32_t>(width),
                                        static_cast<uint32_t>(height),
                                        1};
-            cmds.push_back(context->copyBufferToTexture(bufferCopyView, textureCopyView, copySize));
+            context->mCommandBuffers.emplace_back(
+                context->copyBufferToTexture(bufferCopyView, textureCopyView, copySize));
         }
-        context->submit(cmds.size(), cmds.data());
 
         dawn::TextureViewDescriptor viewDescriptor;
         viewDescriptor.nextInChain = nullptr;
