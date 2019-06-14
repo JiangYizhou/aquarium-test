@@ -79,8 +79,8 @@ bool ContextD3D12::createContext(BACKENDTYPE backend, bool enableMSAA)
     mClientWidth            = mode->width;
     mClientHeight           = mode->height;
 
-    mWindow = glfwCreateWindow(mClientWidth, mClientHeight, "Aquarium", NULL, NULL);
-    if (mWindow == NULL)
+    mWindow = glfwCreateWindow(mClientWidth, mClientHeight, "Aquarium", nullptr, nullptr);
+    if (mWindow == nullptr)
     {
         std::cout << "Failed to open GLFW window." << std::endl;
         glfwTerminate();
@@ -203,7 +203,7 @@ bool ContextD3D12::createContext(BACKENDTYPE backend, bool enableMSAA)
                                                        IID_PPV_ARGS(&m_commandAllocators[n])));
     }
 
-    createCommandList(NULL, mCommandList);
+    createCommandList(nullptr, mCommandList);
 
     // Check highest version of root signature.
     rootSignature.HighestVersion = D3D_ROOT_SIGNATURE_VERSION_1_1;
@@ -400,7 +400,7 @@ void ContextD3D12::preFrame()
     // A command list can be reset after it has been added to the command queue via
     // ExecuteCommandList.
     // Reusing the command list reuses memory.
-    ThrowIfFailed(mCommandList->Reset(m_commandAllocators[m_frameIndex].Get(), NULL));
+    ThrowIfFailed(mCommandList->Reset(m_commandAllocators[m_frameIndex].Get(), nullptr));
 
     // Set descriptor heaps related to command list.
     ID3D12DescriptorHeap *mDescriptorHeaps[] = {m_cbvsrvHeap.Get()};
@@ -589,7 +589,7 @@ ComPtr<ID3DBlob> ContextD3D12::createShaderModule(const std::string &type,
 
     if (FAILED(hr))
     {
-        if (NULL != errors)
+        if (nullptr != errors)
         {
             std::cerr << ((char *)errors->GetBufferPointer());
             errors->Release();

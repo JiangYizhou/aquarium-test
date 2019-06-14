@@ -282,7 +282,7 @@ void Aquarium::updateUrls()
 // Get path of current build.
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32)
     TCHAR temp[200];
-    GetModuleFileName(NULL, temp, MAX_PATH);
+    GetModuleFileName(nullptr, temp, MAX_PATH);
     std::wstring ws(temp);
     mPath       = std::string(ws.begin(), ws.end());
     size_t nPos = mPath.find_last_of(slash);

@@ -128,8 +128,8 @@ bool ContextDawn::createContext(BACKENDTYPE backend, bool enableMSAA)
     // Minus the height of title bar, or dawn vulkan backend cannot work.
     mClientHeight -= 20;
 
-    mWindow = glfwCreateWindow(mClientWidth, mClientHeight, "Aquarium", NULL, NULL);
-    if (mWindow == NULL)
+    mWindow = glfwCreateWindow(mClientWidth, mClientHeight, "Aquarium", nullptr, nullptr);
+    if (mWindow == nullptr)
     {
         std::cout << "Failed to open GLFW window." << std::endl;
         glfwTerminate();

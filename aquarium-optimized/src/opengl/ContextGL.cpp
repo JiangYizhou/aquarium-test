@@ -70,8 +70,8 @@ bool ContextGL::createContext(BACKENDTYPE backend, bool enableMSAA)
     mClientHeight           = mode->height;
 
     glfwWindowHint(GLFW_VISIBLE, GL_FALSE);
-    mWindow = glfwCreateWindow(mClientWidth, mClientHeight, "Aquarium", NULL, NULL);
-    if (mWindow == NULL)
+    mWindow = glfwCreateWindow(mClientWidth, mClientHeight, "Aquarium", nullptr, nullptr);
+    if (mWindow == nullptr)
     {
         std::cout << "Failed to open GLFW window." << std::endl;
         glfwTerminate();
@@ -618,7 +618,7 @@ bool ContextGL::compileProgram(unsigned int programId,
 
     // Compile Vertex Shader
     char const *VertexSourcePointer = VertexShaderCode.c_str();
-    glShaderSource(VertexShaderID, 1, &VertexSourcePointer, NULL);
+    glShaderSource(VertexShaderID, 1, &VertexSourcePointer, nullptr);
     glCompileShader(VertexShaderID);
 
     // Check Vertex Shader
@@ -627,13 +627,13 @@ bool ContextGL::compileProgram(unsigned int programId,
     {
         glGetShaderiv(VertexShaderID, GL_INFO_LOG_LENGTH, &InfoLogLength);
         std::vector<char> VertexShaderErrorMessage(InfoLogLength);
-        glGetShaderInfoLog(VertexShaderID, InfoLogLength, NULL, &VertexShaderErrorMessage[0]);
+        glGetShaderInfoLog(VertexShaderID, InfoLogLength, nullptr, &VertexShaderErrorMessage[0]);
         std::cout << stdout << &VertexShaderErrorMessage[0] << std::endl;
     }
 
     // Compile Fragment Shader
     char const *FragmentSourcePointer = FragmentShaderCode.c_str();
-    glShaderSource(FragmentShaderID, 1, &FragmentSourcePointer, NULL);
+    glShaderSource(FragmentShaderID, 1, &FragmentSourcePointer, nullptr);
     glCompileShader(FragmentShaderID);
 
     // Check Fragment Shader
@@ -642,7 +642,7 @@ bool ContextGL::compileProgram(unsigned int programId,
     {
         glGetShaderiv(FragmentShaderID, GL_INFO_LOG_LENGTH, &InfoLogLength);
         std::vector<char> FragmentShaderErrorMessage(InfoLogLength);
-        glGetShaderInfoLog(FragmentShaderID, InfoLogLength, NULL, &FragmentShaderErrorMessage[0]);
+        glGetShaderInfoLog(FragmentShaderID, InfoLogLength, nullptr, &FragmentShaderErrorMessage[0]);
         std::cout << stdout << &FragmentShaderErrorMessage[0] << std::endl;
     }
 
@@ -657,7 +657,7 @@ bool ContextGL::compileProgram(unsigned int programId,
     {
         glGetProgramiv(programId, GL_INFO_LOG_LENGTH, &InfoLogLength);
         std::vector<char> ProgramErrorMessage(std::max(InfoLogLength, int(1)));
-        glGetProgramInfoLog(programId, InfoLogLength, NULL, &ProgramErrorMessage[0]);
+        glGetProgramInfoLog(programId, InfoLogLength, nullptr, &ProgramErrorMessage[0]);
         std::cout << stdout << &ProgramErrorMessage[0] << std::endl;
     }
     glDeleteShader(VertexShaderID);
