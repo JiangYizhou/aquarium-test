@@ -44,20 +44,26 @@ void SeaweedModelDawn::init()
     texCoordBuffer = static_cast<BufferDawn*>(bufferMap["texCoord"]);
     indicesBuffer = static_cast<BufferDawn*>(bufferMap["indices"]);
 
-    std::vector<dawn::VertexAttributeDescriptor> vertexAttributeDescriptor;
-    std::vector<dawn::VertexBufferDescriptor> vertexBufferDescriptor;
-    contextDawn->createInputState(
-        &vertexInputDescriptor, vertexAttributeDescriptor, vertexBufferDescriptor,
-        {
-            {0, 0, dawn::VertexFormat::Float3, 0},
-            {1, 1, dawn::VertexFormat::Float3, 0},
-            {2, 2, dawn::VertexFormat::Float2, 0},
-        },
-        {
-            {0, positionBuffer->getDataSize(), dawn::InputStepMode::Vertex},
-            {1, normalBuffer->getDataSize(), dawn::InputStepMode::Vertex},
-            {2, texCoordBuffer->getDataSize(), dawn::InputStepMode::Vertex},
-        });
+    vertexInputDescriptor.cBuffers[0].attributeCount    = 1;
+    vertexInputDescriptor.cBuffers[0].stride            = positionBuffer->getDataSize();
+    vertexInputDescriptor.cAttributes[0].format         = dawn::VertexFormat::Float3;
+    vertexInputDescriptor.cAttributes[0].shaderLocation = 0;
+    vertexInputDescriptor.cAttributes[0].offset         = 0;
+    vertexInputDescriptor.cBuffers[0].attributes        = &vertexInputDescriptor.cAttributes[0];
+    vertexInputDescriptor.cBuffers[1].attributeCount    = 1;
+    vertexInputDescriptor.cBuffers[1].stride            = normalBuffer->getDataSize();
+    vertexInputDescriptor.cAttributes[1].format         = dawn::VertexFormat::Float3;
+    vertexInputDescriptor.cAttributes[1].shaderLocation = 1;
+    vertexInputDescriptor.cAttributes[1].offset         = 0;
+    vertexInputDescriptor.cBuffers[1].attributes        = &vertexInputDescriptor.cAttributes[1];
+    vertexInputDescriptor.cBuffers[2].attributeCount    = 1;
+    vertexInputDescriptor.cBuffers[2].stride            = texCoordBuffer->getDataSize();
+    vertexInputDescriptor.cAttributes[2].format         = dawn::VertexFormat::Float2;
+    vertexInputDescriptor.cAttributes[2].shaderLocation = 2;
+    vertexInputDescriptor.cAttributes[2].offset         = 0;
+    vertexInputDescriptor.cBuffers[2].attributes        = &vertexInputDescriptor.cAttributes[2];
+    vertexInputDescriptor.bufferCount                   = 3;
+    vertexInputDescriptor.indexFormat                   = dawn::IndexFormat::Uint16;
 
     groupLayoutModel = contextDawn->MakeBindGroupLayout({
         { 0, dawn::ShaderStageBit::Fragment, dawn::BindingType::UniformBuffer },

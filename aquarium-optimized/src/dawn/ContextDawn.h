@@ -25,21 +25,6 @@ enum BACKENDTYPE: short;
 class ContextDawn : public Context
 {
   public:
-      struct Attribute
-      {
-          int shaderLocation;
-          int bindingSlot;
-          dawn::VertexFormat format;
-          int offset;
-      };
-
-      struct Input
-      {
-          int bindingSlot;
-          int stride;
-          dawn::InputStepMode stepMode;
-      };
-
     ContextDawn();
     ~ContextDawn();
     bool createContext(BACKENDTYPE backend, bool enableMSAA) override;
@@ -83,11 +68,6 @@ class ContextDawn : public Context
         std::initializer_list<dawn::BindGroupLayoutBinding> bindingsInitializer) const;
     dawn::PipelineLayout MakeBasicPipelineLayout(
         std::vector<dawn::BindGroupLayout> bindingsInitializer) const;
-    void createInputState(dawn::VertexInputDescriptor *vertexInputDescriptor,
-                          std::vector<dawn::VertexAttributeDescriptor> &vertexAttributeDescriptor,
-                          std::vector<dawn::VertexBufferDescriptor> &vertexBufferDescriptor,
-                          std::initializer_list<Attribute> attributeInitilizer,
-                          std::initializer_list<Input> inputInitilizer) const;
     dawn::RenderPipeline createRenderPipeline(dawn::PipelineLayout pipelineLayout,
                                               ProgramDawn *programDawn,
                                               dawn::VertexInputDescriptor &vertexInputDescriptor,

@@ -33,10 +33,6 @@
 #include <array>
 #include <cstring>
 
-void PrintDeviceError(const char* message, dawn::CallbackUserdata) {
-    std::cout << "Device error: " << message << std::endl;
-}
-
 ContextDawn::ContextDawn()
     : mWindow(nullptr),
       instance(),
@@ -155,7 +151,6 @@ bool ContextDawn::createContext(BACKENDTYPE backend, bool enableMSAA)
     }
 
     dawnSetProcs(&backendProcs);
-    backendProcs.deviceSetErrorCallback(backendDevice, PrintDeviceError, 0);
     device = dawn::Device::Acquire(backendDevice);
 
     queue = device.CreateQueue();
@@ -266,39 +261,6 @@ dawn::PipelineLayout ContextDawn::MakeBasicPipelineLayout(
     return device.CreatePipelineLayout(&descriptor);
 }
 
-void ContextDawn::createInputState(
-    dawn::VertexInputDescriptor *vertexInputDescriptor,
-    std::vector<dawn::VertexAttributeDescriptor> &vertexAttributeDescriptor,
-    std::vector<dawn::VertexBufferDescriptor> &vertexBufferDescriptor,
-    std::initializer_list<Attribute> attributeInitilizer,
-    std::initializer_list<Input> inputInitilizer) const
-{
-    for (auto &attribute : attributeInitilizer)
-    {
-        dawn::VertexAttributeDescriptor attrib;
-        attrib.shaderLocation = attribute.shaderLocation;
-        attrib.inputSlot      = attribute.bindingSlot;
-        attrib.offset         = attribute.offset;
-        attrib.format         = attribute.format;
-        vertexAttributeDescriptor.push_back(attrib);
-    }
-
-    for (auto &input : inputInitilizer)
-    {
-        dawn::VertexBufferDescriptor in;
-        in.inputSlot = input.bindingSlot;
-        in.stride    = input.stride;
-        in.stepMode  = input.stepMode;
-        vertexBufferDescriptor.push_back(in);
-    }
-
-    vertexInputDescriptor->numAttributes = vertexAttributeDescriptor.size();
-    vertexInputDescriptor->attributes    = &vertexAttributeDescriptor[0];
-    vertexInputDescriptor->numBuffers    = vertexBufferDescriptor.size();
-    vertexInputDescriptor->buffers       = &vertexBufferDescriptor[0];
-    vertexInputDescriptor->indexFormat   = dawn::IndexFormat::Uint16;
-}
-
 dawn::RenderPipeline ContextDawn::createRenderPipeline(
     dawn::PipelineLayout pipelineLayout,
     ProgramDawn *programDawn,
@@ -334,6 +296,14 @@ dawn::RenderPipeline ContextDawn::createRenderPipeline(
     ColorStateDescriptor.alphaBlend     = blendDescriptor;
     ColorStateDescriptor.writeMask      = dawn::ColorWriteMask::All;
 
+    dawn::RasterizationStateDescriptor rasterizationState;
+    rasterizationState.nextInChain         = nullptr;
+    rasterizationState.frontFace           = dawn::FrontFace::CCW;
+    rasterizationState.cullMode            = dawn::CullMode::Front;
+    rasterizationState.depthBias           = 0;
+    rasterizationState.depthBiasSlopeScale = 0.0;
+    rasterizationState.depthBiasClamp      = 0.0;
+
     // test
     utils::ComboRenderPipelineDescriptor descriptor(device);
     descriptor.layout                               = pipelineLayout;
@@ -348,6 +318,7 @@ dawn::RenderPipeline ContextDawn::createRenderPipeline(
     descriptor.cDepthStencilState.depthCompare      = dawn::CompareFunction::Less;
     descriptor.primitiveTopology                    = dawn::PrimitiveTopology::TriangleList;
     descriptor.sampleCount                          = mEnableMSAA ? 4 : 1;
+    descriptor.rasterizationState                   = &rasterizationState;
 
     dawn::RenderPipeline pipeline = device.CreateRenderPipeline(&descriptor);
 

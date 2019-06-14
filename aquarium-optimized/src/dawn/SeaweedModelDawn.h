@@ -13,6 +13,7 @@
 #include "ContextDawn.h"
 #include "ProgramDawn.h"
 #include "dawn/dawncpp.h"
+#include "utils/ComboRenderPipelineDescriptor.h"
 
 class SeaweedModelDawn : public SeaweedModel
 {
@@ -57,7 +58,7 @@ class SeaweedModelDawn : public SeaweedModel
     WorldUniformPer worldUniformPer;
 
   private:
-    dawn::VertexInputDescriptor vertexInputDescriptor;
+    utils::ComboVertexInputDescriptor vertexInputDescriptor;
     dawn::RenderPipeline pipeline;
 
     dawn::BindGroupLayout groupLayoutModel;

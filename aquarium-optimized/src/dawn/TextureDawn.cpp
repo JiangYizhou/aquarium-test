@@ -122,7 +122,7 @@ void TextureDawn::loadTexture()
         descriptor.sampleCount = 1;
         descriptor.format = mFormat;
         descriptor.mipLevelCount   = static_cast<uint32_t>(std::floor(
-                                       static_cast<float>(std::log2(std::max(mWidth, mHeight))))) +
+                                       static_cast<float>(std::log2(std::min(mWidth, mHeight))))) +
                                    1;
         descriptor.usage = dawn::TextureUsageBit::TransferDst | dawn::TextureUsageBit::Sampled;
         mTexture = context->createTexture(descriptor);
@@ -132,8 +132,11 @@ void TextureDawn::loadTexture()
         {
             int height                 = mHeight >> i;
             int width                  = resizedWidth >> i;
-            if (width ==0 || height == 0)
-                break;
+            if (height == 0)
+            {
+                height = 1;
+            }
+
             dawn::Buffer stagingBuffer = context->createBufferFromData(mResizedVec[i], resizedWidth * height * 4, dawn::BufferUsageBit::TransferSrc);
             dawn::BufferCopyView bufferCopyView = context->createBufferCopyView(stagingBuffer, 0, resizedWidth * 4, height);
             dawn::TextureCopyView textureCopyView = context->createTextureCopyView(mTexture, i, 0, { 0, 0, 0 });
@@ -151,7 +154,7 @@ void TextureDawn::loadTexture()
         viewDescriptor.baseMipLevel = 0;
         viewDescriptor.mipLevelCount =
             static_cast<uint32_t>(
-                std::floor(static_cast<float>(std::log2(std::max(mWidth, mHeight))))) +
+                std::floor(static_cast<float>(std::log2(std::min(mWidth, mHeight))))) +
             1;
         viewDescriptor.baseArrayLayer = 0;
         viewDescriptor.arrayLayerCount = 1;

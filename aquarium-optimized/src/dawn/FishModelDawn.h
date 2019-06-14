@@ -15,6 +15,7 @@
 #include "ContextDawn.h"
 #include "ProgramDawn.h"
 #include "dawn/dawncpp.h"
+#include "utils/ComboRenderPipelineDescriptor.h"
 
 class FishModelDawn : public FishModel
 {
@@ -78,7 +79,7 @@ class FishModelDawn : public FishModel
     BufferDawn *indicesBuffer;
 
   private:
-    dawn::VertexInputDescriptor vertexInputDescriptor;
+    utils::ComboVertexInputDescriptor vertexInputDescriptor;
     dawn::RenderPipeline pipeline;
 
     dawn::BindGroupLayout groupLayoutModel;

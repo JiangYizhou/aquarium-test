@@ -52,29 +52,54 @@ void FishModelInstancedDrawDawn::init()
         contextDawn->createBuffer(sizeof(FishPer) * instance,
                                   dawn::BufferUsageBit::Vertex | dawn::BufferUsageBit::TransferDst);
 
-    std::vector<dawn::VertexAttributeDescriptor> vertexAttributeDescriptor;
-    std::vector<dawn::VertexBufferDescriptor> vertexBufferDescriptor;
-    contextDawn->createInputState(
-        &vertexInputDescriptor, vertexAttributeDescriptor, vertexBufferDescriptor,
-        {
-            {0, 0, dawn::VertexFormat::Float3, 0},
-            {1, 1, dawn::VertexFormat::Float3, 0},
-            {2, 2, dawn::VertexFormat::Float2, 0},
-            {3, 3, dawn::VertexFormat::Float3, 0},
-            {4, 4, dawn::VertexFormat::Float3, 0},
-            {5, 5, dawn::VertexFormat::Float3, offsetof(FishPer, worldPosition)},
-            {6, 5, dawn::VertexFormat::Float2, offsetof(FishPer, scale)},
-            {7, 5, dawn::VertexFormat::Float3, offsetof(FishPer, nextPosition)},
-            {8, 5, dawn::VertexFormat::Float, offsetof(FishPer, time)},
-        },
-        {
-            {0, positionBuffer->getDataSize(), dawn::InputStepMode::Vertex},
-            {1, normalBuffer->getDataSize(), dawn::InputStepMode::Vertex},
-            {2, texCoordBuffer->getDataSize(), dawn::InputStepMode::Vertex},
-            {3, tangentBuffer->getDataSize(), dawn::InputStepMode::Vertex},
-            {4, binormalBuffer->getDataSize(), dawn::InputStepMode::Vertex},
-            {5, sizeof(FishPer), dawn::InputStepMode::Instance},
-        });
+    vertexInputDescriptor.cBuffers[0].attributeCount    = 1;
+    vertexInputDescriptor.cBuffers[0].stride            = positionBuffer->getDataSize();
+    vertexInputDescriptor.cAttributes[0].format         = dawn::VertexFormat::Float3;
+    vertexInputDescriptor.cAttributes[0].shaderLocation = 0;
+    vertexInputDescriptor.cAttributes[0].offset         = 0;
+    vertexInputDescriptor.cBuffers[0].attributes        = &vertexInputDescriptor.cAttributes[0];
+    vertexInputDescriptor.cBuffers[1].attributeCount    = 1;
+    vertexInputDescriptor.cBuffers[1].stride            = normalBuffer->getDataSize();
+    vertexInputDescriptor.cAttributes[1].format         = dawn::VertexFormat::Float3;
+    vertexInputDescriptor.cAttributes[1].shaderLocation = 1;
+    vertexInputDescriptor.cAttributes[1].offset         = 0;
+    vertexInputDescriptor.cBuffers[1].attributes        = &vertexInputDescriptor.cAttributes[1];
+    vertexInputDescriptor.cBuffers[2].attributeCount    = 1;
+    vertexInputDescriptor.cBuffers[2].stride            = texCoordBuffer->getDataSize();
+    vertexInputDescriptor.cAttributes[2].format         = dawn::VertexFormat::Float2;
+    vertexInputDescriptor.cAttributes[2].shaderLocation = 2;
+    vertexInputDescriptor.cAttributes[2].offset         = 0;
+    vertexInputDescriptor.cBuffers[2].attributes        = &vertexInputDescriptor.cAttributes[2];
+    vertexInputDescriptor.cBuffers[3].attributeCount    = 1;
+    vertexInputDescriptor.cBuffers[3].stride            = tangentBuffer->getDataSize();
+    vertexInputDescriptor.cAttributes[3].format         = dawn::VertexFormat::Float3;
+    vertexInputDescriptor.cAttributes[3].shaderLocation = 3;
+    vertexInputDescriptor.cAttributes[3].offset         = 0;
+    vertexInputDescriptor.cBuffers[3].attributes        = &vertexInputDescriptor.cAttributes[3];
+    vertexInputDescriptor.cBuffers[4].attributeCount    = 1;
+    vertexInputDescriptor.cBuffers[4].stride            = binormalBuffer->getDataSize();
+    vertexInputDescriptor.cAttributes[4].format         = dawn::VertexFormat::Float3;
+    vertexInputDescriptor.cAttributes[4].shaderLocation = 4;
+    vertexInputDescriptor.cAttributes[4].offset         = offsetof(FishPer, worldPosition);
+    vertexInputDescriptor.cBuffers[4].attributes        = &vertexInputDescriptor.cAttributes[4];
+    vertexInputDescriptor.cBuffers[5].attributeCount    = 4;
+    vertexInputDescriptor.cBuffers[5].stride            = sizeof(FishPer);
+    vertexInputDescriptor.cAttributes[5].format         = dawn::VertexFormat::Float3;
+    vertexInputDescriptor.cAttributes[5].shaderLocation = 5;
+    vertexInputDescriptor.cAttributes[5].offset         = 0;
+    vertexInputDescriptor.cAttributes[6].format         = dawn::VertexFormat::Float;
+    vertexInputDescriptor.cAttributes[6].shaderLocation = 6;
+    vertexInputDescriptor.cAttributes[6].offset         = offsetof(FishPer, scale);
+    vertexInputDescriptor.cAttributes[7].format         = dawn::VertexFormat::Float3;
+    vertexInputDescriptor.cAttributes[7].shaderLocation = 7;
+    vertexInputDescriptor.cAttributes[7].offset         = offsetof(FishPer, nextPosition);
+    vertexInputDescriptor.cAttributes[8].format         = dawn::VertexFormat::Float;
+    vertexInputDescriptor.cAttributes[8].shaderLocation = 8;
+    vertexInputDescriptor.cAttributes[9].offset         = offsetof(FishPer, time);
+    vertexInputDescriptor.cBuffers[5].attributes        = &vertexInputDescriptor.cAttributes[5];
+    vertexInputDescriptor.cBuffers[5].stepMode          = dawn::InputStepMode::Instance;
+    vertexInputDescriptor.bufferCount                   = 6;
+    vertexInputDescriptor.indexFormat                   = dawn::IndexFormat::Uint16;
 
     if (skyboxTexture && reflectionTexture)
     {

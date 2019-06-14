@@ -15,6 +15,7 @@
 #include "ContextDawn.h"
 #include "ProgramDawn.h"
 #include "dawn/dawncpp.h"
+#include "utils/ComboRenderPipelineDescriptor.h"
 
 class OutsideModelDawn : public OutsideModel
 {
@@ -50,7 +51,7 @@ public:
     WorldUniforms worldUniformPer;
 
 private:
-  dawn::VertexInputDescriptor vertexInputDescriptor;
+  utils::ComboVertexInputDescriptor vertexInputDescriptor;
   dawn::RenderPipeline pipeline;
 
   dawn::BindGroupLayout groupLayoutModel;
