@@ -9,7 +9,7 @@
 
 #include <iostream>
 
-#include "ASSERT.h"
+#include "common/AQUARIUM_ASSERT.h"
 
 Buffer::Buffer(AttribBuffer *attribBuffer, GLenum target)
     : mBuf(0),

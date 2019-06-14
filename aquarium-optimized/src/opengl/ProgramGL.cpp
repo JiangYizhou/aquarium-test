@@ -31,7 +31,7 @@
 #include "ProgramGL.h"
 #include <map>
 #include <regex>
-#include "common/ASSERT.h"
+#include "common/AQUARIUM_ASSERT.h"
 #include "../Texture.h"
 #include "../Buffer.h"
 

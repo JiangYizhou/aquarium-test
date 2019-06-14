@@ -12,7 +12,7 @@
 
 #include "ContextDawn.h"
 
-#include "common/ASSERT.h"
+#include "common/AQUARIUM_ASSERT.h"
 
 TextureDawn::~TextureDawn() {
 

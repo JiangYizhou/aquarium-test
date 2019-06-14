@@ -25,7 +25,7 @@
 #include <algorithm>
 #include <cmath>
 
-#include "common/ASSERT.h"
+#include "common/AQUARIUM_ASSERT.h"
 #include "Aquarium.h"
 #include "ContextFactory.h"
 #include "FishModel.h"

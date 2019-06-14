@@ -7,7 +7,7 @@
 
 #include "TextureGL.h"
 
-#include "common/ASSERT.h"
+#include "common/AQUARIUM_ASSERT.h"
 
 // initializs texture 2d
 TextureGL::TextureGL(ContextGL *context, std::string name, std::string url)

@@ -5,7 +5,7 @@
 //
 // ContextGL.cpp: Implements accessing functions to the graphics API of OpenGL.
 
-#include "common/ASSERT.h"
+#include "common/AQUARIUM_ASSERT.h"
 
 #include <algorithm>
 

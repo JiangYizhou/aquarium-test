@@ -25,7 +25,7 @@
 #include <string>
 #include <vector>
 
-#include "ASSERT.h"
+#include "common/AQUARIUM_ASSERT.h"
 #include "Globals.h"
 #include "Matrix.h"
 #include "Model.h"

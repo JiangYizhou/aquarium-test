@@ -14,7 +14,7 @@ executable("aquarium") {
   libs = []
 
   sources = [
-    "common/ASSERT.h",
+    "common/AQUARIUM_ASSERT.h",
     "common/FPSTimer.cpp",
     "common/FPSTimer.h",
     "aquarium-optimized/src/Aquarium.cpp",
@@ -183,7 +183,7 @@ executable("aquarium") {
 
 executable("aquarium-direct-map") {
   sources = [
-    "common/ASSERT.h",
+    "common/AQUARIUM_ASSERT.h",
     "common/FPSTimer.h",
     "common/FPSTimer.cpp",
     "aquarium-direct-map/src/AttribBuffer.h",

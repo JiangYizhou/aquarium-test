@@ -13,7 +13,7 @@
 #include <iostream>
 #include <sstream>
 
-#include "common/ASSERT.h"
+#include "common/AQUARIUM_ASSERT.h"
 #include "Globals.h"
 #include "Model.h"
 #include "Program.h"

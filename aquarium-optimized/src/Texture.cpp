@@ -12,7 +12,7 @@
 #include <cstdio>
 #include <cstring>
 
-#include "common/ASSERT.h"
+#include "common/AQUARIUM_ASSERT.h"
 
 #define STB_IMAGE_IMPLEMENTATION
 #define STB_IMAGE_RESIZE_IMPLEMENTATION

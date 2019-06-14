@@ -15,7 +15,7 @@
 #include <iostream>
 #include <regex>
 
-#include "common/ASSERT.h"
+#include "common/AQUARIUM_ASSERT.h"
 
 Program::Program(std::string vId, std::string fId)
     : program(0u),

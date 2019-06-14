@@ -8,7 +8,7 @@
 
 #include "Model.h"
 
-#include "common/ASSERT.h"
+#include "common/AQUARIUM_ASSERT.h"
 #include "Globals.h"
 
 Model::Model(Program *program_,
