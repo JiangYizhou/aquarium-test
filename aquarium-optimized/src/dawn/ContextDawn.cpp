@@ -78,21 +78,33 @@ ContextDawn::~ContextDawn()
 bool ContextDawn::createContext(BACKENDTYPE backend, bool enableMSAA)
 {
     dawn_native::BackendType backendType = dawn_native::BackendType::Null;
-    if (backend == BACKENDTYPE::BACKENDTYPEDAWND3D12)
+
+    switch (backend)
     {
-        backendType = dawn_native::BackendType::D3D12;
-    }
-    else if (backend == BACKENDTYPE::BACKENDTYPEDAWNVULKAN)
-    {
-        backendType = dawn_native::BackendType::Vulkan;
-    }
-    else if (backend == BACKENDTYPE::BACKENDTYPEDAWNMETAL)
-    {
-        backendType = dawn_native::BackendType::Metal;
-    }
-    else if (backend == BACKENDTYPE::BACKENDTYPEOPENGL)
-    {
-        backendType = dawn_native::BackendType::OpenGL;
+        case BACKENDTYPE::BACKENDTYPEDAWND3D12:
+        {
+            backendType = dawn_native::BackendType::D3D12;
+            break;
+        }
+        case BACKENDTYPE::BACKENDTYPEDAWNVULKAN:
+        {
+            backendType = dawn_native::BackendType::Vulkan;
+            break;
+        }
+        case BACKENDTYPE::BACKENDTYPEDAWNMETAL:
+        {
+            backendType = dawn_native::BackendType::Metal;
+            break;
+        }
+        case BACKENDTYPE::BACKENDTYPEOPENGL:
+        {
+            backendType = dawn_native::BackendType::OpenGL;
+            break;
+        }
+        default:
+        {
+            std::cerr << "Backend type can not reached." << std::endl;
+        }
     }
 
     mEnableMSAA = enableMSAA;
