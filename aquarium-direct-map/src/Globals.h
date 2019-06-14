@@ -16,7 +16,7 @@
 #include <unordered_map>
 #include <vector>
 
-#include "FPSTimer.h"
+#include "common/FPSTimer.h"
 #include "Scene.h"
 
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32) && !defined(__CYGWIN__)

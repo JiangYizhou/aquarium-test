@@ -13,7 +13,7 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 
-#include "ASSERT.h"
+#include "common/ASSERT.h"
 
 // initializs texture 2d
 Texture::Texture(const std::string &url, bool flip)

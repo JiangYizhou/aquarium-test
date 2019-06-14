@@ -12,7 +12,7 @@
 #include <cstdio>
 #include <cstring>
 
-#include "ASSERT.h"
+#include "common/ASSERT.h"
 
 #define STB_IMAGE_IMPLEMENTATION
 #define STB_IMAGE_RESIZE_IMPLEMENTATION

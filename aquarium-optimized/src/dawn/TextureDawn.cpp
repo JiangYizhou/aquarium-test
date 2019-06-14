@@ -12,7 +12,7 @@
 
 #include "ContextDawn.h"
 
-#include "../ASSERT.h"
+#include "common/ASSERT.h"
 
 TextureDawn::~TextureDawn() {
 

@@ -8,7 +8,7 @@
 
 #include "Model.h"
 
-#include "ASSERT.h"
+#include "common/ASSERT.h"
 #include "Globals.h"
 
 Model::Model(Program *program_,

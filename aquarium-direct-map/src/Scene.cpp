@@ -13,7 +13,7 @@
 #include <iostream>
 #include <sstream>
 
-#include "ASSERT.h"
+#include "common/ASSERT.h"
 #include "Globals.h"
 #include "Model.h"
 #include "Program.h"

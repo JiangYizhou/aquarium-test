@@ -31,7 +31,7 @@
 #include "ProgramGL.h"
 #include <map>
 #include <regex>
-#include "../ASSERT.h"
+#include "common/ASSERT.h"
 #include "../Texture.h"
 #include "../Buffer.h"
 

@@ -6,7 +6,7 @@
 // BufferGL.cpp: Implements the index or vertex buffer wrappers and resource bindings of OpenGL.
 
 #include "BufferGL.h"
-#include "../ASSERT.h"
+#include "common/ASSERT.h"
 
 BufferGL::BufferGL(ContextGL *context,
                    int totalCmoponents,
