@@ -70,6 +70,7 @@ bool ContextD3D12::createContext(BACKENDTYPE backend, bool enableMSAA)
         return false;
     }
     glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
+    glfwWindowHint(GLFW_VISIBLE, GL_FALSE);
     // set full screen
     // glfwWindowHint(GLFW_DECORATED, GL_FALSE);
 
@@ -85,7 +86,6 @@ bool ContextD3D12::createContext(BACKENDTYPE backend, bool enableMSAA)
         glfwTerminate();
         return false;
     }
-    glfwHideWindow(mWindow);
 
     HWND hwnd = glfwGetWin32Window(mWindow);
 

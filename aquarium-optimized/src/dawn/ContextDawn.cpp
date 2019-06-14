@@ -106,7 +106,7 @@ bool ContextDawn::createContext(BACKENDTYPE backend, bool enableMSAA)
 
     utils::SetupGLFWWindowHintsForBackend(backendType);
     // set full screen
-    // glfwWindowHint(GLFW_DECORATED, GL_FALSE);
+    glfwWindowHint(GLFW_VISIBLE, GL_FALSE);
 
     GLFWmonitor *pMonitor   = glfwGetPrimaryMonitor();
     const GLFWvidmode *mode = glfwGetVideoMode(pMonitor);
@@ -123,7 +123,7 @@ bool ContextDawn::createContext(BACKENDTYPE backend, bool enableMSAA)
         glfwTerminate();
         return false;
     }
-    glfwHideWindow(mWindow);
+    //glfwHideWindow(mWindow);
 
     instance = std::make_unique<dawn_native::Instance>();
     utils::DiscoverAdapter(instance.get(), mWindow, backendType);

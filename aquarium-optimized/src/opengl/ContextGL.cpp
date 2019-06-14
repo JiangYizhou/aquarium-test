@@ -69,6 +69,7 @@ bool ContextGL::createContext(BACKENDTYPE backend, bool enableMSAA)
     mClientWidth            = mode->width;
     mClientHeight           = mode->height;
 
+    glfwWindowHint(GLFW_VISIBLE, GL_FALSE);
     mWindow = glfwCreateWindow(mClientWidth, mClientHeight, "Aquarium", NULL, NULL);
     if (mWindow == NULL)
     {
@@ -76,7 +77,6 @@ bool ContextGL::createContext(BACKENDTYPE backend, bool enableMSAA)
         glfwTerminate();
         return false;
     }
-    glfwHideWindow(mWindow);
 
 #ifndef GL_GLES_PROTOTYPES 
     glfwWindowHint(GLFW_DECORATED, GL_FALSE);
