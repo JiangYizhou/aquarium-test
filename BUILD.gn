@@ -70,6 +70,7 @@ executable("aquarium") {
 
   if (enable_angle) {
     enable_dawn = false
+    enable_d3d12 = false
 
     defines += [ "EGL_EGL_PROTOTYPES" ]
 

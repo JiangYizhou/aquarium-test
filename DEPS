@@ -10,23 +10,26 @@ vars = {
   'dawn_git': 'https://dawn.googlesource.com',
   'dawn_revision': '87ab2f96d93bcf28ce97fa27a0c90f870ec040db',
   'angle_root': 'third_party/angle',
-  'angle_revision': 'e6b23e45b380bee1a2dfda06e4728d24d4d4ad8b',
-  'glslang_revision': '0527c9db8148ce37442fa4a9c99a2a23ad50b0b7',
+  'angle_revision': '6c824a1bc17b286b86cf05a0228ec549875351eb',
+  'glslang_revision': '11805e41d992a9950a9f7f84c505bb7305fbd09f',
+  'build_revision': '54ea0e7fd122348de2f73ac21d1b6eafb9b78969',
+  'buildtools_revision': 'd5c58b84d50d256968271db459cd29b22bff1ba2',
+  'tools_clang_revision': '210f1dc3ebf8504ae246d925e9110ec427eef43f',
 }
 
 deps = {
   # Dependencies required to use GN/Clang in standalone
   # This revision should be the same as the one in third_party/angle/DEPS
   'build': {
-    'url': '{chromium_git}/chromium/src/build@a660b0b9174e3a808f620222017566e8d1b2669b',
+    'url': '{chromium_git}/chromium/src/build@{build_revision}',
   },
   # This revision should be the same as the one in third_party/angle/DEPS
   'buildtools': {
-    'url': '{chromium_git}/chromium/src/buildtools@459baaf66bee809f6eb288e0215cf524f4d2429a',
+    'url': '{chromium_git}/chromium/src/buildtools@{buildtools_revision}',
   },
   # This revision should be the same as the one in third_party/angle/DEPS
   'tools/clang': {
-    'url': '{chromium_git}/chromium/src/tools/clang@3114fbc11f9644c54dd0a4cdbfa867bac50ff983',
+    'url': '{chromium_git}/chromium/src/tools/clang@{tools_clang_revision}',
   },
   # This revision should be the same as the one in third_party/angle/DEPS
   'testing': {
