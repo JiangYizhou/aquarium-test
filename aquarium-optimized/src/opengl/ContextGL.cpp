@@ -45,7 +45,7 @@ bool ContextGL::createContext(BACKENDTYPE backend, bool enableMSAA)
 #ifdef GL_GLEXT_PROTOTYPES
     // TODO(yizhou) : Enable msaa in angle. Render into a multisample Texture and then blit to a
     // none multisample texture.
-
+    glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
 #else
     if (enableMSAA)
     {
@@ -82,8 +82,6 @@ bool ContextGL::createContext(BACKENDTYPE backend, bool enableMSAA)
     glfwWindowHint(GLFW_DECORATED, GL_FALSE);
     glfwMakeContextCurrent(mWindow);
 #else
-    glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
-
     std::vector<EGLAttrib> display_attribs;
 
     display_attribs.push_back(EGL_PLATFORM_ANGLE_TYPE_ANGLE);
@@ -391,7 +389,6 @@ void ContextGL::DoFlush()
 {
 #ifdef GL_GLEXT_PROTOTYPES
     eglSwapBuffers(mDisplay, mSurface);
-    glfwSwapBuffers(mWindow);
 #else
     glfwSwapBuffers(mWindow);
 #endif

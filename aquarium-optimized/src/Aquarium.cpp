@@ -229,12 +229,13 @@ bool Aquarium::init(int argc, char **argv)
         context      = factory->createContext(mBackendType);
     }
 
-    if (mBackendType == BACKENDTYPE::BACKENDTYPEOPENGL)
+    if (mBackendType == BACKENDTYPE::BACKENDTYPEOPENGL || mBackendType == BACKENDTYPE::BACKENDTYPEANGLE)
     {
 #ifndef EGL_EGL_PROTOTYPES
         mShaderVersion = "450";
 #else
         mShaderVersion = "100";
+        mBackendFullpath = "opengl";
 #endif
     }
 
