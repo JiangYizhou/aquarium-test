@@ -15,6 +15,8 @@ vars = {
   'build_revision': '54ea0e7fd122348de2f73ac21d1b6eafb9b78969',
   'buildtools_revision': 'd5c58b84d50d256968271db459cd29b22bff1ba2',
   'tools_clang_revision': '210f1dc3ebf8504ae246d925e9110ec427eef43f',
+  'spirv_tools_revision': '2090d7a2d26cb9bb0b8738f36a156ed3084a7ab0',
+  'spirv_headers_revision': 'de99d4d834aeb51dd9f099baa285bd44fd04bb3d',
 }
 
 deps = {
@@ -59,6 +61,18 @@ deps = {
   'third_party/angle': {
     'url': '{chromium_git}/angle/angle.git@{angle_revision}',
   },
+  'third_party/spirv-tools': {
+    'url': '{chromium_git}/external/github.com/KhronosGroup/SPIRV-Tools@{spirv_tools_revision}',
+  },
+  'third_party/spirv-headers': {
+    'url': '{chromium_git}/external/github.com/KhronosGroup/SPIRV-Headers@{spirv_headers_revision}',
+  },
+  'third_party/jsoncpp': {
+    'url': '{chromium_git}/chromium/src/third_party/jsoncpp@fd0ac8ce63a47e99b71a58f1489136fbb19c9137',
+   },
+  'third_party/jsoncpp/source': {
+    'url' : '{chromium_git}/external/github.com/open-source-parsers/jsoncpp@f572e8e42e22cfcf5ab0aea26574f408943edfa4',
+   },
 }
 
 hooks = [
