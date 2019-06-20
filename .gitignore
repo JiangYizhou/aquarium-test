@@ -32,9 +32,12 @@ third_party/dawn
 third_party/glfw
 third_party/glslang
 third_party/googletest
-third_party/rapidjson
-third_party/stb
+third_party/jsoncpp
 third_party/llvm-build
+third_party/rapidjson
+third_party/spirv-headers
+third_party/spirv-tools
+third_party/stb
 
 buildtools/
 out/
