@@ -25,7 +25,6 @@
 #include <algorithm>
 #include <cmath>
 
-#include "common/AQUARIUM_ASSERT.h"
 #include "Aquarium.h"
 #include "ContextFactory.h"
 #include "FishModel.h"
@@ -33,6 +32,8 @@
 #include "Program.h"
 #include "SeaweedModel.h"
 #include "Texture.h"
+#include "common/AQUARIUM_ASSERT.h"
+#include "include/CmdArgsHelper.h"
 #include "opengl/ContextGL.h"
 #include "rapidjson/document.h"
 #include "rapidjson/istreamwrapper.h"
@@ -161,6 +162,12 @@ bool Aquarium::init(int argc, char **argv)
     for (int i = 1; i < argc; ++i)
     {
         std::string cmd(argv[i]);
+        if (cmd == "-h" || cmd == "--h")
+        {
+            std::cout << cmdArgsStrAquarium << std::endl;
+
+            return false;
+        }
         if (cmd == "--num-fish")
         {
             mFishCount = strtol(argv[i++ + 1], &pNext, 10);

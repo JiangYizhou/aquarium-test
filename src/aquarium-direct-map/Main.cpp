@@ -25,11 +25,12 @@
 #include <string>
 #include <vector>
 
-#include "common/AQUARIUM_ASSERT.h"
 #include "Globals.h"
 #include "Matrix.h"
 #include "Model.h"
 #include "Program.h"
+#include "common/AQUARIUM_ASSERT.h"
+#include "include/CmdArgsHelper.h"
 #include "rapidjson/document.h"
 #include "rapidjson/istreamwrapper.h"
 #include "rapidjson/stringbuffer.h"
@@ -288,7 +289,7 @@ void getCurrentPath()
 #endif
 }
 
-void initialize(int argc, char** argv)
+bool initialize(int argc, char **argv)
 {
     getCurrentPath();
 
@@ -306,7 +307,12 @@ void initialize(int argc, char** argv)
     for (int i = 1; i < argc; ++i)
     {
         std::string cmd(argv[i]);
-        if (cmd == "--num-fish")
+        if (cmd == "--h" || cmd == "-h")
+        {
+            std::cout << cmdArgsStrAquariumDirectMap << std::endl;
+            return false;
+        }
+        else if (cmd == "--num-fish")
         {
             g_numFish = strtol(argv[i++ + 1], &pNext, 10);
         }
@@ -350,6 +356,8 @@ void initialize(int argc, char** argv)
                 fishInfo.num = numfloat;
             }
     }
+
+    return true;
 }
 
 int main(int argc, char **argv) {
@@ -374,6 +382,7 @@ int main(int argc, char **argv) {
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
     glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
+    glfwWindowHint(GLFW_VISIBLE, GL_FALSE);
 
     GLFWmonitor *pMonitor = glfwGetPrimaryMonitor();
     const GLFWvidmode *mode = glfwGetVideoMode(pMonitor);
@@ -396,6 +405,11 @@ int main(int argc, char **argv) {
         exit(-1);
     }
 
+    if (!initialize(argc, argv))
+    {
+        return -1;
+    }
+
     const char *renderer = (const char *)glGetString(GL_RENDERER);
     std::cout << renderer << std::endl;
 
@@ -404,7 +418,7 @@ int main(int argc, char **argv) {
     glfwGetFramebufferSize(window, &clientWidth, &clientHeight);
     glViewport(0, 0, clientWidth, clientHeight);
 
-    initialize(argc, argv);
+    glfwShowWindow(window);
 
     while (!glfwWindowShouldClose(window))
     {

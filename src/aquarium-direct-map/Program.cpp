@@ -167,7 +167,6 @@ GLuint Program::LoadProgram(const std::string &VertexShaderCode,
     }
 
     // Link the program
-    std::cout << stdout << "Linking program" << std::endl;
     GLuint ProgramID = glCreateProgram();
     glAttachShader(ProgramID, VertexShaderID);
     glAttachShader(ProgramID, FragmentShaderID);
