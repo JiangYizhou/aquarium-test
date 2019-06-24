@@ -5,9 +5,10 @@
 #
 
 declare_args() {
-  enable_dawn = true
+  enable_dawn = is_win || is_linux || is_mac
   enable_angle = false
-  enable_d3d12 = true
+  enable_d3d12 = is_win
+  enable_opengl = is_win || is_linux || is_mac
 }
 
 executable("aquarium") {
@@ -37,24 +38,6 @@ executable("aquarium") {
     "aquarium-optimized/src/SeaweedModel.h",
     "aquarium-optimized/src/Texture.cpp",
     "aquarium-optimized/src/Texture.h",
-    "aquarium-optimized/src/opengl/BufferGL.cpp",
-    "aquarium-optimized/src/opengl/BufferGL.h",
-    "aquarium-optimized/src/opengl/ContextGL.cpp",
-    "aquarium-optimized/src/opengl/ContextGL.h",
-    "aquarium-optimized/src/opengl/FishModelGL.cpp",
-    "aquarium-optimized/src/opengl/FishModelGL.h",
-    "aquarium-optimized/src/opengl/GenericModelGL.cpp",
-    "aquarium-optimized/src/opengl/GenericModelGL.h",
-    "aquarium-optimized/src/opengl/InnerModelGL.cpp",
-    "aquarium-optimized/src/opengl/InnerModelGL.h",
-    "aquarium-optimized/src/opengl/OutsideModelGL.cpp",
-    "aquarium-optimized/src/opengl/OutsideModelGL.h",
-    "aquarium-optimized/src/opengl/ProgramGL.cpp",
-    "aquarium-optimized/src/opengl/ProgramGL.h",
-    "aquarium-optimized/src/opengl/SeaweedModelGL.cpp",
-    "aquarium-optimized/src/opengl/SeaweedModelGL.h",
-    "aquarium-optimized/src/opengl/TextureGL.cpp",
-    "aquarium-optimized/src/opengl/TextureGL.h",
   ]
 
   deps = [
@@ -66,11 +49,39 @@ executable("aquarium") {
     "third_party/stb",
   ]
 
+  if(enable_angle || enable_opengl) {
+      sources += [
+      "aquarium-optimized/src/opengl/BufferGL.cpp",
+      "aquarium-optimized/src/opengl/BufferGL.h",
+      "aquarium-optimized/src/opengl/ContextGL.cpp",
+      "aquarium-optimized/src/opengl/ContextGL.h",
+      "aquarium-optimized/src/opengl/FishModelGL.cpp",
+      "aquarium-optimized/src/opengl/FishModelGL.h",
+      "aquarium-optimized/src/opengl/GenericModelGL.cpp",
+      "aquarium-optimized/src/opengl/GenericModelGL.h",
+      "aquarium-optimized/src/opengl/InnerModelGL.cpp",
+      "aquarium-optimized/src/opengl/InnerModelGL.h",
+      "aquarium-optimized/src/opengl/OutsideModelGL.cpp",
+      "aquarium-optimized/src/opengl/OutsideModelGL.h",
+      "aquarium-optimized/src/opengl/ProgramGL.cpp",
+      "aquarium-optimized/src/opengl/ProgramGL.h",
+      "aquarium-optimized/src/opengl/SeaweedModelGL.cpp",
+      "aquarium-optimized/src/opengl/SeaweedModelGL.h",
+      "aquarium-optimized/src/opengl/TextureGL.cpp",
+      "aquarium-optimized/src/opengl/TextureGL.h",
+    ]
+  }
+
+  if (enable_opengl) {
+    enable_angle = false
+  }
+
   defines = []
 
   if (enable_angle) {
     enable_dawn = false
     enable_d3d12 = false
+    enable_opengl =false
 
     defines += [ "EGL_EGL_PROTOTYPES" ]
 
