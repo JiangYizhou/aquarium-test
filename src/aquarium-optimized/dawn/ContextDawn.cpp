@@ -135,7 +135,6 @@ bool ContextDawn::createContext(BACKENDTYPE backend, bool enableMSAA)
         glfwTerminate();
         return false;
     }
-    //glfwHideWindow(mWindow);
 
     instance = std::make_unique<dawn_native::Instance>();
     utils::DiscoverAdapter(instance.get(), mWindow, backendType);
@@ -174,6 +173,9 @@ bool ContextDawn::createContext(BACKENDTYPE backend, bool enableMSAA)
         static_cast<dawn::TextureFormat>(binding->GetPreferredSwapChainTextureFormat());
     swapchain.Configure(mPreferredSwapChainFormat, dawn::TextureUsageBit::OutputAttachment,
                         mClientWidth, mClientHeight);
+
+    dawn_native::PCIInfo info = backendAdapter.GetPCIInfo();
+    std::cout << info.name << std::endl;
 
     // When MSAA is enabled, we create an intermediate multisampled texture to render the scene to.
     if (mEnableMSAA)

@@ -196,8 +196,9 @@ bool ContextGL::createContext(BACKENDTYPE backend, bool enableMSAA)
     }
 #endif
 
-    const char *renderer = (const char *)glGetString(GL_RENDERER);
-    std::cout << renderer << std::endl;
+    std::string renderer((const char *)glGetString(GL_RENDERER));
+    size_t index = renderer.find("/");
+    std::cout << renderer.substr(0, index) << std::endl;
 
     // Get the resolution of screen
     glfwGetFramebufferSize(mWindow, &mClientWidth, &mClientHeight);

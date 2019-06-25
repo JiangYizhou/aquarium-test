@@ -268,6 +268,7 @@ void ContextD3D12::GetHardwareAdapter(IDXGIFactory2 *pFactory, IDXGIAdapter1 **p
         if (SUCCEEDED(D3D12CreateDevice(adapter.Get(), D3D_FEATURE_LEVEL_11_0,
                                         _uuidof(ID3D12Device), nullptr)))
         {
+            std::wcout << desc.Description << std::endl;
             break;
         }
     }
