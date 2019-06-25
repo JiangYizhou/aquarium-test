@@ -12,7 +12,7 @@ GenericModelDawn::GenericModelDawn(const Context *context,
                                    MODELGROUP type,
                                    MODELNAME name,
                                    bool blend)
-    : GenericModel(type, name, blend), instance(0)
+    : Model(type, name, blend), instance(0)
 {
     contextDawn = static_cast<const ContextDawn *>(context);
 

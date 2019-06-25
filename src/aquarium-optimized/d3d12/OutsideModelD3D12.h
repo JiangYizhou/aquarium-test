@@ -11,13 +11,13 @@
 
 #include <string>
 
-#include "../OutsideModel.h"
+#include "../Model.h"
 #include "BufferD3D12.h"
 #include "ContextD3D12.h"
 #include "ProgramD3D12.h"
 #include "TextureD3D12.h"
 
-class OutsideModelD3D12 : public OutsideModel
+class OutsideModelD3D12 : public Model
 {
   public:
     OutsideModelD3D12(Context *context,

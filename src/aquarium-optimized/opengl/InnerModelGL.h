@@ -9,11 +9,11 @@
 #ifndef INNERMODELGL_H
 #define INNERMODELGL_H 1
 
-#include "../InnerModel.h"
+#include "../Model.h"
 #include "ContextGL.h"
 #include "ProgramGL.h"
 
-class InnerModelGL : public InnerModel
+class InnerModelGL : public Model
 {
   public:
     InnerModelGL(const ContextGL *context, Aquarium *aquarium, MODELGROUP type, MODELNAME name, bool blend);

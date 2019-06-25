@@ -12,7 +12,7 @@ InnerModelD3D12::InnerModelD3D12(Context *context,
                                  MODELGROUP type,
                                  MODELNAME name,
                                  bool blend)
-    : InnerModel(type, name, blend)
+    : Model(type, name, blend)
 {
     contextD3D12 = static_cast<ContextD3D12 *>(context);
 

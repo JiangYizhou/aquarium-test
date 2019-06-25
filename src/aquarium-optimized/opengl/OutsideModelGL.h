@@ -11,9 +11,9 @@
 #include "ContextGL.h"
 #include "ProgramGL.h"
 
-#include "../OutsideModel.h"
+#include "../Model.h"
 
-class OutsideModelGL : public OutsideModel
+class OutsideModelGL : public Model
 {
   public:
     OutsideModelGL(const ContextGL *context,

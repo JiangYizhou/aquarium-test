@@ -9,13 +9,13 @@
 #ifndef INNERMODELDAWN_H
 #define INNERMODELDAWN_H 1
 
-#include "../InnerModel.h"
+#include "../Model.h"
 #include "ContextDawn.h"
 #include "ProgramDawn.h"
 #include "dawn/dawncpp.h"
 #include "utils/ComboRenderPipelineDescriptor.h"
 
-class InnerModelDawn : public InnerModel
+class InnerModelDawn : public Model
 {
   public:
     InnerModelDawn(const Context* context, Aquarium* aquarium, MODELGROUP type, MODELNAME name, bool blend);

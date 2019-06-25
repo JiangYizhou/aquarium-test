@@ -5,8 +5,12 @@
 //
 #include "OutsideModelDawn.h"
 
-OutsideModelDawn::OutsideModelDawn(const Context* context, Aquarium* aquarium, MODELGROUP type, MODELNAME name, bool blend)
-    : OutsideModel(type, name, blend)
+OutsideModelDawn::OutsideModelDawn(const Context *context,
+                                   Aquarium *aquarium,
+                                   MODELGROUP type,
+                                   MODELNAME name,
+                                   bool blend)
+    : Model(type, name, blend)
 {
     contextDawn = static_cast<const ContextDawn*>(context);
 

@@ -8,11 +8,11 @@
 #include "OutsideModelGL.h"
 
 OutsideModelGL::OutsideModelGL(const ContextGL *context,
-                               Aquarium* aquarium,
+                               Aquarium *aquarium,
                                MODELGROUP type,
                                MODELNAME name,
                                bool blend)
-    : OutsideModel(type, name, blend), contextGL(context)
+    : Model(type, name, blend), contextGL(context)
 {
     viewInverseUniform.first           = aquarium->lightWorldPositionUniform.viewInverse;
     lightWorldPosUniform.first = aquarium->lightWorldPositionUniform.lightWorldPos;

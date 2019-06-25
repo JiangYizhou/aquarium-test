@@ -9,13 +9,13 @@
 #ifndef INNERMODELD3D12_H
 #define INNERMODELD3D12_H 1
 
-#include "../InnerModel.h"
+#include "../Model.h"
 #include "BufferD3D12.h"
 #include "ContextD3D12.h"
 #include "ProgramD3D12.h"
 #include "TextureD3D12.h"
 
-class InnerModelD3D12 : public InnerModel
+class InnerModelD3D12 : public Model
 {
   public:
     InnerModelD3D12(Context *context,

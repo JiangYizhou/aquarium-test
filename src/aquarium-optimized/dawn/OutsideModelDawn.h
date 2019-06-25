@@ -11,13 +11,13 @@
 
 #include <string>
 
-#include "../OutsideModel.h"
+#include "../Model.h"
 #include "ContextDawn.h"
 #include "ProgramDawn.h"
 #include "dawn/dawncpp.h"
 #include "utils/ComboRenderPipelineDescriptor.h"
 
-class OutsideModelDawn : public OutsideModel
+class OutsideModelDawn : public Model
 {
 public:
     OutsideModelDawn(const Context* context, Aquarium* aquarium, MODELGROUP type, MODELNAME name, bool blend);

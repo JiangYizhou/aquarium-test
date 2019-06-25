@@ -9,11 +9,11 @@
 #ifndef GENERICMODELGL_H
 #define GENERICMODELGL_H 1
 
-#include "../GenericModel.h"
+#include "../Model.h"
 #include "ContextGL.h"
 #include "ProgramGL.h"
 
-class GenericModelGL : public GenericModel
+class GenericModelGL : public Model
 {
   public:
     GenericModelGL(const ContextGL *context,

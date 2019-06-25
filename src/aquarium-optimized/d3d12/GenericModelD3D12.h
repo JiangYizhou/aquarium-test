@@ -12,13 +12,13 @@
 #include <string>
 #include <vector>
 
-#include "../GenericModel.h"
+#include "../Model.h"
 #include "BufferD3D12.h"
 #include "ContextD3D12.h"
 #include "ProgramD3D12.h"
 #include "TextureD3D12.h"
 
-class GenericModelD3D12 : public GenericModel
+class GenericModelD3D12 : public Model
 {
   public:
     GenericModelD3D12(Context *context,

@@ -9,8 +9,12 @@
 
 #include "InnerModelDawn.h"
 
-InnerModelDawn::InnerModelDawn(const Context* context, Aquarium* aquarium, MODELGROUP type, MODELNAME name, bool blend)
-    : InnerModel(type, name, blend)
+InnerModelDawn::InnerModelDawn(const Context *context,
+                               Aquarium *aquarium,
+                               MODELGROUP type,
+                               MODELNAME name,
+                               bool blend)
+    : Model(type, name, blend)
 {
     contextDawn = static_cast<const ContextDawn*>(context);
 

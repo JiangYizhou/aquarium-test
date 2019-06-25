@@ -12,7 +12,7 @@ InnerModelGL::InnerModelGL(const ContextGL *context,
                            MODELGROUP type,
                            MODELNAME name,
                            bool blend)
-    : InnerModel(type, name, blend), contextGL(context)
+    : Model(type, name, blend), contextGL(context)
 {
     viewInverseUniform.first   = aquarium->lightWorldPositionUniform.viewInverse;
     lightWorldPosUniform.first = aquarium->lightWorldPositionUniform.lightWorldPos;

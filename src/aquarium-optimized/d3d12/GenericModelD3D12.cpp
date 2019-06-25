@@ -5,7 +5,7 @@ GenericModelD3D12::GenericModelD3D12(Context *context,
                                      MODELGROUP type,
                                      MODELNAME name,
                                      bool blend)
-    : GenericModel(type, name, blend), instance(0)
+    : Model(type, name, blend), instance(0)
 {
     contextD3D12 = static_cast<ContextD3D12 *>(context);
 

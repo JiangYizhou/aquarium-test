@@ -11,13 +11,13 @@
 
 #include <string>
 
-#include "../GenericModel.h"
+#include "../Model.h"
 #include "ContextDawn.h"
 #include "ProgramDawn.h"
 #include "dawn/dawncpp.h"
 #include "utils/ComboRenderPipelineDescriptor.h"
 
-class GenericModelDawn : public GenericModel
+class GenericModelDawn : public Model
 {
   public:
     GenericModelDawn(const Context *context,
