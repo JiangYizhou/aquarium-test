@@ -21,8 +21,8 @@ class Program
         : vId(vertexShader), fId(fragmentShader)
     {
     }
-    virtual ~Program(){}
-    virtual void setProgram();
+    virtual ~Program() {}
+    virtual void setProgram() {}
 
   protected:
     std::string vId;

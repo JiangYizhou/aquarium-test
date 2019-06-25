@@ -41,7 +41,7 @@ class Context
     virtual void KeyBoardQuit()                                                            = 0;
     virtual void DoFlush()                                                                 = 0;
     virtual void Terminate()                                                               = 0;
-    virtual void FlushInit();
+    virtual void FlushInit() {}
     virtual void preFrame() = 0;
     virtual void showWindow() = 0;
 
@@ -50,8 +50,8 @@ class Context
 
     virtual Model *createModel(Aquarium *aquarium, MODELGROUP type, MODELNAME name, bool blend) = 0;
 
-    virtual void initGeneralResources(Aquarium* aquarium);
-    virtual void updateWorldlUniforms(Aquarium* aquarium);
+    virtual void initGeneralResources(Aquarium* aquarium) {}
+    virtual void updateWorldlUniforms(Aquarium* aquarium) {}
 
   protected:
     int mClientWidth;
