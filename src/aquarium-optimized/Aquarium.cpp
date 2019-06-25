@@ -126,27 +126,36 @@ BACKENDTYPE Aquarium::getBackendType(std::string& backendPath)
     }
     else if (backendPath == "dawn_d3d12")
     {
+#if defined(WIN32) || defined(_WIN32)
         return BACKENDTYPE::BACKENDTYPEDAWND3D12;
+#endif
     }
     else if (backendPath == "dawn_metal")
     {
+#if defined(__APPLE__)
         return BACKENDTYPE::BACKENDTYPEDAWNMETAL;
+#endif
     }
     else if (backendPath == "dawn_vulkan")
     {
+#if defined(WIN32) || defined(_WIN32) || defined(__linux__)
         return BACKENDTYPE::BACKENDTYPEDAWNVULKAN;
+#endif
     }
     else if (backendPath == "angle")
     {
+#if defined(WIN32) || defined(_WIN32)
         return BACKENDTYPE::BACKENDTYPEANGLE;
+#endif
     }
     else if (backendPath == "d3d12")
     {
+#if defined(WIN32) || defined(_WIN32)
         return BACKENDTYPED3D12;
-    } else
-    {
-        return BACKENDTYPELAST;
+#endif
     }
+
+    return BACKENDTYPELAST;
 }
 
 bool Aquarium::init(int argc, char **argv)
@@ -181,6 +190,12 @@ bool Aquarium::init(int argc, char **argv)
         {
             mBackendFullpath = argv[i++ + 1];
             mBackendType = getBackendType(mBackendFullpath);
+            if (mBackendType == BACKENDTYPE::BACKENDTYPELAST)
+            {
+                std::cout << "Can not create " << mBackendFullpath << " backend" << std::endl;
+                return false;
+            }
+
             if (mBackendFullpath.find("dawn") != std::string::npos)
             {
                 mBackendFullpath = "dawn";
