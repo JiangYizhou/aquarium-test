@@ -55,13 +55,21 @@ ContextD3D12::ContextD3D12()
     {
         mBufferSerias[n] = 0;
     }
+
+    mResourceHelper = new ResourceHelper("d3d12", "");
+    initAvailableToggleBitset();
 }
 
-ContextD3D12::~ContextD3D12() {}
-
-bool ContextD3D12::createContext(BACKENDTYPE backend, bool enableMSAA)
+ContextD3D12::~ContextD3D12()
 {
-    mEnableMSAA = enableMSAA;
+    delete mResourceHelper;
+}
+
+bool ContextD3D12::initialize(
+    BACKENDTYPE backend,
+    const std::bitset<static_cast<size_t>(TOGGLE::TOGGLEMAX)> &toggleBitset)
+{
+    mEnableMSAA = toggleBitset.test(static_cast<size_t>(TOGGLE::ENABLEMSAAx4));
 
     // initialise GLFW
     if (!glfwInit())
@@ -69,6 +77,7 @@ bool ContextD3D12::createContext(BACKENDTYPE backend, bool enableMSAA)
         std::cout << "Failed to initialise GLFW" << std::endl;
         return false;
     }
+
     glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
     glfwWindowHint(GLFW_VISIBLE, GL_FALSE);
     // set full screen
@@ -112,7 +121,7 @@ bool ContextD3D12::createContext(BACKENDTYPE backend, bool enableMSAA)
     ThrowIfFailed(CreateDXGIFactory2(dxgiFactoryFlags, IID_PPV_ARGS(&factory)));
 
     ComPtr<IDXGIAdapter1> hardwareAdapter;
-    GetHardwareAdapter(factory.Get(), &hardwareAdapter);
+    ThrowIfFailed(GetHardwareAdapter(factory.Get(), &hardwareAdapter, toggleBitset));
 
     ThrowIfFailed(
         D3D12CreateDevice(hardwareAdapter.Get(), D3D_FEATURE_LEVEL_11_0, IID_PPV_ARGS(&m_device)));
@@ -245,10 +254,17 @@ bool ContextD3D12::createContext(BACKENDTYPE backend, bool enableMSAA)
 
 // Helper function for acquiring the first available hardware adapter that supports Direct3D 12.
 // If no such adapter can be found, *ppAdapter will be set to nullptr.
-void ContextD3D12::GetHardwareAdapter(IDXGIFactory2 *pFactory, IDXGIAdapter1 **ppAdapter)
+bool ContextD3D12::GetHardwareAdapter(
+    IDXGIFactory2 *pFactory,
+    IDXGIAdapter1 **ppAdapter,
+    const std::bitset<static_cast<size_t>(TOGGLE::TOGGLEMAX)> &toggleBitset)
 {
     ComPtr<IDXGIAdapter1> adapter;
     *ppAdapter = nullptr;
+
+    bool enableIntegratedGpu = toggleBitset.test(static_cast<size_t>(TOGGLE::INTEGRATEDGPU));
+    bool enableDiscretedGpu  = toggleBitset.test(static_cast<size_t>(TOGGLE::DISCRETEDGPU));
+    bool useDefaultGpu      = (enableDiscretedGpu | enableIntegratedGpu) == false ? true : false;
 
     for (UINT adapterIndex = 0;
          DXGI_ERROR_NOT_FOUND != pFactory->EnumAdapters1(adapterIndex, &adapter); ++adapterIndex)
@@ -256,24 +272,32 @@ void ContextD3D12::GetHardwareAdapter(IDXGIFactory2 *pFactory, IDXGIAdapter1 **p
         DXGI_ADAPTER_DESC1 desc;
         adapter->GetDesc1(&desc);
 
-        if (desc.Flags & DXGI_ADAPTER_FLAG_SOFTWARE)
+        if (useDefaultGpu ||
+            (enableDiscretedGpu && (desc.VendorId == 0x10DE || desc.VendorId == 0x1002)) ||
+            (enableIntegratedGpu && desc.VendorId == 0x8086))
         {
-            // Don't select the Basic Render Driver adapter.
-            // If you want a software adapter, pass in "/warp" on the command line.
-            continue;
-        }
+            if (desc.Flags & DXGI_ADAPTER_FLAG_SOFTWARE)
+            {
+                // Don't select the Basic Render Driver adapter.
+                continue;
+            }
 
-        // Check to see if the adapter supports Direct3D 12, but don't create the
-        // actual device yet.
-        if (SUCCEEDED(D3D12CreateDevice(adapter.Get(), D3D_FEATURE_LEVEL_11_0,
-                                        _uuidof(ID3D12Device), nullptr)))
-        {
-            std::wcout << desc.Description << std::endl;
-            break;
+            if (SUCCEEDED(D3D12CreateDevice(adapter.Get(), D3D_FEATURE_LEVEL_11_0,
+                                            _uuidof(ID3D12Device), nullptr)))
+            {
+                std::wcout << desc.Description << std::endl;
+                break;
+            }
         }
     }
 
     *ppAdapter = adapter.Detach();
+    if (ppAdapter == nullptr)
+    {
+        std::cerr << "Failed to create adapter." << std::endl;
+        return false;
+    }
+    return true;
 }
 
 void ContextD3D12::setWindowTitle(const std::string &text)
@@ -299,6 +323,14 @@ void ContextD3D12::stateTransition(ComPtr<ID3D12Resource> &resource,
     CD3DX12_RESOURCE_BARRIER barrier =
         CD3DX12_RESOURCE_BARRIER::Transition(resource.Get(), preState, transferState);
     mCommandList->ResourceBarrier(1, &barrier);
+}
+
+void ContextD3D12::initAvailableToggleBitset()
+{
+    mAvailableToggleBitset.set(static_cast<size_t>(TOGGLE::ENABLEMSAAx4));
+    mAvailableToggleBitset.set(static_cast<size_t>(TOGGLE::ENABLEINSTANCEDDRAWS));
+    mAvailableToggleBitset.set(static_cast<size_t>(TOGGLE::DISCRETEDGPU));
+    mAvailableToggleBitset.set(static_cast<size_t>(TOGGLE::INTEGRATEDGPU));
 }
 
 void ContextD3D12::DoFlush()

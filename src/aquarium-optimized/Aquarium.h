@@ -8,6 +8,7 @@
 #ifndef AQUARIUM_H
 #define AQUARIUM_H
 
+#include <bitset>
 #include <string>
 #include <unordered_map>
 
@@ -29,7 +30,6 @@ const std::string slash = "/";
 
 enum BACKENDTYPE : short
 {
-    BACKENDTYPEFIRST,
     BACKENDTYPEANGLE,
     BACKENDTYPEDAWND3D12,
     BACKENDTYPEDAWNMETAL,
@@ -104,6 +104,26 @@ enum FISHENUM : short
     MEDIUM,
     SMALL,
     MAX
+};
+
+enum TOGGLE : short
+{
+    // Enable 4 times MSAA.
+    ENABLEMSAAx4,
+    // Go through instanced draw.
+    ENABLEINSTANCEDDRAWS,
+    // The toggle is only supported on Dawn backend.
+    // By default, the app will enable dynamic buffer offset.
+    // The toggle is to disable dbo feature.
+    DISABLEDYNAMICBUFFEROFFSET,
+    // Select integrated gpu if available.
+    INTEGRATEDGPU,
+    // Select discreted gpu if available.
+    DISCRETEDGPU,
+    // Update and draw for each model on OpenGL and Angle backend, but draw once per frame on other
+    // backend.
+    UPATEANDDRAWFOREACHMODEL,
+    TOGGLEMAX
 };
 
 const G_sceneInfo g_sceneInfo[] = {
@@ -205,10 +225,6 @@ const G_sceneInfo g_sceneInfo[] = {
      MODELGROUP::OUTSIDE},
     {"SupportBeams", MODELNAME::MODELSUPPORTBEAMS, {"", ""}, false, MODELGROUP::OUTSIDE},
     {"TreasureChest", MODELNAME::MODELTREASURECHEST, {"", ""}, true, MODELGROUP::GENERIC}};
-
-const std::vector<std::string> g_skyBoxUrls = {
-    "GlobeOuter_EM_positive_x.jpg", "GlobeOuter_EM_negative_x.jpg", "GlobeOuter_EM_positive_y.jpg",
-    "GlobeOuter_EM_negative_y.jpg", "GlobeOuter_EM_positive_z.jpg", "GlobeOuter_EM_negative_z.jpg"};
 
 struct Fish
 {
@@ -414,8 +430,8 @@ class Aquarium
     bool init(int argc, char **argv);
     void display();
     Texture *getSkybox() { return mTextureMap["skybox"]; }
-    bool getEnableDynamicBufferOffset() { return enableDynamicBufferOffset; }
 
+    std::bitset<static_cast<size_t>(TOGGLE::TOGGLEMAX)> toggleBitset;
     LightWorldPositionUniform lightWorldPositionUniform;
     WorldUniforms worldUniforms;
     LightUniforms lightUniforms;
@@ -433,22 +449,14 @@ class Aquarium
     FPSTimer fpsTimer;  // object to measure frames per second;
     int mFishCount;
     BACKENDTYPE mBackendType;
-    std::string mBackendFullpath;
-    std::string mShaderVersion;
-    std::string mPath;
     ContextFactory *factory;
-    bool enableMSAA;
-    bool allowInstancedDraws;
-    bool enableDynamicBufferOffset;
     std::vector<std::string> skyUrls;
 
-    void updateUrls();
     void loadReource();
     void loadPlacement();
     void loadModels();
     void loadModel(const G_sceneInfo &info);
     void setupModelEnumMap();
-    void setUpSkyBox(std::vector<std::string> *skyUrls);
     void calculateFishCount();
     float degToRad(float degrees);
     void updateWorldMatrixAndDraw(Model *model);

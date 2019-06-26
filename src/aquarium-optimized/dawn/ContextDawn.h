@@ -27,7 +27,9 @@ class ContextDawn : public Context
   public:
     ContextDawn();
     ~ContextDawn();
-    bool createContext(BACKENDTYPE backend, bool enableMSAA) override;
+    bool initialize(
+        BACKENDTYPE backend,
+        const std::bitset<static_cast<size_t>(TOGGLE::TOGGLEMAX)> &toggleBitset) override;
     void setWindowTitle(const std::string &text) override;
     bool ShouldQuit() override;
     void KeyBoardQuit() override;
@@ -91,6 +93,13 @@ class ContextDawn : public Context
     dawn::BindGroup bindGroupWorld;
 
   private:
+    bool GetHardwareAdapter(
+        std::unique_ptr<dawn_native::Instance> &instance,
+        dawn_native::Adapter *backendAdapter,
+        dawn_native::BackendType backendType,
+        const std::bitset<static_cast<size_t>(TOGGLE::TOGGLEMAX)> &toggleBitset);
+    void initAvailableToggleBitset() override;
+
     GLFWwindow *mWindow;
     std::unique_ptr<dawn_native::Instance> instance;
 

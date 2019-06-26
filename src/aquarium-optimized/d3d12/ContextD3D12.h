@@ -26,7 +26,9 @@ class ContextD3D12 : public Context
   public:
     ContextD3D12();
     ~ContextD3D12();
-    bool createContext(BACKENDTYPE backend, bool enableMSAA) override;
+    bool initialize(
+        BACKENDTYPE backend,
+        const std::bitset<static_cast<size_t>(TOGGLE::TOGGLEMAX)> &toggleBitset) override;
     void setWindowTitle(const std::string &text) override;
     bool ShouldQuit() override;
     void KeyBoardQuit() override;
@@ -114,12 +116,16 @@ class ContextD3D12 : public Context
     std::vector<CD3DX12_STATIC_SAMPLER_DESC> staticSamplers;
 
   private:
-    void GetHardwareAdapter(IDXGIFactory2 *pFactory, IDXGIAdapter1 **ppAdapter);
+    bool GetHardwareAdapter(
+        IDXGIFactory2 *pFactory,
+        IDXGIAdapter1 **ppAdapter,
+        const std::bitset<static_cast<size_t>(TOGGLE::TOGGLEMAX)> &toggleBitset);
     void WaitForPreviousFrame();
     void createDepthStencilView();
     void stateTransition(ComPtr<ID3D12Resource> &resource,
                          D3D12_RESOURCE_STATES preState,
                          D3D12_RESOURCE_STATES transferState) const;
+    void initAvailableToggleBitset() override;
 
     GLFWwindow *mWindow;
     ComPtr<ID3D12Device> m_device;

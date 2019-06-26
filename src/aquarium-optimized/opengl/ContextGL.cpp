@@ -29,11 +29,17 @@
 
 ContextGL::ContextGL() 
 : mWindow(nullptr)
-{}
+{
+    initAvailableToggleBitset();
+}
 
-ContextGL::~ContextGL() {}
+ContextGL::~ContextGL()
+{
+    delete mResourceHelper;
+}
 
-bool ContextGL::createContext(BACKENDTYPE backend, bool enableMSAA)
+bool ContextGL::initialize(BACKENDTYPE backend,
+                           const std::bitset<static_cast<size_t>(TOGGLE::TOGGLEMAX)> &toggleBitset)
 {
     // initialise GLFW
     if (!glfwInit())
@@ -46,11 +52,14 @@ bool ContextGL::createContext(BACKENDTYPE backend, bool enableMSAA)
     // TODO(yizhou) : Enable msaa in angle. Render into a multisample Texture and then blit to a
     // none multisample texture.
     glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
+    mResourceHelper = new ResourceHelper(std::string("angle"), std::string("100"));
 #else
-    if (enableMSAA)
+    if (toggleBitset.test(static_cast<size_t>(TOGGLE::ENABLEMSAAx4)))
     {
         glfwWindowHint(GLFW_SAMPLES, 4);
     }
+
+    mResourceHelper = new ResourceHelper("opengl", "450");
 
 #ifdef __APPLE__
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
@@ -343,6 +352,12 @@ void ContextGL::initState()
     glBlendEquation(GL_FUNC_ADD);
     glEnable(GL_CULL_FACE);
     glDepthMask(true);
+}
+
+void ContextGL::initAvailableToggleBitset()
+{
+    mAvailableToggleBitset.set(static_cast<size_t>(TOGGLE::ENABLEMSAAx4));
+    mAvailableToggleBitset.set(static_cast<size_t>(TOGGLE::UPATEANDDRAWFOREACHMODEL));
 }
 
 Buffer *ContextGL::createBuffer(int numComponents, std::vector<float> &buf, bool isIndex)
