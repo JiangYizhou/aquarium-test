@@ -50,6 +50,8 @@ ContextDawn::ContextDawn()
       device(nullptr),
       mEnableMSAA(false)
 {
+    mResourceHelper = new ResourceHelper("dawn", "");
+    initAvailableToggleBitset();
 }
 
 ContextDawn::~ContextDawn()
@@ -75,7 +77,9 @@ ContextDawn::~ContextDawn()
     device                   = nullptr;
 }
 
-bool ContextDawn::createContext(BACKENDTYPE backend, bool enableMSAA)
+bool ContextDawn::initialize(
+    BACKENDTYPE backend,
+    const std::bitset<static_cast<size_t>(TOGGLE::TOGGLEMAX)> &toggleBitset)
 {
     dawn_native::BackendType backendType = dawn_native::BackendType::Null;
 
@@ -104,10 +108,11 @@ bool ContextDawn::createContext(BACKENDTYPE backend, bool enableMSAA)
         default:
         {
             std::cerr << "Backend type can not reached." << std::endl;
+            return false;
         }
     }
 
-    mEnableMSAA = enableMSAA;
+    mEnableMSAA = toggleBitset.test(static_cast<size_t>(TOGGLE::ENABLEMSAAx4));
 
     // initialise GLFW
     if (!glfwInit())
@@ -139,17 +144,10 @@ bool ContextDawn::createContext(BACKENDTYPE backend, bool enableMSAA)
     instance = std::make_unique<dawn_native::Instance>();
     utils::DiscoverAdapter(instance.get(), mWindow, backendType);
 
-    // Get an adapter for the backend to use, and create the device.
     dawn_native::Adapter backendAdapter;
+    if (!GetHardwareAdapter(instance, &backendAdapter, backendType, toggleBitset))
     {
-        for (auto &adapter : instance->GetAdapters())
-        {
-            if (adapter.GetBackendType() == backendType)
-            {
-                backendAdapter = adapter;
-                break;
-            }
-        }
+        return false;
     }
 
     DawnDevice backendDevice   = backendAdapter.CreateDevice();
@@ -197,6 +195,53 @@ bool ContextDawn::createContext(BACKENDTYPE backend, bool enableMSAA)
     mSceneDepthStencilView = createDepthStencilView();
 
     return true;
+}
+
+bool ContextDawn::GetHardwareAdapter(
+    std::unique_ptr<dawn_native::Instance> &instance,
+    dawn_native::Adapter *backendAdapter,
+    dawn_native::BackendType backendType,
+    const std::bitset<static_cast<size_t>(TOGGLE::TOGGLEMAX)> &toggleBitset)
+{
+    bool enableIntegratedGpu = toggleBitset.test(static_cast<size_t>(TOGGLE::INTEGRATEDGPU));
+    bool enableDiscreteGpu   = toggleBitset.test(static_cast<size_t>(TOGGLE::DISCRETEGPU));
+    bool useDefaultGpu       = (enableDiscreteGpu | enableIntegratedGpu) == false ? true : false;
+    bool result             = false;
+
+    // Get an adapter for the backend to use, and create the device.
+    for (auto &adapter : instance->GetAdapters())
+    {
+        if (adapter.GetBackendType() == backendType)
+        {
+            if (useDefaultGpu ||
+                (enableDiscreteGpu &&
+                 adapter.GetDeviceType() == dawn_native::DeviceType::DiscreteGPU) ||
+                (enableIntegratedGpu &&
+                 adapter.GetDeviceType() == dawn_native::DeviceType::IntegratedGPU))
+            {
+                *backendAdapter = adapter;
+                result          = true;
+                break;
+            }
+        }
+    }
+
+    if (!result)
+    {
+        std::cerr << "Failed to create adapter." << std::endl;
+        return false;
+    }
+
+    return true;
+}
+
+void ContextDawn::initAvailableToggleBitset()
+{
+    mAvailableToggleBitset.set(static_cast<size_t>(TOGGLE::ENABLEMSAAx4));
+    mAvailableToggleBitset.set(static_cast<size_t>(TOGGLE::ENABLEINSTANCEDDRAWS));
+    mAvailableToggleBitset.set(static_cast<size_t>(TOGGLE::DISABLEDYNAMICBUFFEROFFSET));
+    mAvailableToggleBitset.set(static_cast<size_t>(TOGGLE::DISCRETEGPU));
+    mAvailableToggleBitset.set(static_cast<size_t>(TOGGLE::INTEGRATEDGPU));
 }
 
 Texture *ContextDawn::createTexture(std::string name, std::string url)

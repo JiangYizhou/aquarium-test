@@ -135,12 +135,12 @@ aquarium.exe --num-fish 10000 --backend angle
 ./aquarium  --num-fish 10000 --backend opengl
 ./aquarium.exe --num-fish 10000 --backend dawn_metal
 
-# "--allow-instanced-draws" : specifies rendering fishes by instanced draw. By default fishes
+# "--enable-instanced-draws" : specifies rendering fishes by instanced draw. By default fishes
 # are rendered by individual draw. Instanced rendering is only supported on dawn and d3d12 backend now.
 
-aquarium.exe --num-fish 10000 --backend dawn_d3d12 --allow-instanced-draws
-aquarium.exe --num-fish 10000 --backend dawn_vulkan --allow-instanced-draws
-aquarium.exe --num-fish 10000 --backend d3d12 --allow-instanced-draws
+aquarium.exe --num-fish 10000 --backend dawn_d3d12 --enable-instanced-draws
+aquarium.exe --num-fish 10000 --backend dawn_vulkan --enable-instanced-draws
+aquarium.exe --num-fish 10000 --backend d3d12 --enable-instanced-draws
 
 # MSAA is disabled by default. To Enable MSAA, "--enable-msaa", 4 samples.
 # MSAA of angle is not supported now.
@@ -153,6 +153,12 @@ aquarium.exe --num-fish 10000 --backend opengl --enable-msaa
 
 aquarium.exe --num-fish 10000 --backend dawn_d3d12 --disable-dynamic-buffer-offset
 aquarium.exe --num-fish 10000 --backend dawn_vulkan --disable-dynamic-buffer-offset
+
+# "--integrated-gpu", "--discrete-gpu": Specifies which gpu to render the application. The two args are exclusive.
+# This is an optional arg. By default, a default adapter will be created.
+# The option is only supported on dawn and d3d12 backend.
+aquarium.exe --num-fish 10000 --backend dawn_d3d12 --integrated-gpu
+aquarium.exe --num-fish 10000 --backend dawn_vulkan --discrete-gpu
 
 # aquarium-direct-map only has OpenGL backend
 # Enable MSAA

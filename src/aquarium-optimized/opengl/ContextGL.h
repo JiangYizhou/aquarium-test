@@ -35,7 +35,9 @@ class ContextGL : public Context
   public:
     ContextGL();
     ~ContextGL();
-    bool createContext(BACKENDTYPE backend, bool enableMSAA) override;
+    bool initialize(
+        BACKENDTYPE backend,
+        const std::bitset<static_cast<size_t>(TOGGLE::TOGGLEMAX)> &toggleBitset) override;
     void setWindowTitle(const std::string &text) override;
     bool ShouldQuit() override;
     void KeyBoardQuit() override;
@@ -91,6 +93,7 @@ class ContextGL : public Context
 
   private:
     void initState();
+    void initAvailableToggleBitset() override;
 
     GLFWwindow *mWindow;
 

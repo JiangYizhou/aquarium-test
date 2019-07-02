@@ -9,21 +9,11 @@
 // other models. Calculate fish count for each type of fish.
 // Update uniforms for each frame.
 
-#include <fstream>
 #include <iostream>
-#include <sstream>
-
-#ifdef _WIN32
-#include <direct.h>
-#include "Windows.h"
-#elif __APPLE__
-#include <mach-o/dyld.h>
-#else
-#include <unistd.h>
-#endif
 
 #include <algorithm>
 #include <cmath>
+#include <fstream>
 
 #include "Aquarium.h"
 #include "ContextFactory.h"
@@ -40,9 +30,6 @@
 #include "rapidjson/stringbuffer.h"
 #include "rapidjson/writer.h"
 
-static const char *shaderFolder   = "shaders";
-static const char *resourceFolder = "assets";
-
 Aquarium::Aquarium()
     : mModelEnumMap(),
       mTextureMap(),
@@ -51,13 +38,8 @@ Aquarium::Aquarium()
       context(nullptr),
       fpsTimer(),
       mFishCount(1),
-      mBackendType(BACKENDTYPE::BACKENDTYPEOPENGL),
-      mShaderVersion(""),
-      mPath(""),
-      factory(nullptr),
-      enableMSAA(false),
-      allowInstancedDraws(false),
-      enableDynamicBufferOffset(true)
+      mBackendType(BACKENDTYPE::BACKENDTYPELAST),
+      factory(nullptr)
 {
     g.then     = 0.0f;
     g.mclock   = 0.0f;
@@ -166,7 +148,7 @@ bool Aquarium::init(int argc, char **argv)
     // "--backend" {backend}: create different backends. currently opengl is supported.
     // "--num-fish" {numfish}: imply rendering fish count.
     // "--enable-msaa": enable 4 times MSAA.
-    // "--allow-instanced-draws": use instanced draw. By default, it's individual draw.
+    // "--enable-instanced-draws": use instanced draw. By default, it's individual draw.
     char *pNext;
     for (int i = 1; i < argc; ++i)
     {
@@ -177,6 +159,34 @@ bool Aquarium::init(int argc, char **argv)
 
             return false;
         }
+        if (cmd == "--backend")
+        {
+            std::string backend = argv[i++ + 1];
+            mBackendType        = getBackendType(backend);
+
+            if (mBackendType == BACKENDTYPE::BACKENDTYPELAST)
+            {
+                std::cout << "Can not create " << backend << " backend" << std::endl;
+                return false;
+            }
+
+            context = factory->createContext(mBackendType);
+        }
+        else
+        {
+        }
+    }
+
+    std::bitset<static_cast<size_t>(TOGGLE::TOGGLEMAX)> availableToggleBitset =
+        context->getAvailableToggleBitset();
+    if (availableToggleBitset.test(static_cast<size_t>(TOGGLE::UPATEANDDRAWFOREACHMODEL)))
+    {
+        toggleBitset.set(static_cast<size_t>(TOGGLE::UPATEANDDRAWFOREACHMODEL));
+    }
+
+    for (int i = 1; i < argc; ++i)
+    {
+        std::string cmd(argv[i]);
         if (cmd == "--num-fish")
         {
             mFishCount = strtol(argv[i++ + 1], &pNext, 10);
@@ -186,92 +196,84 @@ bool Aquarium::init(int argc, char **argv)
                 return false;
             }
         }
-        else if (cmd == "--backend")
-        {
-            mBackendFullpath = argv[i++ + 1];
-            mBackendType = getBackendType(mBackendFullpath);
-            if (mBackendType == BACKENDTYPE::BACKENDTYPELAST)
-            {
-                std::cout << "Can not create " << mBackendFullpath << " backend" << std::endl;
-                return false;
-            }
-
-            if (mBackendFullpath.find("dawn") != std::string::npos)
-            {
-                mBackendFullpath = "dawn";
-            }
-
-            context = factory->createContext(mBackendType);
-        }
         else if (cmd == "--enable-msaa")
         {
-            enableMSAA = true;
-            if (enableMSAA && mBackendType == BACKENDTYPE::BACKENDTYPEANGLE)
+            if (!availableToggleBitset.test(static_cast<size_t>(TOGGLE::ENABLEMSAAx4)))
             {
-                std::cerr << "MSAA isn't implemented for angle backend." << std::endl;
+                std::cerr << "MSAA isn't implemented for the backend." << std::endl;
                 return false;
             }
+            toggleBitset.set(static_cast<size_t>(TOGGLE::ENABLEMSAAx4));
         }
-        else if (cmd == "--allow-instanced-draws")
+        else if (cmd == "--enable-instanced-draws")
         {
-            allowInstancedDraws = true;
-            if (allowInstancedDraws && (mBackendType == BACKENDTYPE::BACKENDTYPEANGLE ||
-                                        mBackendType == BACKENDTYPE::BACKENDTYPEOPENGL ||
-                                        mBackendType == BACKENDTYPE::BACKENDTYPEFIRST ||
-                                        mBackendType == BACKENDTYPE::BACKENDTYPELAST))
+            if (!availableToggleBitset.test(static_cast<size_t>(TOGGLE::ENABLEINSTANCEDDRAWS)))
             {
-                std::cerr << "Instanced draw path isn't implemented for " + mBackendFullpath +
-                                 " backend."
-                          << std::endl;
+                std::cerr << "Instanced draw path isn't implemented for the backend." << std::endl;
                 return false;
             }
+            toggleBitset.set(static_cast<size_t>(TOGGLE::ENABLEINSTANCEDDRAWS));
         }
         else if (cmd == "--disable-dynamic-buffer-offset")
         {
-            enableDynamicBufferOffset = false;
-            if (allowInstancedDraws || (mBackendType != BACKENDTYPE::BACKENDTYPEDAWND3D12 &&
-                                        mBackendType != BACKENDTYPE::BACKENDTYPEDAWNVULKAN &&
-                                        mBackendType != BACKENDTYPE::BACKENDTYPEDAWNMETAL))
+            if (!availableToggleBitset.test(
+                    static_cast<size_t>(TOGGLE::DISABLEDYNAMICBUFFEROFFSET)))
             {
-                std::cerr << "Non dynamic buffer offset individual draw is only implemented for "
-                             "dawn backend."
+                std::cerr << "Disable dynamic buffer offset is only implemented for dawn backend."
                           << std::endl;
                 return false;
             }
+            toggleBitset.set(static_cast<size_t>(TOGGLE::DISABLEDYNAMICBUFFEROFFSET));
+        }
+        else if (cmd == "--integrated-gpu")
+        {
+            if (!availableToggleBitset.test(static_cast<size_t>(TOGGLE::INTEGRATEDGPU)) &&
+                !availableToggleBitset.test(static_cast<size_t>(TOGGLE::DISCRETEGPU)))
+            {
+                std::cerr << "Dynamically choose gpu isn't supported for the backend." << std::endl;
+                return false;
+            }
+
+            if (toggleBitset.test(static_cast<size_t>(TOGGLE::DISCRETEGPU)))
+            {
+                std::cerr << "Integrated and Discrete gpu cannot be used simultaneosly.";
+            }
+            toggleBitset.set(static_cast<size_t>(TOGGLE::INTEGRATEDGPU));
+        }
+        else if (cmd == "--discrete-gpu")
+        {
+            if (!availableToggleBitset.test(static_cast<size_t>(TOGGLE::INTEGRATEDGPU)) &&
+                !availableToggleBitset.test(static_cast<size_t>(TOGGLE::DISCRETEGPU)))
+            {
+                std::cerr << "Dynamically choose gpu isn't supported for the backend." << std::endl;
+                return false;
+            }
+
+            if (toggleBitset.test(static_cast<size_t>(TOGGLE::INTEGRATEDGPU)))
+            {
+                std::cerr << "Integrated and Discrete gpu cannot be used simultaneosly.";
+            }
+
+            toggleBitset.set(static_cast<size_t>(TOGGLE::DISCRETEGPU));
         }
         else
         {
         }
     }
 
-    if (context == nullptr)
-    {
-        mBackendType = BACKENDTYPE::BACKENDTYPEOPENGL;
-        mBackendFullpath = "opengl";
-        context      = factory->createContext(mBackendType);
-    }
-
-    if (mBackendType == BACKENDTYPE::BACKENDTYPEOPENGL || mBackendType == BACKENDTYPE::BACKENDTYPEANGLE)
-    {
-#ifndef EGL_EGL_PROTOTYPES
-        mShaderVersion = "450";
-#else
-        mShaderVersion = "100";
-        mBackendFullpath = "opengl";
-#endif
-    }
-
-    if (!context->createContext(mBackendType, enableMSAA))
+    if (!context->initialize(mBackendType, toggleBitset))
     {
         return false;
     }
 
     calculateFishCount();
-    updateUrls();
 
     std::cout << "Init resources ..." << std::endl;
     getElapsedTime();
 
+    const ResourceHelper *resourceHelper = context->getResourceHelper();
+    std::vector<std::string> skyUrls;
+    resourceHelper->getSkyBoxUrls(&skyUrls);
     mTextureMap["skybox"] = context->createTexture("skybox", skyUrls);
 
     // Init general buffer and binding groups for dawn backend.
@@ -300,46 +302,6 @@ void Aquarium::display()
     context->Terminate();
 }
 
-void Aquarium::updateUrls()
-{
-// Get path of current build.
-#if defined(WIN32) || defined(_WIN32) || defined(__WIN32)
-    TCHAR temp[200];
-    GetModuleFileName(nullptr, temp, MAX_PATH);
-    std::wstring ws(temp);
-    mPath       = std::string(ws.begin(), ws.end());
-    size_t nPos = mPath.find_last_of(slash);
-    mPath       = mPath.substr(0, nPos) + slash + ".." + slash + ".." + slash;
-#elif __APPLE__
-    char temp[200];
-    uint32_t size = sizeof(temp);
-    _NSGetExecutablePath(temp, &size);
-    mPath = std::string(temp);
-    int nPos = mPath.find_last_of(slash);
-    mPath = mPath.substr(0, nPos) + slash + ".." + slash + ".." + slash;
-#else
-    char temp[200];
-    readlink("/proc/self/exe", temp, sizeof(temp));
-    mPath    = std::string(temp);
-    int nPos = mPath.find_last_of(slash);
-    mPath    = mPath.substr(0, nPos) + slash + ".." + slash + ".." + slash;
-#endif
-
-    // set up skybox url
-    setUpSkyBox(&skyUrls);
-}
-
-void Aquarium::setUpSkyBox(std::vector<std::string> *skyUrls)
-{
-    for (const auto v : g_skyBoxUrls)
-    {
-        std::ostringstream url;
-        url << mPath << resourceFolder << slash << v;
-
-        skyUrls->push_back(url.str());
-    }
-}
-
 void Aquarium::loadReource()
 {
     loadModels();
@@ -357,9 +319,8 @@ void Aquarium::setupModelEnumMap()
 // Load world matrices of models from json file.
 void Aquarium::loadPlacement()
 {
-    std::ostringstream oss;
-    oss << mPath << resourceFolder << slash << "PropPlacement.js";
-    std::string proppath = oss.str();
+    const ResourceHelper *resourceHelper = context->getResourceHelper();
+    std::string proppath                 = resourceHelper->getPropPlacementPath();
     std::ifstream PlacementStream(proppath, std::ios::in);
     rapidjson::IStreamWrapper isPlacement(PlacementStream);
     rapidjson::Document document;
@@ -394,10 +355,11 @@ void Aquarium::loadPlacement()
 
 void Aquarium::loadModels()
 {
+    bool enableInstanceddraw = toggleBitset.test(static_cast<size_t>(TOGGLE::ENABLEINSTANCEDDRAWS));
     for (const auto &info : g_sceneInfo)
     {
-        if ((allowInstancedDraws && info.type == MODELGROUP::FISH) ||
-            (!allowInstancedDraws && info.type == MODELGROUP::FISHINSTANCEDDRAW))
+        if ((enableInstanceddraw && info.type == MODELGROUP::FISH) ||
+            ((!enableInstanceddraw) && info.type == MODELGROUP::FISHINSTANCEDDRAW))
         {
             continue;
         }
@@ -408,14 +370,10 @@ void Aquarium::loadModels()
 // Load vertex and index buffers, textures and program for each model.
 void Aquarium::loadModel(const G_sceneInfo &info)
 {
-    std::ostringstream oss;
-    oss << mPath << resourceFolder << slash;
-    std::string imagePath = oss.str();
-    oss << info.namestr << ".js";
-    std::string modelPath = oss.str();
-    oss.str("");
-    oss << mPath << shaderFolder << slash << mBackendFullpath << slash << mShaderVersion << slash;
-    std::string programPath = oss.str();
+    const ResourceHelper *resourceHelper = context->getResourceHelper();
+    const std::string &imagePath         = resourceHelper->getImagePath();
+    const std::string &programPath       = resourceHelper->getProgramPath();
+    const std::string &modelPath         = resourceHelper->getModelPath(std::string(info.namestr));
 
     std::ifstream ModelStream(modelPath, std::ios::in);
     rapidjson::IStreamWrapper is(ModelStream);
@@ -694,10 +652,15 @@ void Aquarium::drawSeaweed()
 
 void Aquarium::drawFishes()
 {
-    int begin =
-        allowInstancedDraws ? MODELNAME::MODELSMALLFISHAINSTANCEDDRAWS : MODELNAME::MODELSMALLFISHA;
-    int end =
-        allowInstancedDraws ? MODELNAME::MODELBIGFISHBINSTANCEDDRAWS : MODELNAME::MODELBIGFISHB;
+    int begin = toggleBitset.test(static_cast<size_t>(TOGGLE::ENABLEINSTANCEDDRAWS))
+                    ? MODELNAME::MODELSMALLFISHAINSTANCEDDRAWS
+                    : MODELNAME::MODELSMALLFISHA;
+    int end = toggleBitset.test(static_cast<size_t>(TOGGLE::ENABLEINSTANCEDDRAWS))
+                  ? MODELNAME::MODELBIGFISHBINSTANCEDDRAWS
+                  : MODELNAME::MODELBIGFISHB;
+    bool updateAndDrawForEachFish =
+        toggleBitset.test(static_cast<size_t>(TOGGLE::UPATEANDDRAWFOREACHMODEL));
+
     for (int i = begin; i <= end; ++i)
     {
         FishModel *model = static_cast<FishModel *>(mAquariumModels[i]);
@@ -705,7 +668,7 @@ void Aquarium::drawFishes()
         const Fish &fishInfo = fishTable[i - begin];
         int numFish          = fishCount[i - begin];
 
-        if (mBackendType == BACKENDTYPE::BACKENDTYPEOPENGL || mBackendType == BACKENDTYPE::BACKENDTYPEANGLE)
+        if (updateAndDrawForEachFish)
         {
             model->preDraw();
         }
@@ -746,7 +709,7 @@ void Aquarium::drawFishes()
                 fmod((g.mclock + ii * g_tailOffsetMult) * fishTailSpeed * speed,
                      static_cast<float>(M_PI) * 2),
                 ii);
-            if (mBackendType == BACKENDTYPEOPENGL || mBackendType == BACKENDTYPEANGLE)
+            if (updateAndDrawForEachFish)
             {
                 model->updatePerInstanceUniforms(&worldUniforms);
                 model->draw();
@@ -755,8 +718,7 @@ void Aquarium::drawFishes()
         // TODO(yizhou): If backend is dawn or d3d12, draw only once for every type of fish by
         // drawInstance. If backend is opengl or angle, draw for exery fish. Update the logic the
         // same as Dawn if uniform blocks are implemented for OpenGL.
-        if (mBackendType == BACKENDTYPEDAWND3D12 || mBackendType == BACKENDTYPED3D12 ||
-            mBackendType == BACKENDTYPEDAWNVULKAN || mBackendType == BACKENDTYPEDAWNMETAL)
+        if (!updateAndDrawForEachFish)
         {
             model->draw();
         }
@@ -786,16 +748,15 @@ void Aquarium::updateWorldProjections(const float *w)
 
 void Aquarium::updateWorldMatrixAndDraw(Model *model)
 {
+    bool updateAndDrawForEachFish =
+        toggleBitset.test(static_cast<size_t>(TOGGLE::UPATEANDDRAWFOREACHMODEL));
+
     if (model->worldmatrices.size())
     {
         for (auto &world : model->worldmatrices)
         {
             updateWorldProjections(world.data());
-            // Models of dawn keep WorldUniforms for every model while opengl models use global
-            // WorldUniforms.
-            // Update all WorldUniforms on dawn backend.
-            if (mBackendType == BACKENDTYPE::BACKENDTYPEOPENGL ||
-                mBackendType == BACKENDTYPE::BACKENDTYPEANGLE)
+            if (updateAndDrawForEachFish)
             {
                 model->preDraw();
                 model->updatePerInstanceUniforms(&worldUniforms);
@@ -808,11 +769,7 @@ void Aquarium::updateWorldMatrixAndDraw(Model *model)
         }
     }
 
-    // TODO(yizhou): If backend is dawn, draw only once for every model. If
-    // backend is opengl or angle, draw for exery instance.
-    // Update the logic the same as Dawn if uniform blocks are implemented for OpenGL.
-    if (mBackendType == BACKENDTYPEDAWND3D12 || mBackendType == BACKENDTYPED3D12 ||
-        mBackendType == BACKENDTYPEDAWNVULKAN || mBackendType == BACKENDTYPEDAWNMETAL)
+    if (!updateAndDrawForEachFish)
     {
         model->preDraw();
         model->draw();
