@@ -98,6 +98,9 @@ bool ContextD3D12::initialize(
 
     HWND hwnd = glfwGetWin32Window(mWindow);
 
+    // Get the resolution of screen
+    glfwGetFramebufferSize(mWindow, &mClientWidth, &mClientHeight);
+
     UINT dxgiFactoryFlags = 0;
 #if defined(_DEBUG)
     // Enable the debug layer (requires the Graphics Tools "optional feature").

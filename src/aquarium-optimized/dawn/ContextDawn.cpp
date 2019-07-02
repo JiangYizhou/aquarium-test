@@ -129,9 +129,6 @@ bool ContextDawn::initialize(
     const GLFWvidmode *mode = glfwGetVideoMode(pMonitor);
     mClientWidth            = mode->width;
     mClientHeight           = mode->height;
-    // If we show the window bar on the top, max width and height will be 1916 x 1053.
-    // Minus the height of title bar, or dawn vulkan backend cannot work.
-    mClientHeight -= 20;
 
     mWindow = glfwCreateWindow(mClientWidth, mClientHeight, "Aquarium", nullptr, nullptr);
     if (mWindow == nullptr)
@@ -140,6 +137,9 @@ bool ContextDawn::initialize(
         glfwTerminate();
         return false;
     }
+
+    // Get the resolution of screen
+    glfwGetFramebufferSize(mWindow, &mClientWidth, &mClientHeight);
 
     instance = std::make_unique<dawn_native::Instance>();
     utils::DiscoverAdapter(instance.get(), mWindow, backendType);

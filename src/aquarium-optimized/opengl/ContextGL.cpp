@@ -87,6 +87,9 @@ bool ContextGL::initialize(BACKENDTYPE backend,
         return false;
     }
 
+    // Get the resolution of screen
+    glfwGetFramebufferSize(mWindow, &mClientWidth, &mClientHeight);
+
 #ifndef GL_GLES_PROTOTYPES 
     glfwWindowHint(GLFW_DECORATED, GL_FALSE);
     glfwMakeContextCurrent(mWindow);
@@ -208,9 +211,6 @@ bool ContextGL::initialize(BACKENDTYPE backend,
     std::string renderer((const char *)glGetString(GL_RENDERER));
     size_t index = renderer.find("/");
     std::cout << renderer.substr(0, index) << std::endl;
-
-    // Get the resolution of screen
-    glfwGetFramebufferSize(mWindow, &mClientWidth, &mClientHeight);
 
     glViewport(0, 0, mClientWidth, mClientHeight);
 
