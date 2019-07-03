@@ -29,7 +29,7 @@ TextureDawn::TextureDawn(ContextDawn *context, std::string name, std::string url
       mTextureViewDimension(dawn::TextureViewDimension::e2D),
       mTexture(nullptr),
       mSampler(nullptr),
-      mFormat(dawn::TextureFormat::R8G8B8A8Unorm),
+      mFormat(dawn::TextureFormat::RGBA8Unorm),
       mTextureView(nullptr),
       context(context)
 {
@@ -41,7 +41,7 @@ TextureDawn::TextureDawn(ContextDawn *context,
     : Texture(name, urls, false),
       mTextureDimension(dawn::TextureDimension::e2D),
       mTextureViewDimension(dawn::TextureViewDimension::Cube),
-      mFormat(dawn::TextureFormat::R8G8B8A8Unorm),
+      mFormat(dawn::TextureFormat::RGBA8Unorm),
       context(context)
 {
 }
