@@ -44,7 +44,7 @@ class ContextGL : public Context
     void DoFlush() override;
     void Terminate() override;
     void showWindow() override;
-    void showFPS() override;
+    void showFPS(const FPSTimer &fpsTimer) override;
     void destoryImgUI() override;
 
     void preFrame() override;
@@ -99,6 +99,7 @@ class ContextGL : public Context
 
     GLFWwindow *mWindow;
     std::string mGLSLVersion;
+    std::string mRenderer;
 
 #ifdef EGL_EGL_PROTOTYPES
     EGLBoolean FindEGLConfig(EGLDisplay dpy, const EGLint *attrib_list, EGLConfig *config);

@@ -187,6 +187,7 @@ executable("aquarium") {
   cflags_cc = [
     "-Wno-string-conversion",
     "-Wno-unused-result",
+    "-Wno-format-security",
   ]
 }
 

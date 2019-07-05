@@ -35,7 +35,7 @@ class ContextD3D12 : public Context
     void DoFlush() override;
     void Terminate() override;
     void showWindow() override;
-    void showFPS() override;
+    void showFPS(const FPSTimer &fpsTimer) override;
     void destoryImgUI() override;
 
     void FlushInit() override;

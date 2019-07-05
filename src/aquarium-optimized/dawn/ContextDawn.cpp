@@ -524,7 +524,7 @@ void ContextDawn::showWindow()
     glfwShowWindow(mWindow);
 }
 
-void ContextDawn::showFPS() {}
+void ContextDawn::showFPS(const FPSTimer &fpsTimer) {}
 
 void ContextDawn::destoryImgUI() {}
 

@@ -427,7 +427,7 @@ void ContextD3D12::showWindow()
     glfwShowWindow(mWindow);
 }
 
-void ContextD3D12::showFPS() {}
+void ContextD3D12::showFPS(const FPSTimer &fpsTimer) {}
 
 void ContextD3D12::destoryImgUI() {}
 
