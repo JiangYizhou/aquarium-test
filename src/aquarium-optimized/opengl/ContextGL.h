@@ -44,6 +44,8 @@ class ContextGL : public Context
     void DoFlush() override;
     void Terminate() override;
     void showWindow() override;
+    void showFPS() override;
+    void destoryImgUI() override;
 
     void preFrame() override;
     void enableBlend(bool flag) const;
@@ -96,6 +98,7 @@ class ContextGL : public Context
     void initAvailableToggleBitset() override;
 
     GLFWwindow *mWindow;
+    std::string mGLSLVersion;
 
 #ifdef EGL_EGL_PROTOTYPES
     EGLBoolean FindEGLConfig(EGLDisplay dpy, const EGLint *attrib_list, EGLConfig *config);

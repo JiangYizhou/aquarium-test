@@ -52,6 +52,8 @@ class Context
     virtual void FlushInit() {}
     virtual void preFrame()   = 0;
     virtual void showWindow() = 0;
+    virtual void showFPS()    = 0;
+    virtual void destoryImgUI() = 0;
 
     int getClientWidth() const { return mClientWidth; }
     int getclientHeight() const { return mClientHeight; }

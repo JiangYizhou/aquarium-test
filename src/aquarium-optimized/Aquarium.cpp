@@ -612,7 +612,8 @@ void Aquarium::updateGlobalUniforms()
 
 void Aquarium::render()
 {
-    updateGlobalUniforms();
+    context->showFPS();
+    /*updateGlobalUniforms();
 
     matrix::resetPseudoRandom();
 
@@ -626,7 +627,7 @@ void Aquarium::render()
 
     drawSeaweed();
 
-    drawOutside();
+    drawOutside();*/
 }
 
 void Aquarium::drawBackground()

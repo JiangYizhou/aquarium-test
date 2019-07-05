@@ -37,6 +37,8 @@ class ContextDawn : public Context
     void FlushInit() override;
     void Terminate() override;
     void showWindow() override;
+    void showFPS() override;
+    void destoryImgUI() override;
 
     void preFrame() override;
 

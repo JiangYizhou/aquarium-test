@@ -524,6 +524,10 @@ void ContextDawn::showWindow()
     glfwShowWindow(mWindow);
 }
 
+void ContextDawn::showFPS() {}
+
+void ContextDawn::destoryImgUI() {}
+
 void ContextDawn::preFrame()
 {
     mCommandEncoder = device.CreateCommandEncoder();
