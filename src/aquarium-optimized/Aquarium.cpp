@@ -555,7 +555,6 @@ void Aquarium::updateGlobalUniforms()
 
     float elapsedTime = getElapsedTime();
     fpsTimer.update(elapsedTime);
-    context->setWindowTitle("Aquarium");
 
     g.mclock += elapsedTime * g_speed;
     g.eyeClock += elapsedTime * g_eyeSpeed;
@@ -624,7 +623,7 @@ void Aquarium::render()
     drawSeaweed();
 
     drawOutside();
-    
+
     context->showFPS(fpsTimer);
 }
 

@@ -139,8 +139,7 @@ executable("aquarium") {
       "third_party/dawn/third_party/shaderc/libshaderc/include",
     ]
   } else {
-      deps += [ "third_party:glfw",
-    ]
+      deps += [ "third_party:glfw" ]
 
     include_dirs += [
       "third_party/glfw/include",
