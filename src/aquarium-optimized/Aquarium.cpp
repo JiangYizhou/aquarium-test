@@ -556,10 +556,6 @@ void Aquarium::updateGlobalUniforms()
     float elapsedTime = getElapsedTime();
     fpsTimer.update(elapsedTime);
 
-    std::string text =
-        "Aquarium FPS: " + std::to_string(static_cast<unsigned int>(fpsTimer.getAverageFPS()));
-    context->setWindowTitle(text);
-
     g.mclock += elapsedTime * g_speed;
     g.eyeClock += elapsedTime * g_eyeSpeed;
 
@@ -627,6 +623,8 @@ void Aquarium::render()
     drawSeaweed();
 
     drawOutside();
+
+    context->showFPS(fpsTimer);
 }
 
 void Aquarium::drawBackground()

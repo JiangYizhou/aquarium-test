@@ -9,6 +9,8 @@ vars = {
   'github_git': 'https://github.com',
   'dawn_git': 'https://dawn.googlesource.com',
   'dawn_revision': '35716c204d2caebe01417bfec3750f5f63000229',
+  'imgui_git': 'https://github.com/ocornut',
+  'imgui_revision': 'e16564e67a2e88d4cbe3afa6594650712790fba3',
   'angle_root': 'third_party/angle',
   'angle_revision': '6c824a1bc17b286b86cf05a0228ec549875351eb',
   'glslang_revision': '11805e41d992a9950a9f7f84c505bb7305fbd09f',
@@ -73,6 +75,9 @@ deps = {
   'third_party/jsoncpp/source': {
     'url' : '{chromium_git}/external/github.com/open-source-parsers/jsoncpp@f572e8e42e22cfcf5ab0aea26574f408943edfa4',
    },
+  'third_party/imgui': {
+    'url': '{imgui_git}/imgui.git@{imgui_revision}',
+  },
 }
 
 hooks = [

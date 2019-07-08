@@ -103,7 +103,8 @@ void InnerModelGL::preDraw() const
     contextGL->setIndices(indicesBuffer);
 
     contextGL->setUniform(viewInverseUniform.second, viewInverseUniform.first, GL_FLOAT_MAT4);
-    contextGL->setUniform(lightWorldPosUniform.second, lightWorldPosUniform.first, GL_FLOAT_VEC3);
+    // lightWorldPosition is optimized away on mesa because it's not used by shader
+    //contextGL->setUniform(lightWorldPosUniform.second, lightWorldPosUniform.first, GL_FLOAT_VEC3);
     contextGL->setUniform(fogPowerUniform.second, &fogPowerUniform.first, GL_FLOAT);
     contextGL->setUniform(fogMultUniform.second, &fogMultUniform.first, GL_FLOAT);
     contextGL->setUniform(fogOffsetUniform.second, &fogOffsetUniform.first, GL_FLOAT);

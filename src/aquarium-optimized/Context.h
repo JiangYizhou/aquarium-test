@@ -14,6 +14,7 @@
 #include <vector>
 
 #include "Aquarium.h"
+#include "common/FPSTimer.h"
 #include "ResourceHelper.h"
 
 class Aquarium;
@@ -52,6 +53,8 @@ class Context
     virtual void FlushInit() {}
     virtual void preFrame()   = 0;
     virtual void showWindow() = 0;
+    virtual void showFPS(const FPSTimer& fpsTimer)    = 0;
+    virtual void destoryImgUI() = 0;
 
     int getClientWidth() const { return mClientWidth; }
     int getclientHeight() const { return mClientHeight; }

@@ -8,6 +8,11 @@
 #include "common/AQUARIUM_ASSERT.h"
 
 #include <algorithm>
+#include <sstream>
+
+#include "imgui.h"
+#include "imgui_impl_glfw.h"
+#include "imgui_impl_opengl3.h"
 
 #include "BufferGL.h"
 #include "ContextGL.h"
@@ -36,6 +41,7 @@ ContextGL::ContextGL()
 ContextGL::~ContextGL()
 {
     delete mResourceHelper;
+    destoryImgUI();
 }
 
 bool ContextGL::initialize(BACKENDTYPE backend,
@@ -64,13 +70,16 @@ bool ContextGL::initialize(BACKENDTYPE backend,
 #ifdef __APPLE__
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
+    mGLSLVersion = "#version 430";
 #elif _WIN32 || __linux__
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 5);
+    mGLSLVersion = "#version 450";
 #endif
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
     glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
+    mGLSLVersion = "#version 450";
 #endif
 
     GLFWmonitor *pMonitor   = glfwGetPrimaryMonitor();
@@ -89,11 +98,14 @@ bool ContextGL::initialize(BACKENDTYPE backend,
 
     // Get the resolution of screen
     glfwGetFramebufferSize(mWindow, &mClientWidth, &mClientHeight);
+    setWindowTitle("Aquarium");
 
 #ifndef GL_GLES_PROTOTYPES 
     glfwWindowHint(GLFW_DECORATED, GL_FALSE);
     glfwMakeContextCurrent(mWindow);
 #else
+    mGLSLVersion = "#version 100";
+
     std::vector<EGLAttrib> display_attribs;
 
     display_attribs.push_back(EGL_PLATFORM_ANGLE_TYPE_ANGLE);
@@ -200,17 +212,27 @@ bool ContextGL::initialize(BACKENDTYPE backend,
     // Set the window full screen
     // glfwSetWindowPos(window, 0, 0);
 
-#ifndef EGL_EGL_PROTOTYPES
+    #ifndef EGL_EGL_PROTOTYPES
     if (!gladLoadGL())
     {
         std::cout << "Something went wrong!" << std::endl;
         exit(-1);
     }
-#endif
+    #endif
+
+    // Setup Dear ImGui context
+    IMGUI_CHECKVERSION();
+    ImGui::CreateContext();
+    ImGui::StyleColorsDark();
+
+    // Setup Platform/Renderer bindings
+    ImGui_ImplGlfw_InitForOpenGL(mWindow, true);
+    ImGui_ImplOpenGL3_Init(mGLSLVersion.c_str());
 
     std::string renderer((const char *)glGetString(GL_RENDERER));
     size_t index = renderer.find("/");
-    std::cout << renderer.substr(0, index) << std::endl;
+    mRenderer    = renderer.substr(0, index);
+    std::cout << mRenderer << std::endl;
 
     glViewport(0, 0, mClientWidth, mClientHeight);
 
@@ -419,6 +441,51 @@ void ContextGL::Terminate()
 void ContextGL::showWindow()
 {
     glfwShowWindow(mWindow);
+}
+
+void ContextGL::showFPS(const FPSTimer &fpsTimer)
+{
+    // Start the Dear ImGui frame
+    ImGui_ImplOpenGL3_NewFrame();
+    ImGui_ImplGlfw_NewFrame();
+    ImGui::NewFrame();
+
+    {
+        ImGui::Begin("Aquarium Native");
+
+        std::ostringstream rendererStream;
+        std::string backend = mResourceHelper->getBackendName();
+        for (auto & c: backend ) c = toupper(c);
+        rendererStream << mRenderer << " " << backend << " " << mResourceHelper->getShaderVersion();
+        std::string renderer = rendererStream.str();
+        ImGui::Text(renderer.c_str());
+
+        std::ostringstream resolutionStream;
+        resolutionStream <<"Resolution " << mClientWidth << "x" << mClientHeight;
+        std::string resolution = resolutionStream.str();
+        ImGui::Text(resolution.c_str());
+
+        ImGui::PlotLines("[0,100 FPS]", fpsTimer.getHistoryFps(), NUM_HISTORY_DATA, 0, NULL, 0.0f, 100.0f, ImVec2 (0,40));
+
+        ImGui::PlotHistogram("[0,100 ms/frame]", fpsTimer.getHistoryFrameTime(), NUM_HISTORY_DATA,
+                             0, NULL, 0.0f, 100.0f, ImVec2(0, 40));
+
+        ImGui::Text("Application average %.3f ms/frame (%.1f FPS)",
+                    1000.0f / fpsTimer.getAverageFPS(), fpsTimer.getAverageFPS());
+        ImGui::End();
+    }
+
+    // Rendering
+    ImGui::Render();
+    ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+}
+
+void ContextGL::destoryImgUI()
+{
+    // Cleanup
+    ImGui_ImplOpenGL3_Shutdown();
+    ImGui_ImplGlfw_Shutdown();
+    ImGui::DestroyContext();
 }
 
 int ContextGL::getUniformLocation(unsigned int programId, std::string name) const
