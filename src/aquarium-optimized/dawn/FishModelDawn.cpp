@@ -176,7 +176,7 @@ void FishModelDawn::init()
     if (enableDynamicBufferOffset)
     {
         bindGroupPers[0] = contextDawn->makeBindGroup(
-            groupLayoutPer, {{0, fishPersBuffer, 0, sizeof(FishPer) * instance}});
+            groupLayoutPer, {{0, fishPersBuffer, 0, sizeof(FishPer)}});
     }
     else
     {

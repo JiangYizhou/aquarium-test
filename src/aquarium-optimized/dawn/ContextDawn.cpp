@@ -358,7 +358,7 @@ dawn::RenderPipeline ContextDawn::createRenderPipeline(
     dawn::RasterizationStateDescriptor rasterizationState;
     rasterizationState.nextInChain         = nullptr;
     rasterizationState.frontFace           = dawn::FrontFace::CCW;
-    rasterizationState.cullMode            = dawn::CullMode::Front;
+    rasterizationState.cullMode            = dawn::CullMode::Back;
     rasterizationState.depthBias           = 0;
     rasterizationState.depthBiasSlopeScale = 0.0;
     rasterizationState.depthBiasClamp      = 0.0;
