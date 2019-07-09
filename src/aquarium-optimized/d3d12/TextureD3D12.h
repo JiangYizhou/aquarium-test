@@ -12,7 +12,7 @@
 #include "../Texture.h"
 
 #include "stdafx.h"
-// using namespace DirectX;
+
 using Microsoft::WRL::ComPtr;
 
 #include <vector>
