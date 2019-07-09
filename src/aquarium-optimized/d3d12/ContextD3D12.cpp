@@ -1,9 +1,14 @@
 #include "ContextD3D12.h"
 
 #include <iostream>
+#include <sstream>
 
 #define GLFW_EXPOSE_NATIVE_WIN32
 #include <GLFW/glfw3native.h>
+
+#include "imgui.h"
+#include "imgui_impl_dx12.h"
+#include "imgui_impl_glfw.h"
 
 #include "BufferD3D12.h"
 #include "FishModelD3D12.h"
@@ -63,6 +68,7 @@ ContextD3D12::ContextD3D12()
 ContextD3D12::~ContextD3D12()
 {
     delete mResourceHelper;
+    destoryImgUI();
 }
 
 bool ContextD3D12::initialize(
@@ -252,6 +258,23 @@ bool ContextD3D12::initialize(
     }
     createDepthStencilView();
 
+    // Setup Dear ImGui context
+    IMGUI_CHECKVERSION();
+    ImGui::CreateContext();
+
+    // Setup Dear ImGui style
+    ImGui::StyleColorsDark();
+
+    // Setup Platform/Renderer bindings
+    // We use glfw for d3d12 backend as well, but imgui only expose glfw to OpenGL and Vulkan.
+    // However, the glfw api is totoally independent of Graphics API, so we could just ingnore the
+    // name of the function.
+    ImGui_ImplGlfw_InitForOpenGL(mWindow, true);
+    ImGui_ImplDX12_Init(m_device.Get(), FrameCount, mPreferredSwapChainFormat, cbvsrvCPUHandle,
+                        cbvsrvGPUHandle);
+    cbvsrvCPUHandle.Offset(m_cbvsrvDescriptorSize);
+    cbvsrvGPUHandle.Offset(m_cbvsrvDescriptorSize);
+
     return true;
 }
 
@@ -288,7 +311,9 @@ bool ContextD3D12::GetHardwareAdapter(
             if (SUCCEEDED(D3D12CreateDevice(adapter.Get(), D3D_FEATURE_LEVEL_11_0,
                                             _uuidof(ID3D12Device), nullptr)))
             {
-                std::wcout << desc.Description << std::endl;
+                std::wstring str = desc.Description;
+                mRenderer        = std::string(str.begin(), str.end());
+                std::cout << mRenderer << std::endl;
                 break;
             }
         }
@@ -427,9 +452,50 @@ void ContextD3D12::showWindow()
     glfwShowWindow(mWindow);
 }
 
-void ContextD3D12::showFPS(const FPSTimer &fpsTimer) {}
+void ContextD3D12::showFPS(const FPSTimer &fpsTimer)
+{
+    // Start the Dear ImGui frame
+    ImGui_ImplDX12_NewFrame();
+    ImGui_ImplGlfw_NewFrame();
+    ImGui::NewFrame();
 
-void ContextD3D12::destoryImgUI() {}
+    {
+        ImGui::Begin("Aquarium Native");
+
+        std::ostringstream rendererStream;
+        std::string backend = mResourceHelper->getBackendName();
+        for (auto &c : backend)
+            c = toupper(c);
+        rendererStream << mRenderer << " " << backend << " " << mResourceHelper->getShaderVersion();
+        std::string renderer = rendererStream.str();
+        ImGui::Text(renderer.c_str());
+
+        std::ostringstream resolutionStream;
+        resolutionStream << "Resolution " << mClientWidth << "x" << mClientHeight;
+        std::string resolution = resolutionStream.str();
+        ImGui::Text(resolution.c_str());
+
+        ImGui::PlotLines("[0,100 FPS]", fpsTimer.getHistoryFps(), NUM_HISTORY_DATA, 0, NULL, 0.0f,
+                         100.0f, ImVec2(0, 40));
+
+        ImGui::PlotHistogram("[0,100 ms/frame]", fpsTimer.getHistoryFrameTime(), NUM_HISTORY_DATA,
+                             0, NULL, 0.0f, 100.0f, ImVec2(0, 40));
+
+        ImGui::Text("Application average %.3f ms/frame (%.1f FPS)",
+                    1000.0f / fpsTimer.getAverageFPS(), fpsTimer.getAverageFPS());
+        ImGui::End();
+    }
+
+    ImGui::Render();
+    ImGui_ImplDX12_RenderDrawData(ImGui::GetDrawData(), mCommandList.Get());
+}
+
+void ContextD3D12::destoryImgUI()
+{
+    ImGui_ImplDX12_Shutdown();
+    ImGui_ImplGlfw_Shutdown();
+    ImGui::DestroyContext();
+}
 
 void ContextD3D12::preFrame()
 {

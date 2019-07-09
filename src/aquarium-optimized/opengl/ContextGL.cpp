@@ -8,6 +8,7 @@
 #include "common/AQUARIUM_ASSERT.h"
 
 #include <algorithm>
+#include <iostream>
 #include <sstream>
 
 #include "imgui.h"
@@ -24,8 +25,6 @@
 #include "InnerModelGL.h"
 #include "OutsideModelGL.h"
 #include "SeaweedModelGL.h"
-
-#include <iostream>
 
 #ifdef EGL_EGL_PROTOTYPES
 #define GLFW_EXPOSE_NATIVE_WIN32

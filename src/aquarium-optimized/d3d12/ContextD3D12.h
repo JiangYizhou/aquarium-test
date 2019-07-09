@@ -19,7 +19,7 @@ using Microsoft::WRL::ComPtr;
 
 enum BACKENDTYPE : short;
 
-const int cbvsrvCount = 86;
+const int cbvsrvCount = 87;
 
 class ContextD3D12 : public Context
 {
@@ -173,6 +173,7 @@ class ContextD3D12 : public Context
     D3D12_RENDER_TARGET_VIEW_DESC mSceneRenderTargetView;
 
     bool mEnableMSAA;
+    std::string mRenderer;
 };
 
 #endif
