@@ -124,6 +124,8 @@ executable("aquarium") {
       "src/aquarium-optimized/dawn/SeaweedModelDawn.h",
       "src/aquarium-optimized/dawn/TextureDawn.cpp",
       "src/aquarium-optimized/dawn/TextureDawn.h",
+      "src/aquarium-optimized/dawn/imgui_impl_dawn.cpp",
+      "src/aquarium-optimized/dawn/imgui_impl_dawn.h",
     ]
 
     deps += [

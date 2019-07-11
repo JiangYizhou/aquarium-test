@@ -6,8 +6,13 @@
 // DeviceDawn.cpp: Implements accessing functions to the graphics API of Dawn.
 
 #include <iostream>
+#include <sstream>
 #include <string>
 #include <vector>
+
+#include "imgui.h"
+#include "imgui_impl_dawn.h"
+#include "imgui_impl_glfw.h"
 
 #include "../Aquarium.h"
 #include "BufferDawn.h"
@@ -34,9 +39,9 @@
 #include <cstring>
 
 ContextDawn::ContextDawn()
-    : mWindow(nullptr),
+    : queue(nullptr), 
+      mWindow(nullptr),
       instance(),
-      queue(nullptr),
       swapchain(nullptr),
       mCommandEncoder(nullptr),
       mRenderPass(nullptr),
@@ -75,6 +80,9 @@ ContextDawn::~ContextDawn()
     swapchain                = nullptr;
     queue                    = nullptr;
     device                   = nullptr;
+
+    delete mResourceHelper;
+    destoryImgUI();
 }
 
 bool ContextDawn::initialize(
@@ -193,6 +201,20 @@ bool ContextDawn::initialize(
     }
 
     mSceneDepthStencilView = createDepthStencilView();
+
+    // Setup Dear ImGui context
+    IMGUI_CHECKVERSION();
+    ImGui::CreateContext();
+
+    // Setup Dear ImGui style
+    ImGui::StyleColorsDark();
+
+    // Setup Platform/Renderer bindings
+    // We use glfw for d3d12 backend as well, but imgui only expose glfw to OpenGL and Vulkan.
+    // However, the glfw api is totoally independent of Graphics API, so we could just ingnore the
+    // name of the function.
+    ImGui_ImplGlfw_InitForOpenGL(mWindow, true);
+    ImGui_ImplDawn_Init(this, mPreferredSwapChainFormat);
 
     return true;
 }
@@ -357,8 +379,10 @@ dawn::RenderPipeline ContextDawn::createRenderPipeline(
 
     dawn::RasterizationStateDescriptor rasterizationState;
     rasterizationState.nextInChain         = nullptr;
+    //rasterizationState.frontFace           = dawn::FrontFace::CCW;
+    //rasterizationState.cullMode            = dawn::CullMode::Back;
     rasterizationState.frontFace           = dawn::FrontFace::CCW;
-    rasterizationState.cullMode            = dawn::CullMode::Back;
+    rasterizationState.cullMode            = dawn::CullMode::None;
     rasterizationState.depthBias           = 0;
     rasterizationState.depthBiasSlopeScale = 0.0;
     rasterizationState.depthBiasClamp      = 0.0;
@@ -499,7 +523,6 @@ void ContextDawn::KeyBoardQuit()
 // Submit commands of the frame
 void ContextDawn::DoFlush()
 {
-
     mRenderPass.EndPass();
     dawn::CommandBuffer cmd = mCommandEncoder.Finish();
     queue.Submit(1, &cmd);
@@ -524,9 +547,50 @@ void ContextDawn::showWindow()
     glfwShowWindow(mWindow);
 }
 
-void ContextDawn::showFPS(const FPSTimer &fpsTimer) {}
+void ContextDawn::showFPS(const FPSTimer &fpsTimer)
+{
+    // Start the Dear ImGui frame
+    ImGui_ImplDawn_NewFrame();
+    ImGui_ImplGlfw_NewFrame();
+    ImGui::NewFrame();
 
-void ContextDawn::destoryImgUI() {}
+    {
+        ImGui::Begin("Aquarium Native");
+
+        std::ostringstream rendererStream;
+        std::string backend = mResourceHelper->getBackendName();
+        for (auto &c : backend)
+            c = toupper(c);
+        rendererStream << mRenderer << " " << backend << " " << mResourceHelper->getShaderVersion();
+        std::string renderer = rendererStream.str();
+        ImGui::Text(renderer.c_str());
+
+        std::ostringstream resolutionStream;
+        resolutionStream << "Resolution " << mClientWidth << "x" << mClientHeight;
+        std::string resolution = resolutionStream.str();
+        ImGui::Text(resolution.c_str());
+
+        ImGui::PlotLines("[0,100 FPS]", fpsTimer.getHistoryFps(), NUM_HISTORY_DATA, 0, NULL, 0.0f,
+                         100.0f, ImVec2(0, 40));
+
+        ImGui::PlotHistogram("[0,100 ms/frame]", fpsTimer.getHistoryFrameTime(), NUM_HISTORY_DATA,
+                             0, NULL, 0.0f, 100.0f, ImVec2(0, 40));
+
+        ImGui::Text("Application average %.3f ms/frame (%.1f FPS)",
+                    1000.0f / fpsTimer.getAverageFPS(), fpsTimer.getAverageFPS());
+        ImGui::End();
+    }
+
+    ImGui::Render();
+    ImGui_ImplDawn_RenderDrawData(ImGui::GetDrawData());
+}
+
+void ContextDawn::destoryImgUI()
+{
+    ImGui_ImplDawn_Shutdown();
+    ImGui_ImplGlfw_Shutdown();
+    ImGui::DestroyContext();
+}
 
 void ContextDawn::preFrame()
 {

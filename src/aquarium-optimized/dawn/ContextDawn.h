@@ -85,9 +85,10 @@ class ContextDawn : public Context
 
     void initGeneralResources(Aquarium* aquarium) override;
     void updateWorldlUniforms(Aquarium* aquarium) override;
-    dawn::Device getDevice() const { return device; }
-    dawn::RenderPassEncoder getRenderPass() const { return mRenderPass; }
+    const dawn::Device &getDevice() const { return device; }
+    const dawn::RenderPassEncoder &getRenderPass() const { return mRenderPass; }
     std::vector<dawn::CommandBuffer> mCommandBuffers;
+    dawn::Queue queue;
 
     dawn::BindGroupLayout groupLayoutGeneral;
     dawn::BindGroup bindGroupGeneral;
@@ -105,7 +106,6 @@ class ContextDawn : public Context
     GLFWwindow *mWindow;
     std::unique_ptr<dawn_native::Instance> instance;
 
-    dawn::Queue queue;
     dawn::SwapChain swapchain;
     dawn::CommandEncoder mCommandEncoder;
     dawn::RenderPassEncoder mRenderPass;
@@ -125,6 +125,7 @@ class ContextDawn : public Context
     dawn::Device device;
 
     bool mEnableMSAA;
+    std::string mRenderer;
 };
 
 #endif
