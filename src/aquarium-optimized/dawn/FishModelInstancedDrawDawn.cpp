@@ -50,7 +50,7 @@ void FishModelInstancedDrawDawn::init()
 
     fishPersBuffer =
         contextDawn->createBuffer(sizeof(FishPer) * instance,
-                                  dawn::BufferUsageBit::Vertex | dawn::BufferUsageBit::TransferDst);
+                                  dawn::BufferUsageBit::Vertex | dawn::BufferUsageBit::CopyDst);
 
     vertexInputDescriptor.cBuffers[0].attributeCount    = 1;
     vertexInputDescriptor.cBuffers[0].stride            = positionBuffer->getDataSize();
@@ -141,10 +141,10 @@ void FishModelInstancedDrawDawn::init()
 
     fishVertexBuffer = contextDawn->createBufferFromData(
         &fishVertexUniforms, sizeof(FishVertexUniforms),
-        dawn::BufferUsageBit::TransferDst | dawn::BufferUsageBit::Uniform);
+        dawn::BufferUsageBit::CopyDst | dawn::BufferUsageBit::Uniform);
     lightFactorBuffer = contextDawn->createBufferFromData(
         &lightFactorUniforms, sizeof(LightFactorUniforms),
-        dawn::BufferUsageBit::TransferDst | dawn::BufferUsageBit::Uniform);
+        dawn::BufferUsageBit::CopyDst | dawn::BufferUsageBit::Uniform);
 
     // Fish models includes small, medium and big. Some of them contains reflection and skybox
     // texture, but some doesn't.

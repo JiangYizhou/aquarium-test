@@ -430,8 +430,8 @@ void ContextDawn::initGeneralResources(Aquarium* aquarium)
         { 1, dawn::ShaderStageBit::Fragment, dawn::BindingType::UniformBuffer },
     });
 
-    lightBuffer = createBufferFromData(&aquarium->lightUniforms, sizeof(aquarium->lightUniforms), dawn::BufferUsageBit::TransferDst | dawn::BufferUsageBit::Uniform);
-    fogBuffer = createBufferFromData(&aquarium->fogUniforms, sizeof(aquarium->fogUniforms), dawn::BufferUsageBit::TransferDst | dawn::BufferUsageBit::Uniform);
+    lightBuffer = createBufferFromData(&aquarium->lightUniforms, sizeof(aquarium->lightUniforms), dawn::BufferUsageBit::CopyDst | dawn::BufferUsageBit::Uniform);
+    fogBuffer = createBufferFromData(&aquarium->fogUniforms, sizeof(aquarium->fogUniforms), dawn::BufferUsageBit::CopyDst | dawn::BufferUsageBit::Uniform);
 
     bindGroupGeneral = makeBindGroup(groupLayoutGeneral, {
         { 0, lightBuffer, 0, sizeof(aquarium->lightUniforms) },
@@ -446,7 +446,7 @@ void ContextDawn::initGeneralResources(Aquarium* aquarium)
         { 0, dawn::ShaderStageBit::Vertex, dawn::BindingType::UniformBuffer },
     });
 
-    lightWorldPositionBuffer = createBufferFromData(&aquarium->lightWorldPositionUniform, sizeof(aquarium->lightWorldPositionUniform), dawn::BufferUsageBit::TransferDst | dawn::BufferUsageBit::Uniform);
+    lightWorldPositionBuffer = createBufferFromData(&aquarium->lightWorldPositionUniform, sizeof(aquarium->lightWorldPositionUniform), dawn::BufferUsageBit::CopyDst | dawn::BufferUsageBit::Uniform);
     
     bindGroupWorld = makeBindGroup(groupLayoutWorld, {
         {0, lightWorldPositionBuffer, 0, sizeof(aquarium->lightWorldPositionUniform) },

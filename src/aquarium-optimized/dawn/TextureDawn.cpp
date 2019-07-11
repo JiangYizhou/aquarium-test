@@ -63,12 +63,12 @@ void TextureDawn::loadTexture()
         descriptor.sampleCount = 1;
         descriptor.format = mFormat;
         descriptor.mipLevelCount   = 1;
-        descriptor.usage = dawn::TextureUsageBit::TransferDst | dawn::TextureUsageBit::Sampled;
+        descriptor.usage = dawn::TextureUsageBit::CopyDst | dawn::TextureUsageBit::Sampled;
         mTexture = context->createTexture(descriptor);
 
         for (unsigned int i = 0; i < 6; i++)
         {
-            dawn::Buffer stagingBuffer = context->createBufferFromData(mPixelVec[i], mWidth * mHeight * 4, dawn::BufferUsageBit::TransferSrc);
+            dawn::Buffer stagingBuffer = context->createBufferFromData(mPixelVec[i], mWidth * mHeight * 4, dawn::BufferUsageBit::CopySrc);
             dawn::BufferCopyView bufferCopyView = context->createBufferCopyView(stagingBuffer, 0, mWidth * 4, mHeight);
             dawn::TextureCopyView textureCopyView = context->createTextureCopyView(mTexture, 0, i, { 0, 0, 0 });
             dawn::Extent3D copySize = { static_cast<uint32_t>(mWidth), static_cast<uint32_t>(mHeight), 1 };
@@ -95,7 +95,7 @@ void TextureDawn::loadTexture()
         samplerDesc.mipmapFilter = dawn::FilterMode::Nearest;
         samplerDesc.lodMinClamp  = 0.0f;
         samplerDesc.lodMaxClamp  = 1000.0f;
-        samplerDesc.compareFunction = dawn::CompareFunction::Never;
+        samplerDesc.compare = dawn::CompareFunction::Never;
 
         mSampler = context->createSampler(samplerDesc);
     }
@@ -124,7 +124,7 @@ void TextureDawn::loadTexture()
         descriptor.mipLevelCount   = static_cast<uint32_t>(std::floor(
                                        static_cast<float>(std::log2(std::min(mWidth, mHeight))))) +
                                    1;
-        descriptor.usage = dawn::TextureUsageBit::TransferDst | dawn::TextureUsageBit::Sampled;
+        descriptor.usage = dawn::TextureUsageBit::CopyDst | dawn::TextureUsageBit::Sampled;
         mTexture = context->createTexture(descriptor);
 
         int count = 0;
@@ -137,7 +137,7 @@ void TextureDawn::loadTexture()
                 height = 1;
             }
 
-            dawn::Buffer stagingBuffer = context->createBufferFromData(mResizedVec[i], resizedWidth * height * 4, dawn::BufferUsageBit::TransferSrc);
+            dawn::Buffer stagingBuffer = context->createBufferFromData(mResizedVec[i], resizedWidth * height * 4, dawn::BufferUsageBit::CopySrc);
             dawn::BufferCopyView bufferCopyView = context->createBufferCopyView(stagingBuffer, 0, resizedWidth * 4, height);
             dawn::TextureCopyView textureCopyView = context->createTextureCopyView(mTexture, i, 0, { 0, 0, 0 });
             dawn::Extent3D copySize = {static_cast<uint32_t>(width),
@@ -168,7 +168,7 @@ void TextureDawn::loadTexture()
         samplerDesc.magFilter = dawn::FilterMode::Linear;
         samplerDesc.lodMinClamp  = 0.0f;
         samplerDesc.lodMaxClamp  = 1000.0f;
-        samplerDesc.compareFunction = dawn::CompareFunction::Never;
+        samplerDesc.compare = dawn::CompareFunction::Never;
 
         if (isPowerOf2(mWidth) && isPowerOf2(mHeight))
         {

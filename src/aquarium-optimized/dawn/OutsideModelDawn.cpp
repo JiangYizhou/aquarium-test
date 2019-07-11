@@ -101,10 +101,10 @@ void OutsideModelDawn::init()
 
     lightFactorBuffer = contextDawn->createBufferFromData(
         &lightFactorUniforms, sizeof(lightFactorUniforms),
-        dawn::BufferUsageBit::TransferDst | dawn::BufferUsageBit::Uniform);
+        dawn::BufferUsageBit::CopyDst | dawn::BufferUsageBit::Uniform);
     viewBuffer = contextDawn->createBufferFromData(
         &worldUniformPer, sizeof(WorldUniforms),
-        dawn::BufferUsageBit::TransferDst | dawn::BufferUsageBit::Uniform);
+        dawn::BufferUsageBit::CopyDst | dawn::BufferUsageBit::Uniform);
 
     bindGroupModel = contextDawn->makeBindGroup(groupLayoutModel, {
         { 0, lightFactorBuffer, 0, sizeof(LightFactorUniforms) },

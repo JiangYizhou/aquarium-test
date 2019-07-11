@@ -119,7 +119,7 @@ void FishModelDawn::init()
     if (enableDynamicBufferOffset)
     {
         groupLayoutPer = contextDawn->MakeBindGroupLayout({
-            {0, dawn::ShaderStageBit::Vertex, dawn::BindingType::DynamicUniformBuffer},
+            {0, dawn::ShaderStageBit::Vertex, dawn::BindingType::UniformBuffer, true},
         });
     }
     else
@@ -141,13 +141,13 @@ void FishModelDawn::init()
 
     fishVertexBuffer = contextDawn->createBufferFromData(
         &fishVertexUniforms, sizeof(FishVertexUniforms),
-        dawn::BufferUsageBit::TransferDst | dawn::BufferUsageBit::Uniform);
+        dawn::BufferUsageBit::CopyDst | dawn::BufferUsageBit::Uniform);
     lightFactorBuffer = contextDawn->createBufferFromData(
         &lightFactorUniforms, sizeof(LightFactorUniforms),
-        dawn::BufferUsageBit::TransferDst | dawn::BufferUsageBit::Uniform);
+        dawn::BufferUsageBit::CopyDst | dawn::BufferUsageBit::Uniform);
     fishPersBuffer = contextDawn->createBufferFromData(
         fishPers, sizeof(FishPer) * instance,
-        dawn::BufferUsageBit::TransferDst | dawn::BufferUsageBit::Uniform);
+        dawn::BufferUsageBit::CopyDst | dawn::BufferUsageBit::Uniform);
 
     // Fish models includes small, medium and big. Some of them contains reflection and skybox
     // texture, but some doesn't.
