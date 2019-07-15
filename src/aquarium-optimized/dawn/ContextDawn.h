@@ -126,6 +126,7 @@ class ContextDawn : public Context
 
     bool mEnableMSAA;
     std::string mRenderer;
+    std::string mBackendType;
 };
 
 #endif

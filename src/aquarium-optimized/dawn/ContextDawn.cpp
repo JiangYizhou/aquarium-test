@@ -39,7 +39,7 @@
 #include <cstring>
 
 ContextDawn::ContextDawn()
-    : queue(nullptr), 
+    : queue(nullptr),
       mWindow(nullptr),
       instance(),
       swapchain(nullptr),
@@ -61,6 +61,9 @@ ContextDawn::ContextDawn()
 
 ContextDawn::~ContextDawn()
 {
+    delete mResourceHelper;
+    destoryImgUI();
+
     mSceneRenderTargetView   = nullptr;
     mSceneDepthStencilView   = nullptr;
     mBackbuffer              = nullptr;
@@ -80,9 +83,6 @@ ContextDawn::~ContextDawn()
     swapchain                = nullptr;
     queue                    = nullptr;
     device                   = nullptr;
-
-    delete mResourceHelper;
-    destoryImgUI();
 }
 
 bool ContextDawn::initialize(
@@ -96,21 +96,25 @@ bool ContextDawn::initialize(
         case BACKENDTYPE::BACKENDTYPEDAWND3D12:
         {
             backendType = dawn_native::BackendType::D3D12;
+            mBackendType = "Dawn D3D12";
             break;
         }
         case BACKENDTYPE::BACKENDTYPEDAWNVULKAN:
         {
             backendType = dawn_native::BackendType::Vulkan;
+            mBackendType = "Dawn Vulkan";
             break;
         }
         case BACKENDTYPE::BACKENDTYPEDAWNMETAL:
         {
             backendType = dawn_native::BackendType::Metal;
+            mBackendType = "Dawn Metal";
             break;
         }
         case BACKENDTYPE::BACKENDTYPEOPENGL:
         {
             backendType = dawn_native::BackendType::OpenGL;
+            mBackendType = "Dawn OpenGL";
             break;
         }
         default:
@@ -181,7 +185,8 @@ bool ContextDawn::initialize(
                         mClientWidth, mClientHeight);
 
     dawn_native::PCIInfo info = backendAdapter.GetPCIInfo();
-    std::cout << info.name << std::endl;
+    mRenderer                 = info.name;
+    std::cout << mRenderer << std::endl;
 
     // When MSAA is enabled, we create an intermediate multisampled texture to render the scene to.
     if (mEnableMSAA)
@@ -210,9 +215,9 @@ bool ContextDawn::initialize(
     ImGui::StyleColorsDark();
 
     // Setup Platform/Renderer bindings
-    // We use glfw for d3d12 backend as well, but imgui only expose glfw to OpenGL and Vulkan.
-    // However, the glfw api is totoally independent of Graphics API, so we could just ingnore the
-    // name of the function.
+    // We use glfw to create window for dawn backend as well.
+    // Because imgui doesn't have dawn backend, we rewrite the functions by dawn API in
+    // imgui_impl_dawn.cpp and imgui_impl_dawn.h
     ImGui_ImplGlfw_InitForOpenGL(mWindow, true);
     ImGui_ImplDawn_Init(this, mPreferredSwapChainFormat);
 
@@ -379,10 +384,8 @@ dawn::RenderPipeline ContextDawn::createRenderPipeline(
 
     dawn::RasterizationStateDescriptor rasterizationState;
     rasterizationState.nextInChain         = nullptr;
-    //rasterizationState.frontFace           = dawn::FrontFace::CCW;
-    //rasterizationState.cullMode            = dawn::CullMode::Back;
     rasterizationState.frontFace           = dawn::FrontFace::CCW;
-    rasterizationState.cullMode            = dawn::CullMode::None;
+    rasterizationState.cullMode            = dawn::CullMode::Back;
     rasterizationState.depthBias           = 0;
     rasterizationState.depthBiasSlopeScale = 0.0;
     rasterizationState.depthBiasClamp      = 0.0;
@@ -558,10 +561,8 @@ void ContextDawn::showFPS(const FPSTimer &fpsTimer)
         ImGui::Begin("Aquarium Native");
 
         std::ostringstream rendererStream;
-        std::string backend = mResourceHelper->getBackendName();
-        for (auto &c : backend)
-            c = toupper(c);
-        rendererStream << mRenderer << " " << backend << " " << mResourceHelper->getShaderVersion();
+        rendererStream << mRenderer << " " << mBackendType << " "
+                       << mResourceHelper->getShaderVersion();
         std::string renderer = rendererStream.str();
         ImGui::Text(renderer.c_str());
 
