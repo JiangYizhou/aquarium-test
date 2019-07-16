@@ -552,6 +552,13 @@ void ContextDawn::showWindow()
 
 void ContextDawn::showFPS(const FPSTimer &fpsTimer)
 {
+    // TODO(yizhou): Dawn doesn't support recreating swap chain if framebuffer size is changed. This will cause 
+    // 'AcquireNextImage' returns an error code on linux vulkan backend. The error is 'VK_ERROR_OUT_OF_DATE_KHR'.
+#ifdef __linux__
+    if (mBackendType == "Dawn Vulkan")
+        return;
+#endif
+
     // Start the Dear ImGui frame
     ImGui_ImplDawn_NewFrame();
     ImGui_ImplGlfw_NewFrame();
