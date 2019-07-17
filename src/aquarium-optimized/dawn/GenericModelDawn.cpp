@@ -156,10 +156,10 @@ void GenericModelDawn::init()
 
     lightFactorBuffer = contextDawn->createBufferFromData(
         &lightFactorUniforms, sizeof(lightFactorUniforms),
-        dawn::BufferUsageBit::TransferDst | dawn::BufferUsageBit::Uniform);
+        dawn::BufferUsageBit::CopyDst | dawn::BufferUsageBit::Uniform);
     worldBuffer = contextDawn->createBufferFromData(
         &worldUniformPer, sizeof(worldUniformPer),
-        dawn::BufferUsageBit::TransferDst | dawn::BufferUsageBit::Uniform);
+        dawn::BufferUsageBit::CopyDst | dawn::BufferUsageBit::Uniform);
 
     // Generic models use reflection, normal or diffuse shaders, of which grouplayouts are
     // diiferent in texture binding. MODELGLOBEBASE use diffuse shader though it contains

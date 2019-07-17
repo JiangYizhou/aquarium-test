@@ -107,10 +107,10 @@ void InnerModelDawn::init()
     pipeline = contextDawn->createRenderPipeline(pipelineLayout, programDawn, vertexInputDescriptor,
                                                  mBlend);
 
-    innerBuffer = contextDawn->createBufferFromData(&innerUniforms, sizeof(innerUniforms), dawn::BufferUsageBit::TransferDst | dawn::BufferUsageBit::Uniform);
+    innerBuffer = contextDawn->createBufferFromData(&innerUniforms, sizeof(innerUniforms), dawn::BufferUsageBit::CopyDst | dawn::BufferUsageBit::Uniform);
     viewBuffer = contextDawn->createBufferFromData(
         &worldUniformPer, sizeof(WorldUniforms),
-        dawn::BufferUsageBit::TransferDst | dawn::BufferUsageBit::Uniform);
+        dawn::BufferUsageBit::CopyDst | dawn::BufferUsageBit::Uniform);
 
     bindGroupModel = contextDawn->makeBindGroup(groupLayoutModel, {
         { 0, innerBuffer, 0, sizeof(InnerUniforms) },

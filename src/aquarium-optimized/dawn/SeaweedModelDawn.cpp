@@ -87,11 +87,11 @@ void SeaweedModelDawn::init()
 
     lightFactorBuffer = contextDawn->createBufferFromData(
         &lightFactorUniforms, sizeof(lightFactorUniforms),
-        dawn::BufferUsageBit::TransferDst | dawn::BufferUsageBit::Uniform);
-    timeBuffer = contextDawn->createBufferFromData(&seaweedPer, sizeof(seaweedPer), dawn::BufferUsageBit::TransferDst | dawn::BufferUsageBit::Uniform);
+        dawn::BufferUsageBit::CopyDst | dawn::BufferUsageBit::Uniform);
+    timeBuffer = contextDawn->createBufferFromData(&seaweedPer, sizeof(seaweedPer), dawn::BufferUsageBit::CopyDst | dawn::BufferUsageBit::Uniform);
     viewBuffer = contextDawn->createBufferFromData(
         &worldUniformPer, sizeof(WorldUniformPer),
-        dawn::BufferUsageBit::TransferDst | dawn::BufferUsageBit::Uniform);
+        dawn::BufferUsageBit::CopyDst | dawn::BufferUsageBit::Uniform);
 
     bindGroupModel = contextDawn->makeBindGroup(groupLayoutModel, {
         { 0, lightFactorBuffer, 0, sizeof(LightFactorUniforms) },

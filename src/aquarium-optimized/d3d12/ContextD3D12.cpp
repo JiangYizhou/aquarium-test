@@ -458,7 +458,6 @@ void ContextD3D12::showFPS(const FPSTimer &fpsTimer)
     ImGui_ImplDX12_NewFrame();
     ImGui_ImplGlfw_NewFrame();
     ImGui::NewFrame();
-
     {
         ImGui::Begin("Aquarium Native");
 

@@ -6,8 +6,13 @@
 // DeviceDawn.cpp: Implements accessing functions to the graphics API of Dawn.
 
 #include <iostream>
+#include <sstream>
 #include <string>
 #include <vector>
+
+#include "imgui.h"
+#include "imgui_impl_dawn.h"
+#include "imgui_impl_glfw.h"
 
 #include "../Aquarium.h"
 #include "BufferDawn.h"
@@ -34,9 +39,9 @@
 #include <cstring>
 
 ContextDawn::ContextDawn()
-    : mWindow(nullptr),
+    : queue(nullptr),
+      mWindow(nullptr),
       instance(),
-      queue(nullptr),
       swapchain(nullptr),
       mCommandEncoder(nullptr),
       mRenderPass(nullptr),
@@ -56,6 +61,9 @@ ContextDawn::ContextDawn()
 
 ContextDawn::~ContextDawn()
 {
+    delete mResourceHelper;
+    destoryImgUI();
+
     mSceneRenderTargetView   = nullptr;
     mSceneDepthStencilView   = nullptr;
     mBackbuffer              = nullptr;
@@ -88,21 +96,25 @@ bool ContextDawn::initialize(
         case BACKENDTYPE::BACKENDTYPEDAWND3D12:
         {
             backendType = dawn_native::BackendType::D3D12;
+            mBackendType = "Dawn D3D12";
             break;
         }
         case BACKENDTYPE::BACKENDTYPEDAWNVULKAN:
         {
             backendType = dawn_native::BackendType::Vulkan;
+            mBackendType = "Dawn Vulkan";
             break;
         }
         case BACKENDTYPE::BACKENDTYPEDAWNMETAL:
         {
             backendType = dawn_native::BackendType::Metal;
+            mBackendType = "Dawn Metal";
             break;
         }
         case BACKENDTYPE::BACKENDTYPEOPENGL:
         {
             backendType = dawn_native::BackendType::OpenGL;
+            mBackendType = "Dawn OpenGL";
             break;
         }
         default:
@@ -173,7 +185,8 @@ bool ContextDawn::initialize(
                         mClientWidth, mClientHeight);
 
     dawn_native::PCIInfo info = backendAdapter.GetPCIInfo();
-    std::cout << info.name << std::endl;
+    mRenderer                 = info.name;
+    std::cout << mRenderer << std::endl;
 
     // When MSAA is enabled, we create an intermediate multisampled texture to render the scene to.
     if (mEnableMSAA)
@@ -193,6 +206,20 @@ bool ContextDawn::initialize(
     }
 
     mSceneDepthStencilView = createDepthStencilView();
+
+    // Setup Dear ImGui context
+    IMGUI_CHECKVERSION();
+    ImGui::CreateContext();
+
+    // Setup Dear ImGui style
+    ImGui::StyleColorsDark();
+
+    // Setup Platform/Renderer bindings
+    // We use glfw to create window for dawn backend as well.
+    // Because imgui doesn't have dawn backend, we rewrite the functions by dawn API in
+    // imgui_impl_dawn.cpp and imgui_impl_dawn.h
+    ImGui_ImplGlfw_InitForOpenGL(mWindow, true);
+    ImGui_ImplDawn_Init(this, mPreferredSwapChainFormat);
 
     return true;
 }
@@ -430,8 +457,8 @@ void ContextDawn::initGeneralResources(Aquarium* aquarium)
         { 1, dawn::ShaderStageBit::Fragment, dawn::BindingType::UniformBuffer },
     });
 
-    lightBuffer = createBufferFromData(&aquarium->lightUniforms, sizeof(aquarium->lightUniforms), dawn::BufferUsageBit::TransferDst | dawn::BufferUsageBit::Uniform);
-    fogBuffer = createBufferFromData(&aquarium->fogUniforms, sizeof(aquarium->fogUniforms), dawn::BufferUsageBit::TransferDst | dawn::BufferUsageBit::Uniform);
+    lightBuffer = createBufferFromData(&aquarium->lightUniforms, sizeof(aquarium->lightUniforms), dawn::BufferUsageBit::CopyDst | dawn::BufferUsageBit::Uniform);
+    fogBuffer = createBufferFromData(&aquarium->fogUniforms, sizeof(aquarium->fogUniforms), dawn::BufferUsageBit::CopyDst | dawn::BufferUsageBit::Uniform);
 
     bindGroupGeneral = makeBindGroup(groupLayoutGeneral, {
         { 0, lightBuffer, 0, sizeof(aquarium->lightUniforms) },
@@ -446,7 +473,7 @@ void ContextDawn::initGeneralResources(Aquarium* aquarium)
         { 0, dawn::ShaderStageBit::Vertex, dawn::BindingType::UniformBuffer },
     });
 
-    lightWorldPositionBuffer = createBufferFromData(&aquarium->lightWorldPositionUniform, sizeof(aquarium->lightWorldPositionUniform), dawn::BufferUsageBit::TransferDst | dawn::BufferUsageBit::Uniform);
+    lightWorldPositionBuffer = createBufferFromData(&aquarium->lightWorldPositionUniform, sizeof(aquarium->lightWorldPositionUniform), dawn::BufferUsageBit::CopyDst | dawn::BufferUsageBit::Uniform);
     
     bindGroupWorld = makeBindGroup(groupLayoutWorld, {
         {0, lightWorldPositionBuffer, 0, sizeof(aquarium->lightWorldPositionUniform) },
@@ -499,7 +526,6 @@ void ContextDawn::KeyBoardQuit()
 // Submit commands of the frame
 void ContextDawn::DoFlush()
 {
-
     mRenderPass.EndPass();
     dawn::CommandBuffer cmd = mCommandEncoder.Finish();
     queue.Submit(1, &cmd);
@@ -524,9 +550,55 @@ void ContextDawn::showWindow()
     glfwShowWindow(mWindow);
 }
 
-void ContextDawn::showFPS(const FPSTimer &fpsTimer) {}
+void ContextDawn::showFPS(const FPSTimer &fpsTimer)
+{
+    // TODO(yizhou): Dawn doesn't support recreating swap chain if framebuffer size is changed. This will cause 
+    // 'AcquireNextImage' returns an error code on linux vulkan backend. The error is 'VK_ERROR_OUT_OF_DATE_KHR'.
+#ifdef __linux__
+    if (mBackendType == "Dawn Vulkan")
+        return;
+#endif
 
-void ContextDawn::destoryImgUI() {}
+    // Start the Dear ImGui frame
+    ImGui_ImplDawn_NewFrame();
+    ImGui_ImplGlfw_NewFrame();
+    ImGui::NewFrame();
+
+    {
+        ImGui::Begin("Aquarium Native");
+
+        std::ostringstream rendererStream;
+        rendererStream << mRenderer << " " << mBackendType << " "
+                       << mResourceHelper->getShaderVersion();
+        std::string renderer = rendererStream.str();
+        ImGui::Text(renderer.c_str());
+
+        std::ostringstream resolutionStream;
+        resolutionStream << "Resolution " << mClientWidth << "x" << mClientHeight;
+        std::string resolution = resolutionStream.str();
+        ImGui::Text(resolution.c_str());
+
+        ImGui::PlotLines("[0,100 FPS]", fpsTimer.getHistoryFps(), NUM_HISTORY_DATA, 0, NULL, 0.0f,
+                         100.0f, ImVec2(0, 40));
+
+        ImGui::PlotHistogram("[0,100 ms/frame]", fpsTimer.getHistoryFrameTime(), NUM_HISTORY_DATA,
+                             0, NULL, 0.0f, 100.0f, ImVec2(0, 40));
+
+        ImGui::Text("Application average %.3f ms/frame (%.1f FPS)",
+                    1000.0f / fpsTimer.getAverageFPS(), fpsTimer.getAverageFPS());
+        ImGui::End();
+    }
+
+    ImGui::Render();
+    ImGui_ImplDawn_RenderDrawData(ImGui::GetDrawData());
+}
+
+void ContextDawn::destoryImgUI()
+{
+    ImGui_ImplDawn_Shutdown();
+    ImGui_ImplGlfw_Shutdown();
+    ImGui::DestroyContext();
+}
 
 void ContextDawn::preFrame()
 {
