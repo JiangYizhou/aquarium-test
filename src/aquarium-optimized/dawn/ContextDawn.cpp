@@ -325,7 +325,7 @@ dawn::CommandBuffer ContextDawn::copyBufferToTexture(const dawn::BufferCopyView 
     return copy;
 }
 
-dawn::ShaderModule ContextDawn::createShaderModule(dawn::ShaderStage stage,
+dawn::ShaderModule ContextDawn::createShaderModule(utils::ShaderStage stage,
                                                    const std::string &str) const
 {
     return utils::CreateShaderModule(device, stage, str.c_str());

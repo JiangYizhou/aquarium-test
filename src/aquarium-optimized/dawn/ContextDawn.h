@@ -67,7 +67,7 @@ class ContextDawn : public Context
                                                 uint32_t level,
                                                 uint32_t slice,
                                                 dawn::Origin3D origin);
-    dawn::ShaderModule createShaderModule(dawn::ShaderStage stage, const std::string &str) const;
+    dawn::ShaderModule createShaderModule(utils::ShaderStage stage, const std::string &str) const;
     dawn::BindGroupLayout  MakeBindGroupLayout(
         std::initializer_list<dawn::BindGroupLayoutBinding> bindingsInitializer) const;
     dawn::PipelineLayout MakeBasicPipelineLayout(
