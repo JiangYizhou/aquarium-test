@@ -24,7 +24,7 @@ constexpr int cbvsrvCount = 87;
 class ContextD3D12 : public Context
 {
   public:
-    ContextD3D12();
+    ContextD3D12(BACKENDTYPE backendType);
     ~ContextD3D12();
     bool initialize(
         BACKENDTYPE backend,
@@ -127,7 +127,7 @@ class ContextD3D12 : public Context
     void stateTransition(ComPtr<ID3D12Resource> &resource,
                          D3D12_RESOURCE_STATES preState,
                          D3D12_RESOURCE_STATES transferState) const;
-    void initAvailableToggleBitset() override;
+    void initAvailableToggleBitset(BACKENDTYPE backendType) override;
 
     GLFWwindow *mWindow;
     ComPtr<ID3D12Device> m_device;

@@ -31,28 +31,27 @@ Context *ContextFactory::createContext(BACKENDTYPE backendType)
         case BACKENDTYPE::BACKENDTYPEOPENGL:
         case BACKENDTYPE::BACKENDTYPEANGLE:
             {
-                context = new ContextGL();
+                context = new ContextGL(backendType);
                 break;
             }
         case BACKENDTYPE::BACKENDTYPEDAWND3D12:
         case BACKENDTYPE::BACKENDTYPEDAWNMETAL:
         case BACKENDTYPE::BACKENDTYPEDAWNVULKAN:
             {
-
-                #ifdef ENABLE_DAWN_BACKEND
-                       context = new ContextDawn();
-                #endif
-                       break;
-             }
-        case BACKENDTYPE::BACKENDTYPED3D12:
-        {
-    #ifdef ENABLE_D3D12_BACKEND
-            context = new ContextD3D12();
-            break;
-    #endif
-        }
-    default:
-             break;
+#ifdef ENABLE_DAWN_BACKEND
+                context = new ContextDawn(backendType);
+#endif
+                break;
+            }
+            case BACKENDTYPE::BACKENDTYPED3D12:
+            {
+#ifdef ENABLE_D3D12_BACKEND
+                context = new ContextD3D12(backendType);
+                break;
+#endif
+            }
+            default:
+                break;
     }
 
     return context;

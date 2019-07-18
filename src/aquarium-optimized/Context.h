@@ -78,7 +78,7 @@ class Context
     ResourceHelper *mResourceHelper;
 
     std::bitset<static_cast<size_t>(TOGGLE::TOGGLEMAX)> mAvailableToggleBitset;
-    virtual void initAvailableToggleBitset() = 0;
+    virtual void initAvailableToggleBitset(BACKENDTYPE backendType) = 0;
 };
 
 #endif

@@ -18,7 +18,7 @@ FishModelDawn::FishModelDawn(const Context *context,
     contextDawn = static_cast<const ContextDawn *>(context);
 
     enableDynamicBufferOffset =
-        !aquarium->toggleBitset.test(static_cast<size_t>(TOGGLE::DISABLEDYNAMICBUFFEROFFSET));
+        aquarium->toggleBitset.test(static_cast<size_t>(TOGGLE::ENABLEDYNAMICBUFFEROFFSET));
 
     lightFactorUniforms.shininess      = 5.0f;
     lightFactorUniforms.specularFactor = 0.3f;

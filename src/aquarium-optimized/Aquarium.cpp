@@ -184,6 +184,10 @@ bool Aquarium::init(int argc, char **argv)
     {
         toggleBitset.set(static_cast<size_t>(TOGGLE::UPATEANDDRAWFOREACHMODEL));
     }
+    if (availableToggleBitset.test(static_cast<size_t>(TOGGLE::ENABLEDYNAMICBUFFEROFFSET)))
+    {
+        toggleBitset.set(static_cast<size_t>(TOGGLE::ENABLEDYNAMICBUFFEROFFSET));
+    }
 
     for (int i = 1; i < argc; ++i)
     {
@@ -217,14 +221,14 @@ bool Aquarium::init(int argc, char **argv)
         }
         else if (cmd == "--disable-dynamic-buffer-offset")
         {
-            if (!availableToggleBitset.test(
-                    static_cast<size_t>(TOGGLE::DISABLEDYNAMICBUFFEROFFSET)))
+            if (!availableToggleBitset.test(static_cast<size_t>(TOGGLE::ENABLEDYNAMICBUFFEROFFSET)))
             {
-                std::cerr << "Disable dynamic buffer offset is only implemented for dawn backend."
+                std::cerr << "Dynamic buffer offset is only implemented for Dawn Vulkan, Dawn "
+                             "Metal and D3D12 backend."
                           << std::endl;
                 return false;
             }
-            toggleBitset.set(static_cast<size_t>(TOGGLE::DISABLEDYNAMICBUFFEROFFSET));
+            toggleBitset.set(static_cast<size_t>(TOGGLE::ENABLEDYNAMICBUFFEROFFSET), false);
         }
         else if (cmd == "--integrated-gpu")
         {
