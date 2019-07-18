@@ -87,7 +87,15 @@ bool ContextGL::initialize(BACKENDTYPE backend,
     mClientHeight           = mode->height;
 
     glfwWindowHint(GLFW_VISIBLE, GL_FALSE);
-    mWindow = glfwCreateWindow(mClientWidth, mClientHeight, "Aquarium", nullptr, nullptr);
+    if (toggleBitset.test(static_cast<size_t>(TOGGLE::ENABLEFULLSCREENMODE)))
+    {
+        mWindow = glfwCreateWindow(mClientWidth, mClientHeight, "Aquarium", pMonitor, nullptr);
+    }
+    else
+    {
+        mWindow = glfwCreateWindow(mClientWidth, mClientHeight, "Aquarium", nullptr, nullptr);
+    }
+
     if (mWindow == nullptr)
     {
         std::cout << "Failed to open GLFW window." << std::endl;
@@ -379,6 +387,7 @@ void ContextGL::initAvailableToggleBitset()
 {
     mAvailableToggleBitset.set(static_cast<size_t>(TOGGLE::ENABLEMSAAx4));
     mAvailableToggleBitset.set(static_cast<size_t>(TOGGLE::UPATEANDDRAWFOREACHMODEL));
+    mAvailableToggleBitset.set(static_cast<size_t>(TOGGLE::ENABLEFULLSCREENMODE));
 }
 
 Buffer *ContextGL::createBuffer(int numComponents, std::vector<float> &buf, bool isIndex)

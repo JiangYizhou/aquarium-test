@@ -142,7 +142,15 @@ bool ContextDawn::initialize(
     mClientWidth            = mode->width;
     mClientHeight           = mode->height;
 
-    mWindow = glfwCreateWindow(mClientWidth, mClientHeight, "Aquarium", nullptr, nullptr);
+    if (toggleBitset.test(static_cast<size_t>(TOGGLE::ENABLEFULLSCREENMODE)))
+    {
+        mWindow = glfwCreateWindow(mClientWidth, mClientHeight, "Aquarium", pMonitor, nullptr);
+    }
+    else
+    {
+        mWindow = glfwCreateWindow(mClientWidth, mClientHeight, "Aquarium", nullptr, nullptr);
+    }
+
     if (mWindow == nullptr)
     {
         std::cout << "Failed to open GLFW window." << std::endl;
@@ -269,6 +277,7 @@ void ContextDawn::initAvailableToggleBitset()
     mAvailableToggleBitset.set(static_cast<size_t>(TOGGLE::DISABLEDYNAMICBUFFEROFFSET));
     mAvailableToggleBitset.set(static_cast<size_t>(TOGGLE::DISCRETEGPU));
     mAvailableToggleBitset.set(static_cast<size_t>(TOGGLE::INTEGRATEDGPU));
+    mAvailableToggleBitset.set(static_cast<size_t>(TOGGLE::ENABLEFULLSCREENMODE));
 }
 
 Texture *ContextDawn::createTexture(std::string name, std::string url)

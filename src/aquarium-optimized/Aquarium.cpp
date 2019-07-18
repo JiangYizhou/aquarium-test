@@ -256,6 +256,16 @@ bool Aquarium::init(int argc, char **argv)
 
             toggleBitset.set(static_cast<size_t>(TOGGLE::DISCRETEGPU));
         }
+        else if (cmd == "--enable-full-screen-mode")
+        {
+            if (!availableToggleBitset.test(static_cast<size_t>(TOGGLE::ENABLEFULLSCREENMODE)))
+            {
+                std::cerr << "Full screen mode isn't supported for the backend." << std::endl;
+                return false;
+            }
+
+            toggleBitset.set(static_cast<size_t>(TOGGLE::ENABLEFULLSCREENMODE));
+        }
         else
         {
         }

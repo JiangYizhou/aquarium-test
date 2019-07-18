@@ -123,6 +123,8 @@ enum TOGGLE : short
     // Update and draw for each model on OpenGL and Angle backend, but draw once per frame on other
     // backend.
     UPATEANDDRAWFOREACHMODEL,
+    // Support Full Screen mode
+    ENABLEFULLSCREENMODE,
     TOGGLEMAX
 };
 

@@ -94,7 +94,15 @@ bool ContextD3D12::initialize(
     mClientWidth            = mode->width;
     mClientHeight           = mode->height;
 
-    mWindow = glfwCreateWindow(mClientWidth, mClientHeight, "Aquarium", nullptr, nullptr);
+    if (toggleBitset.test(static_cast<size_t>(TOGGLE::ENABLEFULLSCREENMODE)))
+    {
+        mWindow = glfwCreateWindow(mClientWidth, mClientHeight, "Aquarium", pMonitor, nullptr);
+    }
+    else
+    {
+        mWindow = glfwCreateWindow(mClientWidth, mClientHeight, "Aquarium", nullptr, nullptr);
+    }
+
     if (mWindow == nullptr)
     {
         std::cout << "Failed to open GLFW window." << std::endl;
@@ -359,6 +367,7 @@ void ContextD3D12::initAvailableToggleBitset()
     mAvailableToggleBitset.set(static_cast<size_t>(TOGGLE::ENABLEINSTANCEDDRAWS));
     mAvailableToggleBitset.set(static_cast<size_t>(TOGGLE::DISCRETEGPU));
     mAvailableToggleBitset.set(static_cast<size_t>(TOGGLE::INTEGRATEDGPU));
+    mAvailableToggleBitset.set(static_cast<size_t>(TOGGLE::ENABLEFULLSCREENMODE));
 }
 
 void ContextD3D12::DoFlush()
