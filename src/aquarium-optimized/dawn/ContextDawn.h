@@ -25,7 +25,7 @@ enum BACKENDTYPE: short;
 class ContextDawn : public Context
 {
   public:
-    ContextDawn();
+    ContextDawn(BACKENDTYPE backendType);
     ~ContextDawn();
     bool initialize(
         BACKENDTYPE backend,
@@ -101,7 +101,7 @@ class ContextDawn : public Context
         dawn_native::Adapter *backendAdapter,
         dawn_native::BackendType backendType,
         const std::bitset<static_cast<size_t>(TOGGLE::TOGGLEMAX)> &toggleBitset);
-    void initAvailableToggleBitset() override;
+    void initAvailableToggleBitset(BACKENDTYPE backendType) override;
 
     GLFWwindow *mWindow;
     std::unique_ptr<dawn_native::Instance> instance;

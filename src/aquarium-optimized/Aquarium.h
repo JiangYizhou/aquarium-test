@@ -115,7 +115,7 @@ enum TOGGLE : short
     // The toggle is only supported on Dawn backend.
     // By default, the app will enable dynamic buffer offset.
     // The toggle is to disable dbo feature.
-    DISABLEDYNAMICBUFFEROFFSET,
+    ENABLEDYNAMICBUFFEROFFSET,
     // Select integrated gpu if available.
     INTEGRATEDGPU,
     // Select discrete gpu if available.

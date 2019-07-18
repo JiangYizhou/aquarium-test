@@ -30,10 +30,9 @@
 #include <GLFW/glfw3native.h>
 #endif
 
-ContextGL::ContextGL() 
-: mWindow(nullptr)
+ContextGL::ContextGL(BACKENDTYPE backendType) : mWindow(nullptr)
 {
-    initAvailableToggleBitset();
+    initAvailableToggleBitset(backendType);
 }
 
 ContextGL::~ContextGL()
@@ -382,7 +381,7 @@ void ContextGL::initState()
     glDepthMask(true);
 }
 
-void ContextGL::initAvailableToggleBitset()
+void ContextGL::initAvailableToggleBitset(BACKENDTYPE backendType)
 {
     mAvailableToggleBitset.set(static_cast<size_t>(TOGGLE::ENABLEMSAAx4));
     mAvailableToggleBitset.set(static_cast<size_t>(TOGGLE::UPATEANDDRAWFOREACHMODEL));

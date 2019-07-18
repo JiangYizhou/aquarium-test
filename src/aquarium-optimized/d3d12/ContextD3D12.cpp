@@ -33,7 +33,7 @@ inline void ThrowIfFailed(HRESULT hr)
     }
 }
 
-ContextD3D12::ContextD3D12()
+ContextD3D12::ContextD3D12(BACKENDTYPE backendType)
     : lightWorldPositionView({}),
       mWindow(nullptr),
       m_device(nullptr),
@@ -62,7 +62,7 @@ ContextD3D12::ContextD3D12()
     }
 
     mResourceHelper = new ResourceHelper("d3d12", "");
-    initAvailableToggleBitset();
+    initAvailableToggleBitset(backendType);
 }
 
 ContextD3D12::~ContextD3D12()
@@ -361,7 +361,7 @@ void ContextD3D12::stateTransition(ComPtr<ID3D12Resource> &resource,
     mCommandList->ResourceBarrier(1, &barrier);
 }
 
-void ContextD3D12::initAvailableToggleBitset()
+void ContextD3D12::initAvailableToggleBitset(BACKENDTYPE backendType)
 {
     mAvailableToggleBitset.set(static_cast<size_t>(TOGGLE::ENABLEMSAAx4));
     mAvailableToggleBitset.set(static_cast<size_t>(TOGGLE::ENABLEINSTANCEDDRAWS));

@@ -37,7 +37,7 @@
 
 #include "../Aquarium.h"
 
-ContextDawn::ContextDawn()
+ContextDawn::ContextDawn(BACKENDTYPE backendType)
     : queue(nullptr),
       mWindow(nullptr),
       instance(),
@@ -55,13 +55,16 @@ ContextDawn::ContextDawn()
       mEnableMSAA(false)
 {
     mResourceHelper = new ResourceHelper("dawn", "");
-    initAvailableToggleBitset();
+    initAvailableToggleBitset(backendType);
 }
 
 ContextDawn::~ContextDawn()
 {
     delete mResourceHelper;
-    destoryImgUI();
+    if (mWindow != nullptr)
+    {
+        destoryImgUI();
+    }
 
     mSceneRenderTargetView   = nullptr;
     mSceneDepthStencilView   = nullptr;
@@ -269,11 +272,15 @@ bool ContextDawn::GetHardwareAdapter(
     return true;
 }
 
-void ContextDawn::initAvailableToggleBitset()
+void ContextDawn::initAvailableToggleBitset(BACKENDTYPE backendType)
 {
     mAvailableToggleBitset.set(static_cast<size_t>(TOGGLE::ENABLEMSAAx4));
     mAvailableToggleBitset.set(static_cast<size_t>(TOGGLE::ENABLEINSTANCEDDRAWS));
-    mAvailableToggleBitset.set(static_cast<size_t>(TOGGLE::DISABLEDYNAMICBUFFEROFFSET));
+    // DBO on dawn is not supported yet
+    if (backendType != BACKENDTYPE::BACKENDTYPEDAWND3D12)
+    {
+        mAvailableToggleBitset.set(static_cast<size_t>(TOGGLE::ENABLEDYNAMICBUFFEROFFSET));
+    }
     mAvailableToggleBitset.set(static_cast<size_t>(TOGGLE::DISCRETEGPU));
     mAvailableToggleBitset.set(static_cast<size_t>(TOGGLE::INTEGRATEDGPU));
     mAvailableToggleBitset.set(static_cast<size_t>(TOGGLE::ENABLEFULLSCREENMODE));

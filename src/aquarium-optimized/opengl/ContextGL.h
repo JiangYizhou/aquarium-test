@@ -33,7 +33,7 @@ enum BACKENDTYPE: short;
 class ContextGL : public Context
 {
   public:
-    ContextGL();
+    ContextGL(BACKENDTYPE backendType);
     ~ContextGL();
     bool initialize(
         BACKENDTYPE backend,
@@ -95,7 +95,7 @@ class ContextGL : public Context
 
   private:
     void initState();
-    void initAvailableToggleBitset() override;
+    void initAvailableToggleBitset(BACKENDTYPE backendType) override;
 
     GLFWwindow *mWindow;
     std::string mGLSLVersion;
