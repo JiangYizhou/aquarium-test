@@ -6,8 +6,6 @@
 // Scene.cpp: Implements Scene.
 // Load resources including images, vertexes and programs, then group them into models.
 
-#include "Scene.h"
-
 #include <cstdio>
 #include <fstream>
 #include <iostream>
@@ -17,6 +15,8 @@
 #include "Globals.h"
 #include "Model.h"
 #include "Program.h"
+#include "Scene.h"
+
 #include "rapidjson/document.h"
 #include "rapidjson/filereadstream.h"
 #include "rapidjson/istreamwrapper.h"

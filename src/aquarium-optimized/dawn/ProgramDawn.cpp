@@ -3,13 +3,14 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
-#include "ProgramDawn.h"
+
+#include <fstream>
+#include <regex>
+#include <string>
 
 #include "ContextDawn.h"
+#include "ProgramDawn.h"
 #include "common/AQUARIUM_ASSERT.h"
-#include <fstream>
-#include <cstring>
-#include <regex>
 
 ProgramDawn::ProgramDawn(ContextDawn *context, std::string vId, std::string fId)
     : Program(vId, fId), vsModule(nullptr), fsModule(nullptr), context(context)

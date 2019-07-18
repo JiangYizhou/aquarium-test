@@ -80,7 +80,7 @@ void GenericModelGL::draw()
     contextGL->drawElements(indicesBuffer);
 }
 
-void GenericModelGL::preDraw() const
+void GenericModelGL::prepareForDraw() const
 {
     mProgram->setProgram();
     contextGL->enableBlend(mBlend);

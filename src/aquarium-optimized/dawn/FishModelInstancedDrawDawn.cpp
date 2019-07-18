@@ -5,8 +5,8 @@
 //
 // FishModelDawn.cpp: Implements fish model of Dawn.
 
-#include "FishModelInstancedDrawDawn.h"
 #include "BufferDawn.h"
+#include "FishModelInstancedDrawDawn.h"
 
 FishModelInstancedDrawDawn::FishModelInstancedDrawDawn(const Context *context,
                                                        Aquarium *aquarium,
@@ -176,7 +176,7 @@ void FishModelInstancedDrawDawn::init()
                                &fishVertexUniforms);
 }
 
-void FishModelInstancedDrawDawn::preDraw() const {}
+void FishModelInstancedDrawDawn::prepareForDraw() const {}
 
 void FishModelInstancedDrawDawn::draw()
 {

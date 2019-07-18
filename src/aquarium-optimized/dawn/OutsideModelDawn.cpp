@@ -119,7 +119,7 @@ void OutsideModelDawn::init()
     contextDawn->setBufferData(lightFactorBuffer, 0, sizeof(LightFactorUniforms), &lightFactorUniforms);
 }
 
-void OutsideModelDawn::preDraw() const
+void OutsideModelDawn::prepareForDraw() const
 {
 }
 

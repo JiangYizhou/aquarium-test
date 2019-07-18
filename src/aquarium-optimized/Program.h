@@ -9,7 +9,6 @@
 #define PROGRAM_H 1
 
 #include <string>
-#include <vector>
 
 enum UNIFORMNAME : short;
 

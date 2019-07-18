@@ -9,8 +9,7 @@
 
 #include <algorithm>
 #include <iostream>
-#include <cstdio>
-#include <cstring>
+#include <string>
 
 #include "../common/AQUARIUM_ASSERT.h"
 

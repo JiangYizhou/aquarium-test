@@ -9,13 +9,13 @@
 #ifndef TEXTURED3D12_H
 #define TEXTURED3D12_H
 
-#include "../Texture.h"
+#include <vector>
 
 #include "stdafx.h"
 
-using Microsoft::WRL::ComPtr;
+#include "../Texture.h"
 
-#include <vector>
+using Microsoft::WRL::ComPtr;
 
 class ContextD3D12;
 

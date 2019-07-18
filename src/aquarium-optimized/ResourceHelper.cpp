@@ -1,6 +1,7 @@
 #include "ResourceHelper.h"
 
 #include <sstream>
+
 #ifdef _WIN32
 #include <direct.h>
 #include "Windows.h"

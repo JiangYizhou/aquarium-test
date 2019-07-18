@@ -3,6 +3,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
+
 #include "GenericModelDawn.h"
 
 #include "../Aquarium.h"
@@ -204,7 +205,7 @@ void GenericModelDawn::init()
                                &lightFactorUniforms);
 }
 
-void GenericModelDawn::preDraw() const
+void GenericModelDawn::prepareForDraw() const
 {
     contextDawn->setBufferData(worldBuffer, 0, sizeof(WorldUniformPer), &worldUniformPer);
 }

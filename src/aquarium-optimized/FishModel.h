@@ -9,8 +9,6 @@
 #ifndef FISHMODEL_H
 #define FISHMODEL_H 1
 
-#include <string>
-
 #include "Model.h"
 
 class FishModel : public Model

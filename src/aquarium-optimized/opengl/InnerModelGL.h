@@ -9,15 +9,16 @@
 #ifndef INNERMODELGL_H
 #define INNERMODELGL_H 1
 
-#include "../Model.h"
 #include "ContextGL.h"
 #include "ProgramGL.h"
+
+#include "../Model.h"
 
 class InnerModelGL : public Model
 {
   public:
     InnerModelGL(const ContextGL *context, Aquarium *aquarium, MODELGROUP type, MODELNAME name, bool blend);
-    void preDraw() const override;
+    void prepareForDraw() const override;
     void updatePerInstanceUniforms(WorldUniforms *WorldUniforms) override;
     void init() override;
     void draw() override;

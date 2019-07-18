@@ -5,16 +5,18 @@
 //
 // DeviceDawn.cpp: Implements accessing functions to the graphics API of Dawn.
 
+#include <array>
+#include <cstring>
 #include <iostream>
 #include <sstream>
 #include <string>
 #include <vector>
+#include <dawn/dawn.h>
+#include <dawn/dawn_wsi.h>
+#include <dawn/dawncpp.h>
+#include <dawn_native/DawnNative.h>
+#include <shaderc/shaderc.hpp>
 
-#include "imgui.h"
-#include "imgui_impl_dawn.h"
-#include "imgui_impl_glfw.h"
-
-#include "../Aquarium.h"
 #include "BufferDawn.h"
 #include "ContextDawn.h"
 #include "FishModelDawn.h"
@@ -26,17 +28,14 @@
 #include "SeaweedModelDawn.h"
 #include "TextureDawn.h"
 
-#include <dawn/dawn.h>
-#include <dawn/dawn_wsi.h>
-#include <dawn/dawncpp.h>
-#include <dawn_native/DawnNative.h>
-#include <shaderc/shaderc.hpp>
 #include "common/Constants.h"
+#include "imgui.h"
+#include "imgui_impl_dawn.h"
+#include "imgui_impl_glfw.h"
 #include "utils/BackendBinding.h"
 #include "utils/ComboRenderPipelineDescriptor.h"
 
-#include <array>
-#include <cstring>
+#include "../Aquarium.h"
 
 ContextDawn::ContextDawn()
     : queue(nullptr),

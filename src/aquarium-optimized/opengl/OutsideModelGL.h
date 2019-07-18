@@ -8,6 +8,7 @@
 #pragma once
 #ifndef OutsideModelGL_H
 #define OutsideModelGL_H 1
+
 #include "ContextGL.h"
 #include "ProgramGL.h"
 
@@ -21,7 +22,7 @@ class OutsideModelGL : public Model
                    MODELGROUP type,
                    MODELNAME name,
                    bool blend);
-    void preDraw() const override;
+    void prepareForDraw() const override;
     void updatePerInstanceUniforms(WorldUniforms *worldUniforms) override;
     void init() override;
     void draw() override;

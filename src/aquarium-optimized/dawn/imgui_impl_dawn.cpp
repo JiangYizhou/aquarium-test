@@ -1,10 +1,10 @@
 // dear imgui: Renderer for Dawn
 // This needs to be used along with a Platform Binding (e.g. GLFW)
 
+#include "ProgramDawn.h"
+
 #include "imgui_impl_dawn.h"
 #include "imgui.h"
-
-#include "ProgramDawn.h"
 #include "utils/ComboRenderPipelineDescriptor.h"
 
 // Dawn data

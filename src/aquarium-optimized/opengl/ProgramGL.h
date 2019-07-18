@@ -12,18 +12,18 @@
 #ifndef PROGRAMGL_H
 #define PROGRAMGL_H 1
 
-#include "../Program.h"
-
 #ifndef SHADERLOADER_H
 #define SHADERLOADER_H
 
 #include <string>
 #include <unordered_map>
 
-#include "../Aquarium.h"
 #include "BufferGL.h"
 #include "ContextGL.h"
 #include "TextureGL.h"
+
+#include "../Aquarium.h"
+#include "../Program.h"
 
 class ProgramGL : public Program
 {

@@ -107,7 +107,7 @@ void SeaweedModelDawn::init()
     contextDawn->setBufferData(lightFactorBuffer, 0, sizeof(lightFactorUniforms), &lightFactorUniforms);
 }
 
-void SeaweedModelDawn::preDraw() const
+void SeaweedModelDawn::prepareForDraw() const
 {
     contextDawn->setBufferData(viewBuffer, 0, sizeof(WorldUniformPer), &worldUniformPer);
     contextDawn->setBufferData(timeBuffer, 0, sizeof(SeaweedPer), &seaweedPer);

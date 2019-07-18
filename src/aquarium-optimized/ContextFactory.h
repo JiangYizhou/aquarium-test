@@ -7,8 +7,6 @@
 
 #ifndef CONTEXTFACTORY
 #define CONTEXTFACTORY 1
-#include <string>
-#include "Context.h"
 
 class Context;
 enum BACKENDTYPE : short;

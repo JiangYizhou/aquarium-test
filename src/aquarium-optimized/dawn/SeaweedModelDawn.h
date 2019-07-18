@@ -9,11 +9,12 @@
 #ifndef SEAWEEDMODELDAWN_H
 #define SEAWEEDMODELDAWN_H 1
 
-#include "../SeaweedModel.h"
 #include "ContextDawn.h"
 #include "ProgramDawn.h"
 #include "dawn/dawncpp.h"
 #include "utils/ComboRenderPipelineDescriptor.h"
+
+#include "../SeaweedModel.h"
 
 class SeaweedModelDawn : public SeaweedModel
 {
@@ -22,7 +23,7 @@ class SeaweedModelDawn : public SeaweedModel
     ~SeaweedModelDawn();
 
     void init() override;
-    void preDraw() const override;
+    void prepareForDraw() const override;
     void draw() override;
 
     void updatePerInstanceUniforms(WorldUniforms *worldUniforms) override;

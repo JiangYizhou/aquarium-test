@@ -101,7 +101,7 @@ void InnerModelD3D12::init()
                                               programD3D12->getFSModule(), m_pipelineState, mBlend);
 }
 
-void InnerModelD3D12::preDraw() const {}
+void InnerModelD3D12::prepareForDraw() const {}
 
 void InnerModelD3D12::draw()
 {

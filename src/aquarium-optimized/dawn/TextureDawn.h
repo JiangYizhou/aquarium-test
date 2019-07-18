@@ -9,8 +9,9 @@
 #ifndef TEXTUREDAWN_H
 #define TEXTUREDAWN_H
 
-#include "../Texture.h"
 #include <dawn/dawncpp.h>
+
+#include "../Texture.h"
 
 class ContextDawn;
 

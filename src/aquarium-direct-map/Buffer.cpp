@@ -3,11 +3,11 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
-// Buffer.cpp: Implements the index or vertex buffer wrappers and resource bindings of OpenGL.
-
-#include "Buffer.h"
+// Buffer.cpp: Implement the index or vertex buffer wrappers and resource bindings of OpenGL.
 
 #include <iostream>
+
+#include "Buffer.h"
 
 #include "common/AQUARIUM_ASSERT.h"
 

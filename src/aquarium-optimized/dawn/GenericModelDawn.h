@@ -9,13 +9,12 @@
 #ifndef GENERICMODELDAWN_H
 #define GENERICMODELDAWN_H 1
 
-#include <string>
-
-#include "../Model.h"
 #include "ContextDawn.h"
 #include "ProgramDawn.h"
 #include "dawn/dawncpp.h"
 #include "utils/ComboRenderPipelineDescriptor.h"
+
+#include "../Model.h"
 
 class GenericModelDawn : public Model
 {
@@ -28,7 +27,7 @@ class GenericModelDawn : public Model
     ~GenericModelDawn();
 
     void init() override;
-    void preDraw() const override;
+    void prepareForDraw() const override;
     void draw() override;
 
     void updatePerInstanceUniforms(WorldUniforms *worldUniforms) override;

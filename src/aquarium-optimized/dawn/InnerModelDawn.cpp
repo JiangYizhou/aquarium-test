@@ -5,8 +5,6 @@
 //
 // InnerModelDawn.cpp: Implements inner model of Dawn.
 
-#include <cstring>
-
 #include "InnerModelDawn.h"
 
 InnerModelDawn::InnerModelDawn(const Context *context,
@@ -130,7 +128,7 @@ void InnerModelDawn::init()
     contextDawn->setBufferData(innerBuffer, 0, sizeof(InnerUniforms), &innerUniforms);
 }
 
-void InnerModelDawn::preDraw() const
+void InnerModelDawn::prepareForDraw() const
 {
 }
 

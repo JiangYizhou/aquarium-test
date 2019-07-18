@@ -6,10 +6,6 @@
 #define GLFW_EXPOSE_NATIVE_WIN32
 #include <GLFW/glfw3native.h>
 
-#include "imgui.h"
-#include "imgui_impl_dx12.h"
-#include "imgui_impl_glfw.h"
-
 #include "BufferD3D12.h"
 #include "FishModelD3D12.h"
 #include "FishModelInstancedDrawD3D12.h"
@@ -19,6 +15,10 @@
 #include "ProgramD3D12.h"
 #include "SeaweedModelD3D12.h"
 #include "TextureD3D12.h"
+
+#include "imgui.h"
+#include "imgui_impl_dx12.h"
+#include "imgui_impl_glfw.h"
 
 const CD3DX12_HEAP_PROPERTIES defaultheapProperties =
     CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT);

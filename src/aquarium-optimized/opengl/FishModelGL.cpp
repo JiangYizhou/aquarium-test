@@ -102,7 +102,7 @@ void FishModelGL::draw()
     contextGL->drawElements(indicesBuffer);
 }
 
-void FishModelGL::preDraw() const
+void FishModelGL::prepareForDraw() const
 {
     mProgram->setProgram();
     contextGL->enableBlend(mBlend);

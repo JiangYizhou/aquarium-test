@@ -6,9 +6,8 @@
 // FPSTimer.cpp: Implement fps timer.
 
 #include "FPSTimer.h"
+
 #include <cmath>
-#include <cstdlib>
-#include <list>
 
 FPSTimer::FPSTimer()
     : mTotalTime(static_cast<float>(NUM_FRAMES_TO_AVERAGE)),

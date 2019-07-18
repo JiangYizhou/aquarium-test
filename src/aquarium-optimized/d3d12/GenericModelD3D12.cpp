@@ -140,7 +140,7 @@ void GenericModelD3D12::init()
 }
 
 // Update constant buffer per frame
-void GenericModelD3D12::preDraw() const
+void GenericModelD3D12::prepareForDraw() const
 {
     CD3DX12_RANGE readRange(0, 0);
     UINT8 *m_pCbvDataBegin;
