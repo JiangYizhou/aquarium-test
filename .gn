@@ -8,6 +8,7 @@ buildconfig = "//build/config/BUILDCONFIG.gn"
 
 default_args = {
   clang_use_chrome_plugins = false
+  treat_warnings_as_errors = false
 }
 
 check_targets = [
