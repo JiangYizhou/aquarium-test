@@ -2,13 +2,13 @@
 #include "ContextD3D12.h"
 
 BufferD3D12::BufferD3D12(ContextD3D12 *context,
-                         int totalCmoponents,
+                         int totalComponents,
                          int numComponents,
                          const std::vector<float> &buffer,
                          bool isIndex)
-    : mIsIndex(isIndex), mTotoalComponents(totalCmoponents), mStride(0), mOffset(nullptr)
+    : mIsIndex(isIndex), mTotoalComponents(totalComponents), mStride(0), mOffset(nullptr)
 {
-    mSize   = totalCmoponents * sizeof(float);
+    mSize   = totalComponents * sizeof(float);
     mBuffer = context->createDefaultBuffer(buffer.data(), mSize, mUploadBuffer);
 
     // Initialize the vertex buffer view.
@@ -18,13 +18,13 @@ BufferD3D12::BufferD3D12(ContextD3D12 *context,
 }
 
 BufferD3D12::BufferD3D12(ContextD3D12 *context,
-                         int totalCmoponents,
+                         int totalComponents,
                          int numComponents,
                          const std::vector<unsigned short> &buffer,
                          bool isIndex)
-    : mIsIndex(isIndex), mTotoalComponents(totalCmoponents), mStride(0), mOffset(nullptr)
+    : mIsIndex(isIndex), mTotoalComponents(totalComponents), mStride(0), mOffset(nullptr)
 {
-    mSize   = totalCmoponents * sizeof(unsigned short);
+    mSize   = totalComponents * sizeof(unsigned short);
     mBuffer = context->createDefaultBuffer(buffer.data(), mSize, mUploadBuffer);
 
     // Initialize the vertex buffer view.

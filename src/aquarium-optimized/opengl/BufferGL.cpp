@@ -9,16 +9,16 @@
 #include "common/AQUARIUM_ASSERT.h"
 
 BufferGL::BufferGL(ContextGL *context,
-                   int totalCmoponents,
+                   int totalComponents,
                    int numComponents,
                    bool isIndex,
                    unsigned int type,
                    bool normalize)
-    : context(context),
+    : mContext(context),
       mBuf(0),
       mTarget(isIndex ? GL_ELEMENT_ARRAY_BUFFER : GL_ARRAY_BUFFER),
       mNumComponents(numComponents),
-      mTotoalComponents(totalCmoponents),
+      mTotoalComponents(totalComponents),
       mNumElements(mTotoalComponents / numComponents),
       mType(type),
       mNormalize(normalize),
@@ -30,17 +30,17 @@ BufferGL::BufferGL(ContextGL *context,
 
 void BufferGL::loadBuffer(const std::vector<float> &buf)
 {
-    context->bindBuffer(mTarget, mBuf);
-    context->uploadBuffer(mTarget, buf);
+    mContext->bindBuffer(mTarget, mBuf);
+    mContext->uploadBuffer(mTarget, buf);
 }
 
 void BufferGL::loadBuffer(const std::vector<unsigned short> &buf)
 {
-    context->bindBuffer(mTarget, mBuf);
-    context->uploadBuffer(mTarget, buf);
+    mContext->bindBuffer(mTarget, mBuf);
+    mContext->uploadBuffer(mTarget, buf);
 }
 
 BufferGL::~BufferGL()
 {
-    context->deleteBuffer(&mBuf);
+    mContext->deleteBuffer(&mBuf);
 }

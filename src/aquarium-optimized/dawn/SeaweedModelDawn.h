@@ -28,56 +28,55 @@ class SeaweedModelDawn : public SeaweedModel
 
     void updatePerInstanceUniforms(WorldUniforms *worldUniforms) override;
 
+    TextureDawn *mDiffuseTexture;
+    TextureDawn *mNormalTexture;
+    TextureDawn *mReflectionTexture;
+    TextureDawn *mSkyboxTexture;
 
-    TextureDawn *diffuseTexture;
-    TextureDawn *normalTexture;
-    TextureDawn *reflectionTexture;
-    TextureDawn *skyboxTexture;
+    BufferDawn *mPositionBuffer;
+    BufferDawn *mNormalBuffer;
+    BufferDawn *mTexCoordBuffer;
 
-    BufferDawn *positionBuffer;
-    BufferDawn *normalBuffer;
-    BufferDawn *texCoordBuffer;
-
-    BufferDawn *indicesBuffer;
+    BufferDawn *mIndicesBuffer;
     void updateSeaweedModelTime(float time) override;
 
     struct LightFactorUniforms
     {
         float shininess;
         float specularFactor;
-    } lightFactorUniforms;
+    } mLightFactorUniforms;
 
     struct SeaweedPer
     {
         float time[20];
-    } seaweedPer;
+    } mSeaweedPer;
 
     struct WorldUniformPer
     {
-        WorldUniforms worldUniforms[20];
+        WorldUniforms mWorldUniforms[20];
     };
-    WorldUniformPer worldUniformPer;
+    WorldUniformPer mWorldUniformPer;
 
   private:
-    utils::ComboVertexInputDescriptor vertexInputDescriptor;
-    dawn::RenderPipeline pipeline;
+    utils::ComboVertexInputDescriptor mVertexInputDescriptor;
+    dawn::RenderPipeline mPipeline;
 
-    dawn::BindGroupLayout groupLayoutModel;
-    dawn::BindGroupLayout groupLayoutPer;
-    dawn::PipelineLayout pipelineLayout;
+    dawn::BindGroupLayout mGroupLayoutModel;
+    dawn::BindGroupLayout mGroupLayoutPer;
+    dawn::PipelineLayout mPipelineLayout;
 
-    dawn::BindGroup bindGroupModel;
-    dawn::BindGroup bindGroupPer;
+    dawn::BindGroup mBindGroupModel;
+    dawn::BindGroup mBindGroupPer;
 
-    dawn::Buffer lightFactorBuffer;
-    dawn::Buffer timeBuffer;
-    dawn::Buffer viewBuffer;
+    dawn::Buffer mLightFactorBuffer;
+    dawn::Buffer mTimeBuffer;
+    dawn::Buffer mViewBuffer;
 
-    const ContextDawn *contextDawn;
-    ProgramDawn* programDawn;
+    const ContextDawn *mContextDawn;
+    ProgramDawn *mProgramDawn;
     Aquarium * mAquarium;
 
-    int instance;
+    int mInstance;
 };
 
 #endif // !SEAWEEDMODEL_H

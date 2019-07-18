@@ -30,7 +30,7 @@ class FishModelInstancedDrawDawn : public FishModel
     void prepareForDraw() const override;
     void draw() override;
 
-    void updatePerInstanceUniforms(WorldUniforms *WorldUniforms) override;
+    void updatePerInstanceUniforms(WorldUniforms *worldUniforms) override;
     void updateFishPerUniforms(float x,
                                float y,
                                float z,
@@ -41,18 +41,18 @@ class FishModelInstancedDrawDawn : public FishModel
                                float time,
                                int index) override;
 
-    struct FishVertexUniforms
+    struct mFishVertexUniforms
     {
         float fishLength;
         float fishWaveLength;
         float fishBendAmount;
-    } fishVertexUniforms;
+    } mFishVertexUniforms;
 
     struct LightFactorUniforms
     {
         float shininess;
         float specularFactor;
-    } lightFactorUniforms;
+    } mLightFactorUniforms;
 
     struct FishPer
     {
@@ -61,41 +61,41 @@ class FishModelInstancedDrawDawn : public FishModel
         float nextPosition[3];
         float time;
     };
-    FishPer *fishPers;
+    FishPer *mFishPers;
 
-    TextureDawn *diffuseTexture;
-    TextureDawn *normalTexture;
-    TextureDawn *reflectionTexture;
-    TextureDawn *skyboxTexture;
+    TextureDawn *mDiffuseTexture;
+    TextureDawn *mNormalTexture;
+    TextureDawn *mReflectionTexture;
+    TextureDawn *mSkyboxTexture;
 
-    BufferDawn *positionBuffer;
-    BufferDawn *normalBuffer;
-    BufferDawn *texCoordBuffer;
-    BufferDawn *tangentBuffer;
-    BufferDawn *binormalBuffer;
+    BufferDawn *mPositionBuffer;
+    BufferDawn *mNormalBuffer;
+    BufferDawn *mTexCoordBuffer;
+    BufferDawn *mTangentBuffer;
+    BufferDawn *mBinormalBuffer;
 
-    BufferDawn *indicesBuffer;
+    BufferDawn *mIndicesBuffer;
 
   private:
-    utils::ComboVertexInputDescriptor vertexInputDescriptor;
-    dawn::RenderPipeline pipeline;
+    utils::ComboVertexInputDescriptor mVertexInputDescriptor;
+    dawn::RenderPipeline mPipeline;
 
-    dawn::BindGroupLayout groupLayoutModel;
-    dawn::BindGroupLayout groupLayoutPer;
-    dawn::PipelineLayout pipelineLayout;
+    dawn::BindGroupLayout mGroupLayoutModel;
+    dawn::BindGroupLayout mGroupLayoutPer;
+    dawn::PipelineLayout mPipelineLayout;
 
-    dawn::BindGroup bindGroupModel;
-    dawn::BindGroup bindGroupPer;
+    dawn::BindGroup mBindGroupModel;
+    dawn::BindGroup mBindGroupPer;
 
-    dawn::Buffer fishVertexBuffer;
-    dawn::Buffer lightFactorBuffer;
+    dawn::Buffer mFishVertexBuffer;
+    dawn::Buffer mLightFactorBuffer;
 
-    dawn::Buffer fishPersBuffer;
+    dawn::Buffer mFishPersBuffer;
 
-    int instance;
+    int mInstance;
 
-    ProgramDawn *programDawn;
-    const ContextDawn *contextDawn;
+    ProgramDawn *mProgramDawn;
+    const ContextDawn *mContextDawn;
 };
 
 #endif
