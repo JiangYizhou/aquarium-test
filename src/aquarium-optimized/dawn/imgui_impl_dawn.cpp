@@ -28,6 +28,7 @@ ContextDawn *contextDawn(nullptr);
 
 int mIndexBufferSize  = 0;
 int mVertexBufferSize = 0;
+bool mEnableMSAA      = false;
 ImDrawVert vertexData[3000];
 ImDrawIdx indexData[3000];
 
@@ -313,7 +314,7 @@ bool ImGui_ImplDawn_CreateDeviceObjects()
     pipelineDescriptor.cDepthStencilState.depthWriteEnabled = false;
     pipelineDescriptor.cDepthStencilState.depthCompare      = dawn::CompareFunction::Always;
     pipelineDescriptor.primitiveTopology                    = dawn::PrimitiveTopology::TriangleList;
-    pipelineDescriptor.sampleCount                          = 1;
+    pipelineDescriptor.sampleCount                          = mEnableMSAA ? 4 : 1;
     pipelineDescriptor.rasterizationState                   = &rasterizationState;
 
     mPipeline = mDevice.CreateRenderPipeline(&pipelineDescriptor);
@@ -336,7 +337,7 @@ bool ImGui_ImplDawn_CreateDeviceObjects()
     return true;
 }
 
-bool ImGui_ImplDawn_Init(ContextDawn *context, dawn::TextureFormat rtv_format)
+bool ImGui_ImplDawn_Init(ContextDawn *context, dawn::TextureFormat rtv_format, bool enableMSAA)
 {
     // Setup back-end capabilities flags
     ImGuiIO &io            = ImGui::GetIO();
@@ -353,6 +354,7 @@ bool ImGui_ImplDawn_Init(ContextDawn *context, dawn::TextureFormat rtv_format)
     mVertexBuffer     = NULL;
     mIndexBufferSize  = 10000;
     mVertexBufferSize = 5000;
+    mEnableMSAA       = enableMSAA;
 
     return true;
 }
