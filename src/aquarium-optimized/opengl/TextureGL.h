@@ -12,6 +12,7 @@
 #include <string>
 #include <unordered_map>
 #include <vector>
+
 #ifdef EGL_EGL_PROTOTYPES
 #include <angle_gl.h>
 #include <memory>
@@ -24,8 +25,9 @@
 #include "glad/glad.h"
 #endif
 
-#include "../Texture.h"
 #include "ContextGL.h"
+
+#include "../Texture.h"
 
 class ContextGL;
 

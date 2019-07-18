@@ -9,11 +9,12 @@
 #ifndef INNERMODELDAWN_H
 #define INNERMODELDAWN_H 1
 
-#include "../Model.h"
 #include "ContextDawn.h"
 #include "ProgramDawn.h"
 #include "dawn/dawncpp.h"
 #include "utils/ComboRenderPipelineDescriptor.h"
+
+#include "../Model.h"
 
 class InnerModelDawn : public Model
 {
@@ -22,7 +23,7 @@ class InnerModelDawn : public Model
     ~InnerModelDawn();
 
     void init() override;
-    void preDraw() const override;
+    void prepareForDraw() const override;
     void draw() override;
     void updatePerInstanceUniforms(WorldUniforms *WorldUniforms) override;
 

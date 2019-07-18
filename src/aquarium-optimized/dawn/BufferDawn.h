@@ -10,9 +10,9 @@
 #define BUFFERDAWN_H 1
 
 #include <vector>
+#include <dawn/dawncpp.h>
 
 #include "../Buffer.h"
-#include <dawn/dawncpp.h>
 
 class ContextDawn;
 

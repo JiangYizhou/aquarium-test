@@ -29,14 +29,14 @@
 #include "Matrix.h"
 #include "Model.h"
 #include "Program.h"
+
+#include "GLFW/glfw3.h"
 #include "common/AQUARIUM_ASSERT.h"
 #include "include/CmdArgsHelper.h"
 #include "rapidjson/document.h"
 #include "rapidjson/istreamwrapper.h"
 #include "rapidjson/stringbuffer.h"
 #include "rapidjson/writer.h"
-
-#include "GLFW/glfw3.h"
 
 #define min(a,b) ((a)<(b)?(a):(b))
 
@@ -468,7 +468,7 @@ void DrawGroup(std::multimap<std::string, std::vector<float>> &group,
             if (model != currentModel)
             {
                 currentModel = model;
-                model->drawPrep(constUniforms);
+                model->prepareForDraw(constUniforms);
             }
 
             world = std::vector<float>(object.second.begin(), object.second.end());
@@ -602,7 +602,7 @@ void render() {
             Model *fish             = scene->getModels()[0];
             auto &f                 = g["fish"];
             fishConst.constUniforms = fishInfo.constUniforms;
-            fish->drawPrep(fishConst);
+            fish->prepareForDraw(fishConst);
             float fishBaseClock                  = mClock * f["fishSpeed"];
             float fishRadius                     = fishInfo.radius;
             float fishRadiusRange                = fishInfo.radiusRange;

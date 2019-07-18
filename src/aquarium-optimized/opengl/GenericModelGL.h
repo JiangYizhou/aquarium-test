@@ -9,9 +9,10 @@
 #ifndef GENERICMODELGL_H
 #define GENERICMODELGL_H 1
 
-#include "../Model.h"
 #include "ContextGL.h"
 #include "ProgramGL.h"
+
+#include "../Model.h"
 
 class GenericModelGL : public Model
 {
@@ -21,7 +22,7 @@ class GenericModelGL : public Model
                    MODELGROUP type,
                    MODELNAME name,
                    bool blend);
-    void preDraw() const override;
+    void prepareForDraw() const override;
     void updatePerInstanceUniforms(WorldUniforms *worldUniforms) override;
     void init() override;
     void draw() override;

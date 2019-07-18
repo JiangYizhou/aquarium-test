@@ -9,7 +9,6 @@
 #ifndef BUFFERGL_H
 #define BUFFERGL_H 1
 
-#include <vector>
 #ifdef EGL_EGL_PROTOTYPES
 #include <angle_gl.h>
 #include <memory>
@@ -22,8 +21,11 @@
 #include "glad/glad.h"
 #endif
 
-#include "../Buffer.h"
+#include <vector>
+
 #include "ContextGL.h"
+
+#include "../Buffer.h"
 
 class ContextGL;
 

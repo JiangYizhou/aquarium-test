@@ -18,9 +18,10 @@
 #include <string>
 #include <unordered_map>
 
-#include "../Aquarium.h"
 #include "BufferDawn.h"
 #include "TextureDawn.h"
+
+#include "../Aquarium.h"
 
 class ContextDawn;
 

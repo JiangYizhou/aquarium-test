@@ -7,9 +7,9 @@
 // Update uniforms, textures and buffers for each frame.
 
 #include "Model.h"
+#include "Globals.h"
 
 #include "common/AQUARIUM_ASSERT.h"
-#include "Globals.h"
 
 Model::Model(Program *program_,
              std::unordered_map<std::string, AttribBuffer *> *arrays,
@@ -89,7 +89,7 @@ void Model::applyTextures() const
     }
 }
 
-void Model::drawPrep(const GenericConst &constUniforms)
+void Model::prepareForDraw(const GenericConst &constUniforms)
 {
     program->use();
 
@@ -116,9 +116,9 @@ void Model::drawPrep(const GenericConst &constUniforms)
     program->setUniform("tankColorFudge", constUniforms.tankColorFudge);
 }
 
-void Model::drawPrep(const FishConst &fishConst)
+void Model::prepareForDraw(const FishConst &fishConst)
 {
-    drawPrep(fishConst.genericConst);
+    prepareForDraw(fishConst.genericConst);
 
     program->setUniform("fishBendAmount", fishConst.constUniforms.fishBendAmount);
     program->setUniform("fishLength", fishConst.constUniforms.fishLength);

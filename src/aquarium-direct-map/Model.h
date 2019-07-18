@@ -30,8 +30,8 @@ public:
         std::unordered_map<std::string, AttribBuffer *> *arrays,
         std::unordered_map<std::string, Texture *> *textures);
 
-  void drawPrep(const GenericConst &constUniforms);
-  void drawPrep(const FishConst &fishConst);
+  void prepareForDraw(const GenericConst &constUniforms);
+  void prepareForDraw(const FishConst &fishConst);
   void draw(const GenericPer &perUniforms);
   void draw(const FishPer &fishPer);
 

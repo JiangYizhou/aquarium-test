@@ -50,5 +50,5 @@ class Texture
     std::string mName;
 };
 
-#endif // ! TEXTURE_H
+#endif // !TEXTURE_H
 

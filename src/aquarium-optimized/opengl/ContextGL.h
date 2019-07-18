@@ -8,10 +8,6 @@
 #ifndef ContextGL_H
 #define ContextGL_H 1
 
-#include <vector>
-
-#include "../Context.h"
-
 #ifdef EGL_EGL_PROTOTYPES
 #include <angle_gl.h>
 #include "EGL/egl.h"
@@ -24,7 +20,11 @@
 #include "glad/glad.h"
 #endif
 
+#include <vector>
+
 #include "GLFW/glfw3.h"
+
+#include "../Context.h"
 
 class BufferGL;
 class TextureGL;

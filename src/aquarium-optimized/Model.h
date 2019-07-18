@@ -12,8 +12,7 @@
 #ifndef MODEL_H
 #define MODEL_H 1
 
-#include <cstdio>
-#include <cstring>
+#include <string>
 #include <vector>
 
 #include "Aquarium.h"
@@ -34,7 +33,7 @@ class Model
     Model(MODELGROUP type, MODELNAME name, bool blend)
         : mProgram(nullptr), mBlend(blend), mName(name) {}
     virtual ~Model();
-    virtual void preDraw() const     = 0;
+    virtual void prepareForDraw() const     = 0;
     virtual void updatePerInstanceUniforms(WorldUniforms* worldUniforms) = 0;
     virtual void draw() = 0;
 
@@ -50,8 +49,6 @@ class Model
     bool mBlend;
     MODELNAME mName;
 
-  private:
-    //MODELGROUP mType;
 };
 
 #endif

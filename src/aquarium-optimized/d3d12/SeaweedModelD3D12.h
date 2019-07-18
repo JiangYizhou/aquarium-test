@@ -9,11 +9,12 @@
 #ifndef SEAWEEDMODELD3D12_H
 #define SEAWEEDMODELD3D12_H 1
 
-#include "../SeaweedModel.h"
 #include "BufferD3D12.h"
 #include "ContextD3D12.h"
 #include "ProgramD3D12.h"
 #include "TextureD3D12.h"
+
+#include "../SeaweedModel.h"
 
 class SeaweedModelD3D12 : public SeaweedModel
 {
@@ -25,7 +26,7 @@ class SeaweedModelD3D12 : public SeaweedModel
                       bool blend);
 
     void init() override;
-    void preDraw() const override;
+    void prepareForDraw() const override;
     void draw() override;
 
     void updatePerInstanceUniforms(WorldUniforms *worldUniforms) override;

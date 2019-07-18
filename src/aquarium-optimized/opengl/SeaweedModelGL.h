@@ -9,9 +9,10 @@
 #ifndef SEAWEEDMODELGL_H
 #define SEAWEEDMODELGL_H 1
 
-#include "../SeaweedModel.h"
-#include "ProgramGL.h"
 #include "ContextGL.h"
+#include "ProgramGL.h"
+
+#include "../SeaweedModel.h"
 
 class SeaweedModelGL : public SeaweedModel
 {
@@ -21,7 +22,7 @@ class SeaweedModelGL : public SeaweedModel
                    MODELGROUP type,
                    MODELNAME name,
                    bool blend);
-    void preDraw() const override;
+    void prepareForDraw() const override;
     void updatePerInstanceUniforms(WorldUniforms *worldUniforms) override;
     void init() override;
     void draw() override;

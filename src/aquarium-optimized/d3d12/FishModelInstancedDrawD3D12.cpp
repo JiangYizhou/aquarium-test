@@ -5,8 +5,8 @@
 //
 // FishModelD3D12.cpp: Implements fish model of D3D12.
 
-#include "FishModelInstancedDrawD3D12.h"
 #include "BufferD3D12.h"
+#include "FishModelInstancedDrawD3D12.h"
 
 FishModelInstancedDrawD3D12::FishModelInstancedDrawD3D12(Context *context,
                                                          Aquarium *aquarium,
@@ -152,7 +152,7 @@ void FishModelInstancedDrawD3D12::init()
 
 }
 
-void FishModelInstancedDrawD3D12::preDraw() const {}
+void FishModelInstancedDrawD3D12::prepareForDraw() const {}
 
 void FishModelInstancedDrawD3D12::draw()
 {

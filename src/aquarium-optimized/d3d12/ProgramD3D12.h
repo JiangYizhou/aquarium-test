@@ -10,7 +10,6 @@
 #ifndef PROGRAMD3D_H
 #define PROGRAMD3D_H 1
 
-#include "../Program.h"
 
 #ifndef SHADERLOADER_H
 #define SHADERLOADER_H
@@ -18,10 +17,11 @@
 #include <string>
 #include <unordered_map>
 
-#include "../Aquarium.h"
-
 #include "stdafx.h"
-// using namespace DirectX;
+
+#include "../Aquarium.h"
+#include "../Program.h"
+
 using Microsoft::WRL::ComPtr;
 
 class ContextD3D12;

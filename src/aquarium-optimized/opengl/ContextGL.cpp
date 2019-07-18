@@ -11,20 +11,19 @@
 #include <iostream>
 #include <sstream>
 
-#include "imgui.h"
-#include "imgui_impl_glfw.h"
-#include "imgui_impl_opengl3.h"
-
 #include "BufferGL.h"
 #include "ContextGL.h"
-#include "ProgramGL.h"
-#include "TextureGL.h"
-
 #include "FishModelGL.h"
 #include "GenericModelGL.h"
 #include "InnerModelGL.h"
 #include "OutsideModelGL.h"
+#include "ProgramGL.h"
 #include "SeaweedModelGL.h"
+#include "TextureGL.h"
+
+#include "imgui.h"
+#include "imgui_impl_glfw.h"
+#include "imgui_impl_opengl3.h"
 
 #ifdef EGL_EGL_PROTOTYPES
 #define GLFW_EXPOSE_NATIVE_WIN32

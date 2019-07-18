@@ -74,7 +74,7 @@ void OutsideModelGL::draw()
     contextGL->drawElements(indicesBuffer);
 }
 
-void OutsideModelGL::preDraw() const
+void OutsideModelGL::prepareForDraw() const
 {
     mProgram->setProgram();
     contextGL->enableBlend(mBlend);

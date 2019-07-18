@@ -9,11 +9,12 @@
 #ifndef INNERMODELD3D12_H
 #define INNERMODELD3D12_H 1
 
-#include "../Model.h"
 #include "BufferD3D12.h"
 #include "ContextD3D12.h"
 #include "ProgramD3D12.h"
 #include "TextureD3D12.h"
+
+#include "../Model.h"
 
 class InnerModelD3D12 : public Model
 {
@@ -25,7 +26,7 @@ class InnerModelD3D12 : public Model
                     bool blend);
 
     void init() override;
-    void preDraw() const override;
+    void prepareForDraw() const override;
     void draw() override;
     void updatePerInstanceUniforms(WorldUniforms *WorldUniforms) override;
 

@@ -5,12 +5,11 @@
 //
 // TextureDawn.cpp: Wrap textures of Dawn. Load image files and wrap into a Dawn texture.
 
-#include "TextureDawn.h"
-
 #include <algorithm>
 #include <cmath>
 
 #include "ContextDawn.h"
+#include "TextureDawn.h"
 
 #include "common/AQUARIUM_ASSERT.h"
 

@@ -8,8 +8,6 @@
 // Compiles OpenGL shaders and check if compiled success.
 // Apply Buffers, Textures and Uniforms to program.
 
-#include "ProgramGL.h"
-
 #ifdef EGL_EGL_PROTOTYPES
 #include <angle_gl.h>
 #include <memory>
@@ -21,19 +19,19 @@
 #else
 #include "glad/glad.h"
 #endif
-#include <cstdio>
-#include <string>
-#include <vector>
-#include <iostream>
+
 #include <fstream>
-#include <cstdlib>
-#include <cstring>
-#include "ProgramGL.h"
+#include <iostream>
 #include <map>
 #include <regex>
+#include <string>
+#include <vector>
+
 #include "common/AQUARIUM_ASSERT.h"
-#include "../Texture.h"
+#include "ProgramGL.h"
+
 #include "../Buffer.h"
+#include "../Texture.h"
 
 ProgramGL::ProgramGL(ContextGL *context, std::string vId, std::string fId)
     : Program(vId, fId),

@@ -4,16 +4,15 @@
 // found in the LICENSE file.
 //
 // Aquarium.cpp: Create context for specific graphics API.
-// Data preparation, load vertex and index buffer, images and shders.
+// Data preparation, load vertex and index buffer, images and shaders.
 // Implements logic of rendering background, fishes, seaweeds and
 // other models. Calculate fish count for each type of fish.
 // Update uniforms for each frame.
 
-#include <iostream>
-
 #include <algorithm>
 #include <cmath>
 #include <fstream>
+#include <iostream>
 
 #include "Aquarium.h"
 #include "ContextFactory.h"
@@ -22,9 +21,11 @@
 #include "Program.h"
 #include "SeaweedModel.h"
 #include "Texture.h"
+
 #include "common/AQUARIUM_ASSERT.h"
 #include "include/CmdArgsHelper.h"
 #include "opengl/ContextGL.h"
+
 #include "rapidjson/document.h"
 #include "rapidjson/istreamwrapper.h"
 #include "rapidjson/stringbuffer.h"
@@ -668,7 +669,7 @@ void Aquarium::drawFishes()
 
         if (updateAndDrawForEachFish)
         {
-            model->preDraw();
+            model->prepareForDraw();
         }
 
         float fishBaseClock   = g.mclock * g_fishSpeed;
@@ -756,7 +757,7 @@ void Aquarium::updateWorldMatrixAndDraw(Model *model)
             updateWorldProjections(world.data());
             if (updateAndDrawForEachFish)
             {
-                model->preDraw();
+                model->prepareForDraw();
                 model->updatePerInstanceUniforms(&worldUniforms);
                 model->draw();
             }
@@ -769,7 +770,7 @@ void Aquarium::updateWorldMatrixAndDraw(Model *model)
 
     if (!updateAndDrawForEachFish)
     {
-        model->preDraw();
+        model->prepareForDraw();
         model->draw();
     }
 }

@@ -3,7 +3,10 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
+
+#include "Aquarium.h"
 #include "ContextFactory.h"
+
 #include "opengl/ContextGL.h"
 #ifdef ENABLE_DAWN_BACKEND
 #include "dawn/ContextDawn.h"
@@ -11,8 +14,6 @@
 #ifdef ENABLE_D3D12_BACKEND
 #include "d3d12/ContextD3D12.h"
 #endif
-
-#include "Aquarium.h"
 
 ContextFactory::ContextFactory()
     :context(nullptr)

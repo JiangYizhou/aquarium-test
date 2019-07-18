@@ -85,7 +85,7 @@ void InnerModelGL::draw()
     contextGL->drawElements(indicesBuffer);
 }
 
-void InnerModelGL::preDraw() const
+void InnerModelGL::prepareForDraw() const
 {
     mProgram->setProgram();
     contextGL->enableBlend(mBlend);

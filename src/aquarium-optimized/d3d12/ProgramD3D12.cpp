@@ -1,9 +1,8 @@
-#include "ProgramD3D12.h"
+#include <cstring>
+#include <fstream>
 
 #include "ContextD3D12.h"
-
-#include <string.h>
-#include <fstream>
+#include "ProgramD3D12.h"
 
 ProgramD3D12::ProgramD3D12(ContextD3D12 *context, std::string vId, std::string fId)
     : Program(vId, fId), vertexShader(nullptr), pixelShader(nullptr), context(context)

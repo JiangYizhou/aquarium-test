@@ -9,13 +9,13 @@
 #ifndef CONTEXTDAWN_H
 #define CONTEXTDAWN_H
 
-#include "../Context.h"
-
 #include <dawn/dawncpp.h>
 #include <dawn_native/DawnNative.h>
-#include "utils/DawnHelpers.h"
 
 #include "GLFW/glfw3.h"
+#include "utils/DawnHelpers.h"
+
+#include "../Context.h"
 
 class TextureDawn;
 class BufferDawn;

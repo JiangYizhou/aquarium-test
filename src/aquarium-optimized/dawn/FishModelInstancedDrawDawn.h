@@ -9,13 +9,12 @@
 #ifndef FISHMODELINSTANCEDDRAWDAWN_H
 #define FISHMODELINSTANCEDDRAWDAWN_H 1
 
-#include <string>
-
-#include "../FishModel.h"
 #include "ContextDawn.h"
 #include "ProgramDawn.h"
 #include "dawn/dawncpp.h"
 #include "utils/ComboRenderPipelineDescriptor.h"
+
+#include "../FishModel.h"
 
 class FishModelInstancedDrawDawn : public FishModel
 {
@@ -28,7 +27,7 @@ class FishModelInstancedDrawDawn : public FishModel
     ~FishModelInstancedDrawDawn();
 
     void init() override;
-    void preDraw() const override;
+    void prepareForDraw() const override;
     void draw() override;
 
     void updatePerInstanceUniforms(WorldUniforms *WorldUniforms) override;
