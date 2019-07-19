@@ -464,12 +464,12 @@ class Aquarium
     std::unordered_map<std::string, Texture *> mTextureMap;
     std::unordered_map<std::string, Program *> mProgramMap;
     Model *mAquariumModels[MODELNAME::MODELMAX];
-    Context *context;
-    FPSTimer fpsTimer;  // object to measure frames per second;
+    Context *mContext;
+    FPSTimer mFpsTimer;  // object to measure frames per second;
     int mFishCount;
     BACKENDTYPE mBackendType;
-    ContextFactory *factory;
-    std::vector<std::string> skyUrls;
+    ContextFactory *mFactory;
+    std::vector<std::string> mSkyUrls;
 };
 
 #endif

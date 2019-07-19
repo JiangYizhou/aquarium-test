@@ -19,43 +19,43 @@ class InnerModelGL : public Model
   public:
     InnerModelGL(const ContextGL *context, Aquarium *aquarium, MODELGROUP type, MODELNAME name, bool blend);
     void prepareForDraw() const override;
-    void updatePerInstanceUniforms(const WorldUniforms &WorldUniforms) override;
+    void updatePerInstanceUniforms(const WorldUniforms &worldUniforms) override;
     void init() override;
     void draw() override;
 
-    std::pair<float *, int> worldViewProjectionUniform;
-    std::pair<float *, int> worldUniform;
-    std::pair<float*, int> worldInverseUniform;
-    std::pair<float *, int> worldInverseTransposeUniform;
+    std::pair<float *, int> mWorldViewProjectionUniform;
+    std::pair<float *, int> mWorldUniform;
+    std::pair<float *, int> mWorldInverseUniform;
+    std::pair<float *, int> mWorldInverseTransposeUniform;
 
-    std::pair<float *, int> viewInverseUniform;
-    std::pair<float *, int> lightWorldPosUniform;
+    std::pair<float *, int> mViewInverseUniform;
+    std::pair<float *, int> mLightWorldPosUniform;
 
-    std::pair<float, int> etaUniform;
-    std::pair<float, int> tankColorFudgeUniform;
-    std::pair<float, int> refractionFudgeUniform;
+    std::pair<float, int> mEtaUniform;
+    std::pair<float, int> mTankColorFudgeUniform;
+    std::pair<float, int> mRefractionFudgeUniform;
 
-    std::pair<float, int> fogPowerUniform;
-    std::pair<float, int> fogMultUniform;
-    std::pair<float, int> fogOffsetUniform;
-    std::pair<float *, int> fogColorUniform;
+    std::pair<float, int> mFogPowerUniform;
+    std::pair<float, int> mFogMultUniform;
+    std::pair<float, int> mFogOffsetUniform;
+    std::pair<float *, int> mFogColorUniform;
 
-    std::pair<TextureGL *, int> diffuseTexture;
-    std::pair<TextureGL *, int> normalTexture;
-    std::pair<TextureGL *, int> reflectionTexture;
-    std::pair<TextureGL *, int> skyboxTexture;
+    std::pair<TextureGL *, int> mDiffuseTexture;
+    std::pair<TextureGL *, int> mNormalTexture;
+    std::pair<TextureGL *, int> mReflectionTexture;
+    std::pair<TextureGL *, int> mSkyboxTexture;
 
-    std::pair<BufferGL *, int> positionBuffer;
-    std::pair<BufferGL *, int> normalBuffer;
-    std::pair<BufferGL *, int> texCoordBuffer;
+    std::pair<BufferGL *, int> mPositionBuffer;
+    std::pair<BufferGL *, int> mNormalBuffer;
+    std::pair<BufferGL *, int> mTexCoordBuffer;
 
-    std::pair<BufferGL *, int> tangentBuffer;
-    std::pair<BufferGL *, int> binormalBuffer;
+    std::pair<BufferGL *, int> mTangentBuffer;
+    std::pair<BufferGL *, int> mBiNormalBuffer;
 
-    BufferGL *indicesBuffer;
+    BufferGL *mIndicesBuffer;
 
   private:
-    const ContextGL *contextGL;
+    const ContextGL *mContextGL;
 };
 
 #endif // !INNERMODELGL_H

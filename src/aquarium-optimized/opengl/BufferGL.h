@@ -53,7 +53,7 @@ class BufferGL : public Buffer
     void loadBuffer(const std::vector<unsigned short> &buf);
 
   private:
-    ContextGL *context;
+    ContextGL *mContext;
     unsigned int mBuf;
     unsigned int mTarget;
     int mNumComponents;

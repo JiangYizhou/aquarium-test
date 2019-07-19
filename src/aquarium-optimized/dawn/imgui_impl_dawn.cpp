@@ -12,8 +12,8 @@ dawn::Device mDevice(nullptr);
 dawn::RenderPipeline mPipeline(nullptr);
 dawn::BindGroup mBindGroup(nullptr);
 dawn::TextureFormat mFormat(dawn::TextureFormat::RGBA8Unorm);
-dawn::ShaderModule vsModule(nullptr);
-dawn::ShaderModule fsModule(nullptr);
+dawn::ShaderModule mVsModule(nullptr);
+dawn::ShaderModule mFsModule(nullptr);
 
 dawn::Buffer mIndexBuffer(nullptr);
 dawn::Buffer mVertexBuffer(nullptr);
@@ -23,14 +23,14 @@ dawn::Texture mTexture(nullptr);
 dawn::TextureView mTextureView;
 dawn::Sampler mSampler(nullptr);
 
-ProgramDawn *programDawn(nullptr);
-ContextDawn *contextDawn(nullptr);
+ProgramDawn *mProgramDawn(nullptr);
+ContextDawn *mContextDawn(nullptr);
 
 int mIndexBufferSize  = 0;
 int mVertexBufferSize = 0;
 bool mEnableMSAA      = false;
-ImDrawVert vertexData[3000];
-ImDrawIdx indexData[3000];
+ImDrawVert mVertexData[3000];
+ImDrawIdx mIndexData[3000];
 
 struct VERTEX_CONSTANT_BUFFER
 {
@@ -111,8 +111,8 @@ void ImGui_ImplDawn_RenderDrawData(ImDrawData *draw_data)
     // Upload vertex/index data into a single contiguous GPU buffer
     uint32_t vtx_dst = 0;
     uint32_t idx_dst = 0;
-    ImDrawVert *pVertex = vertexData;
-    ImDrawIdx *pIndex   = indexData;
+    ImDrawVert *pVertex = mVertexData;
+    ImDrawIdx *pIndex   = mIndexData;
     for (int n = 0; n < draw_data->CmdListsCount; n++)
     {
         const ImDrawList *cmd_list = draw_data->CmdLists[n];
@@ -127,10 +127,10 @@ void ImGui_ImplDawn_RenderDrawData(ImDrawData *draw_data)
     vtx_dst = vtx_dst % 4 == 0 ? vtx_dst : vtx_dst + 4 - vtx_dst % 4;
     idx_dst = idx_dst % 4 == 0 ? idx_dst : idx_dst + 4 - idx_dst % 4;
 
-    contextDawn->setBufferData(mVertexBuffer, 0, vtx_dst, vertexData);
-    contextDawn->setBufferData(mIndexBuffer, 0, idx_dst, indexData);
+    mContextDawn->setBufferData(mVertexBuffer, 0, vtx_dst, mVertexData);
+    mContextDawn->setBufferData(mIndexBuffer, 0, idx_dst, mIndexData);
 
-    const dawn::RenderPassEncoder& pass = contextDawn->getRenderPass();
+    const dawn::RenderPassEncoder &pass = mContextDawn->getRenderPass();
 
     // Setup desired Dawn state
     ImGui_ImplDawn_SetupRenderState(draw_data, pass);
@@ -190,18 +190,18 @@ static void ImGui_ImplDawn_CreateFontsTexture()
         descriptor.format          = mFormat;
         descriptor.mipLevelCount   = 1;
         descriptor.usage = dawn::TextureUsageBit::CopyDst | dawn::TextureUsageBit::Sampled;
-        mTexture         = contextDawn->createTexture(descriptor);
+        mTexture                   = mContextDawn->createTexture(descriptor);
 
-        mStagingBuffer = contextDawn->createBufferFromData(
-            pixels, width * height * 4, dawn::BufferUsageBit::CopySrc);
+        mStagingBuffer = mContextDawn->createBufferFromData(pixels, width * height * 4,
+                                                            dawn::BufferUsageBit::CopySrc);
         dawn::BufferCopyView bufferCopyView =
-            contextDawn->createBufferCopyView(mStagingBuffer, 0, width * 4, height);
+            mContextDawn->createBufferCopyView(mStagingBuffer, 0, width * 4, height);
         dawn::TextureCopyView textureCopyView =
-            contextDawn->createTextureCopyView(mTexture, 0, 0, {0, 0, 0});
+            mContextDawn->createTextureCopyView(mTexture, 0, 0, {0, 0, 0});
         dawn::Extent3D copySize = {static_cast<uint32_t>(width), static_cast<uint32_t>(height), 1};
         dawn::CommandBuffer copyCommand =
-            contextDawn->copyBufferToTexture(bufferCopyView, textureCopyView, copySize);
-        contextDawn->queue.Submit(1, &copyCommand);
+            mContextDawn->copyBufferToTexture(bufferCopyView, textureCopyView, copySize);
+        mContextDawn->queue.Submit(1, &copyCommand);
 
         // Create texture view
         dawn::TextureViewDescriptor viewDescriptor;
@@ -226,7 +226,7 @@ static void ImGui_ImplDawn_CreateFontsTexture()
         samplerDesc.compare = dawn::CompareFunction::Always;
         samplerDesc.mipmapFilter    = dawn::FilterMode::Linear;
 
-        mSampler = contextDawn->createSampler(samplerDesc);
+        mSampler = mContextDawn->createSampler(samplerDesc);
     }
 
     io.Fonts->TexID = (ImTextureID)mTextureView.Get();
@@ -237,47 +237,47 @@ bool ImGui_ImplDawn_CreateDeviceObjects()
     if (!mDevice)
         return false;
 
-    utils::ComboVertexInputDescriptor vertexInputDescriptor;
-    vertexInputDescriptor.cBuffers[0].attributeCount    = 3;
-    vertexInputDescriptor.cBuffers[0].stride            = sizeof(ImDrawVert);
-    vertexInputDescriptor.cAttributes[0].format         = dawn::VertexFormat::Float2;
-    vertexInputDescriptor.cAttributes[0].shaderLocation = 0;
-    vertexInputDescriptor.cAttributes[0].offset         = 0;
-    vertexInputDescriptor.cAttributes[1].format         = dawn::VertexFormat::Float2;
-    vertexInputDescriptor.cAttributes[1].shaderLocation = 1;
-    vertexInputDescriptor.cAttributes[1].offset         = IM_OFFSETOF(ImDrawVert, uv);
-    vertexInputDescriptor.cAttributes[2].format         = dawn::VertexFormat::UChar4Norm;
-    vertexInputDescriptor.cAttributes[2].shaderLocation = 2;
-    vertexInputDescriptor.cAttributes[2].offset         = IM_OFFSETOF(ImDrawVert, col);
+    utils::ComboVertexInputDescriptor mVertexInputDescriptor;
+    mVertexInputDescriptor.cBuffers[0].attributeCount    = 3;
+    mVertexInputDescriptor.cBuffers[0].stride            = sizeof(ImDrawVert);
+    mVertexInputDescriptor.cAttributes[0].format         = dawn::VertexFormat::Float2;
+    mVertexInputDescriptor.cAttributes[0].shaderLocation = 0;
+    mVertexInputDescriptor.cAttributes[0].offset         = 0;
+    mVertexInputDescriptor.cAttributes[1].format         = dawn::VertexFormat::Float2;
+    mVertexInputDescriptor.cAttributes[1].shaderLocation = 1;
+    mVertexInputDescriptor.cAttributes[1].offset         = IM_OFFSETOF(ImDrawVert, uv);
+    mVertexInputDescriptor.cAttributes[2].format         = dawn::VertexFormat::UChar4Norm;
+    mVertexInputDescriptor.cAttributes[2].shaderLocation = 2;
+    mVertexInputDescriptor.cAttributes[2].offset         = IM_OFFSETOF(ImDrawVert, col);
 
-    vertexInputDescriptor.cBuffers[0].attributes        = &vertexInputDescriptor.cAttributes[0];
-    vertexInputDescriptor.bufferCount                   = 1;
-    vertexInputDescriptor.indexFormat                   = dawn::IndexFormat::Uint16;
+    mVertexInputDescriptor.cBuffers[0].attributes = &mVertexInputDescriptor.cAttributes[0];
+    mVertexInputDescriptor.bufferCount            = 1;
+    mVertexInputDescriptor.indexFormat            = dawn::IndexFormat::Uint16;
 
     // Create bind group layout
-    dawn::BindGroupLayout layout = contextDawn->MakeBindGroupLayout(
+    dawn::BindGroupLayout layout = mContextDawn->MakeBindGroupLayout(
         {{0, dawn::ShaderStageBit::Vertex, dawn::BindingType::UniformBuffer},
          {1, dawn::ShaderStageBit::Fragment, dawn::BindingType::Sampler},
          {2, dawn::ShaderStageBit::Fragment, dawn::BindingType::SampledTexture}});
 
-    dawn::PipelineLayout pipelineLayout = contextDawn->MakeBasicPipelineLayout({layout});
+    dawn::PipelineLayout mPipelineLayout = mContextDawn->MakeBasicPipelineLayout({layout});
 
-    const ResourceHelper *resourceHelper = contextDawn->getResourceHelper();
+    const ResourceHelper *resourceHelper = mContextDawn->getResourceHelper();
     const std::string &programPath       = resourceHelper->getProgramPath();
-    programDawn = new ProgramDawn(contextDawn, programPath + "imguiVertexShader",
-                                  programPath + "imguiFragmentShader");
-    programDawn->loadProgram();
+    mProgramDawn = new ProgramDawn(mContextDawn, programPath + "imguiVertexShader",
+                                   programPath + "imguiFragmentShader");
+    mProgramDawn->loadProgram();
 
-    const dawn::ShaderModule &vsModule = programDawn->getVSModule();
-    const dawn::ShaderModule &fsModule = programDawn->getFSModule();
+    const dawn::ShaderModule &mVsModule = mProgramDawn->getVSModule();
+    const dawn::ShaderModule &mFsModule = mProgramDawn->getFSModule();
 
     dawn::PipelineStageDescriptor cVertexStage;
     cVertexStage.entryPoint = "main";
-    cVertexStage.module     = vsModule;
+    cVertexStage.module     = mVsModule;
 
     dawn::PipelineStageDescriptor cFragmentStage;
     cFragmentStage.entryPoint = "main";
-    cFragmentStage.module     = fsModule;
+    cFragmentStage.module     = mFsModule;
 
     dawn::BlendDescriptor blendDescriptor;
     blendDescriptor.operation = dawn::BlendOperation::Add;
@@ -301,23 +301,23 @@ bool ImGui_ImplDawn_CreateDeviceObjects()
     rasterizationState.depthBiasSlopeScale = 0.0;
     rasterizationState.depthBiasClamp      = 0.0;
 
-    // create graphics pipeline
-    utils::ComboRenderPipelineDescriptor pipelineDescriptor(mDevice);
-    pipelineDescriptor.layout                    = pipelineLayout;
-    pipelineDescriptor.cVertexStage.module       = vsModule;
-    pipelineDescriptor.cFragmentStage.module     = fsModule;
-    pipelineDescriptor.vertexInput               = &vertexInputDescriptor;
-    pipelineDescriptor.depthStencilState         = &pipelineDescriptor.cDepthStencilState;
-    pipelineDescriptor.cDepthStencilState.format = dawn::TextureFormat::Depth24PlusStencil8;
-    pipelineDescriptor.cColorStates[0]           = &ColorStateDescriptor;
-    pipelineDescriptor.cColorStates[0]->format   = mFormat;
-    pipelineDescriptor.cDepthStencilState.depthWriteEnabled = false;
-    pipelineDescriptor.cDepthStencilState.depthCompare      = dawn::CompareFunction::Always;
-    pipelineDescriptor.primitiveTopology                    = dawn::PrimitiveTopology::TriangleList;
-    pipelineDescriptor.sampleCount                          = mEnableMSAA ? 4 : 1;
-    pipelineDescriptor.rasterizationState                   = &rasterizationState;
+    // create graphics mPipeline
+    utils::ComboRenderPipelineDescriptor mPipelineDescriptor(mDevice);
+    mPipelineDescriptor.layout                    = mPipelineLayout;
+    mPipelineDescriptor.cVertexStage.module       = mVsModule;
+    mPipelineDescriptor.cFragmentStage.module     = mFsModule;
+    mPipelineDescriptor.vertexInput               = &mVertexInputDescriptor;
+    mPipelineDescriptor.depthStencilState         = &mPipelineDescriptor.cDepthStencilState;
+    mPipelineDescriptor.cDepthStencilState.format = dawn::TextureFormat::Depth24PlusStencil8;
+    mPipelineDescriptor.cColorStates[0]           = &ColorStateDescriptor;
+    mPipelineDescriptor.cColorStates[0]->format   = mFormat;
+    mPipelineDescriptor.cDepthStencilState.depthWriteEnabled = false;
+    mPipelineDescriptor.cDepthStencilState.depthCompare      = dawn::CompareFunction::Always;
+    mPipelineDescriptor.primitiveTopology  = dawn::PrimitiveTopology::TriangleList;
+    mPipelineDescriptor.sampleCount        = mEnableMSAA ? 4 : 1;
+    mPipelineDescriptor.rasterizationState = &rasterizationState;
 
-    mPipeline = mDevice.CreateRenderPipeline(&pipelineDescriptor);
+    mPipeline = mDevice.CreateRenderPipeline(&mPipelineDescriptor);
 
     ImGui_ImplDawn_CreateFontsTexture();
 
@@ -329,10 +329,10 @@ bool ImGui_ImplDawn_CreateDeviceObjects()
 
     mConstantBuffer = mDevice.CreateBuffer(&descriptor);
 
-    mBindGroup =
-        contextDawn->makeBindGroup(layout, {{0, mConstantBuffer, 0, sizeof(VERTEX_CONSTANT_BUFFER)},
-                                            {1, mSampler},
-                                            {2, mTextureView}});
+    mBindGroup = mContextDawn->makeBindGroup(
+        layout, {{0, mConstantBuffer, 0, sizeof(VERTEX_CONSTANT_BUFFER)},
+                 {1, mSampler},
+                 {2, mTextureView}});
 
     return true;
 }
@@ -348,7 +348,7 @@ bool ImGui_ImplDawn_Init(ContextDawn *context, dawn::TextureFormat rtv_format, b
 
     mDevice     = context->getDevice();
     mFormat     = rtv_format;
-    contextDawn = context;
+    mContextDawn = context;
 
     mIndexBuffer      = NULL;
     mVertexBuffer     = NULL;
@@ -361,12 +361,12 @@ bool ImGui_ImplDawn_Init(ContextDawn *context, dawn::TextureFormat rtv_format, b
 
 void ImGui_ImplDawn_Shutdown()
 {
-    delete programDawn;
+    delete mProgramDawn;
 
     mPipeline  = nullptr;
     mBindGroup = nullptr;
-    vsModule   = nullptr;
-    fsModule   = nullptr;
+    mVsModule  = nullptr;
+    mFsModule  = nullptr;
 
     mIndexBuffer  = nullptr;
     mVertexBuffer = nullptr;

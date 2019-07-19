@@ -46,7 +46,7 @@ class Context
     virtual Buffer *createBuffer(int numComponents,
                                  std::vector<unsigned short> *buffer,
                                  bool isIndex)                                                = 0;
-    virtual Program *createProgram(const std::string &vId, const std::string &fId)            = 0;
+    virtual Program *createProgram(const std::string &mVId, const std::string &mFId)          = 0;
     virtual void setWindowTitle(const std::string &text)                                      = 0;
     virtual bool ShouldQuit()                                                                 = 0;
     virtual void KeyBoardQuit()                                                               = 0;

@@ -69,7 +69,7 @@ class ContextGL : public Context
     void uploadBuffer(unsigned int target, const std::vector<float> &buf);
     void uploadBuffer(unsigned int target, const std::vector<unsigned short> &buf);
 
-    Program *createProgram(const std::string &vId, const std::string &fId) override;
+    Program *createProgram(const std::string &mVId, const std::string &mFId) override;
     unsigned int generateProgram();
     void setProgram(unsigned int program);
     void deleteProgram(unsigned int program);

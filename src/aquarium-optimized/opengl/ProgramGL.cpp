@@ -33,10 +33,8 @@
 #include "../Buffer.h"
 #include "../Texture.h"
 
-ProgramGL::ProgramGL(ContextGL *context, std::string vId, std::string fId)
-    : Program(vId, fId),
-    mProgramId(0u),
-    context(context)
+ProgramGL::ProgramGL(ContextGL *context, std::string mVId, std::string mFId)
+    : Program(mVId, mFId), mProgramId(0u), mContext(context)
 {
     mProgramId= context->generateProgram();
     mVAO = context->generateVAO();
@@ -44,19 +42,19 @@ ProgramGL::ProgramGL(ContextGL *context, std::string vId, std::string fId)
 
 ProgramGL::~ProgramGL()
 {
-    context->deleteVAO(mVAO);
-    context->deleteProgram(mProgramId);
+    mContext->deleteVAO(mVAO);
+    mContext->deleteProgram(mProgramId);
 }
 
 void ProgramGL::loadProgram()
 {
-    std::ifstream VertexShaderStream(vId, std::ios::in);
+    std::ifstream VertexShaderStream(mVId, std::ios::in);
     std::string VertexShaderCode((std::istreambuf_iterator<char>(VertexShaderStream)),
                                  std::istreambuf_iterator<char>());
     VertexShaderStream.close();
 
     // Read the Fragment Shader code from the file
-    std::ifstream FragmentShaderStream(fId, std::ios::in);
+    std::ifstream FragmentShaderStream(mFId, std::ios::in);
     std::string FragmentShaderCode((std::istreambuf_iterator<char>(FragmentShaderStream)),
                                    std::istreambuf_iterator<char>());
     FragmentShaderStream.close();
@@ -88,7 +86,7 @@ void ProgramGL::loadProgram()
     FragmentShaderCode =
         std::regex_replace(FragmentShaderCode, std::regex(R"(\n.*?// #noNormalMap)"), "");
 
-    bool status = context->compileProgram(mProgramId, VertexShaderCode, FragmentShaderCode);
+    bool status = mContext->compileProgram(mProgramId, VertexShaderCode, FragmentShaderCode);
     ASSERT(status);
     if (!status) {
         std::cout << "Error occurs in compiling program!" << std::endl;
@@ -97,5 +95,5 @@ void ProgramGL::loadProgram()
 
 void ProgramGL::setProgram()
 {
-    context->setProgram(mProgramId);
+    mContext->setProgram(mProgramId);
 }

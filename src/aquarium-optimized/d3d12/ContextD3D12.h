@@ -47,7 +47,7 @@ class ContextD3D12 : public Context
                          std::vector<unsigned short> *buffer,
                          bool isIndex) override;
 
-    Program *createProgram(const std::string &vId, const std::string &fId) override;
+    Program *createProgram(const std::string &mVId, const std::string &mFId) override;
 
     Texture *createTexture(const std::string &name, const std::string &url) override;
     Texture *createTexture(const std::string &name, const std::vector<std::string> &urls) override;
@@ -77,15 +77,16 @@ class ContextD3D12 : public Context
                                                ComPtr<ID3D12Resource> &uploadBuffer) const;
     ComPtr<ID3D12Resource> createUploadBuffer(const void *initData, UINT64 byteSize) const;
     void createRootSignature(const D3D12_VERSIONED_ROOT_SIGNATURE_DESC &pRootSignatureDesc,
-                             ComPtr<ID3D12RootSignature> &m_rootSignature) const;
-    void createGraphicsPipelineState(const std::vector<D3D12_INPUT_ELEMENT_DESC> &inputElementDescs,
-                                     const ComPtr<ID3D12RootSignature> &rootSignature,
-                                     const ComPtr<ID3DBlob> &vertexShader,
-                                     const ComPtr<ID3DBlob> &pixelShader,
-                                     ComPtr<ID3D12PipelineState> &pipelineState,
-                                     bool enableBlend) const;
+                             ComPtr<ID3D12RootSignature> &rootSignature) const;
+    void createGraphicsPipelineState(
+        const std::vector<D3D12_INPUT_ELEMENT_DESC> &mInputElementDescs,
+        const ComPtr<ID3D12RootSignature> &rootSignature,
+        const ComPtr<ID3DBlob> &mVertexShader,
+        const ComPtr<ID3DBlob> &mPixelShader,
+        ComPtr<ID3D12PipelineState> &mPipelineState,
+        bool enableBlend) const;
     void buildSrvDescriptor(const ComPtr<ID3D12Resource> &resource,
-                            const D3D12_SHADER_RESOURCE_VIEW_DESC &srvDesc,
+                            const D3D12_SHADER_RESOURCE_VIEW_DESC &mSrvDesc,
                             D3D12_GPU_DESCRIPTOR_HANDLE *hGpuDescriptor);
     void buildCbvDescriptor(const D3D12_CONSTANT_BUFFER_VIEW_DESC &cbvDesc,
                             D3D12_GPU_DESCRIPTOR_HANDLE *hGpuDescriptor);
@@ -126,44 +127,44 @@ class ContextD3D12 : public Context
     void initAvailableToggleBitset(BACKENDTYPE backendType) override;
 
     GLFWwindow *mWindow;
-    ComPtr<ID3D12Device> m_device;
-    ComPtr<ID3D12CommandQueue> m_commandQueue;
-    ComPtr<IDXGISwapChain3> m_swapChain;
+    ComPtr<ID3D12Device> mDevice;
+    ComPtr<ID3D12CommandQueue> mCommandQueue;
+    ComPtr<IDXGISwapChain3> mSwapChain;
     DXGI_FORMAT mPreferredSwapChainFormat;
-    UINT compileFlags;
+    UINT mCompileFlags;
 
-    static const UINT FrameCount = 3;
+    static const UINT mFrameCount = 3;
     UINT m_frameIndex;
-    UINT mBufferSerias[FrameCount];
-    ComPtr<ID3D12CommandAllocator> m_commandAllocators[FrameCount];
+    UINT mBufferSerias[mFrameCount];
+    ComPtr<ID3D12CommandAllocator> mCommandAllocators[mFrameCount];
 
-    ComPtr<ID3D12DescriptorHeap> m_rtvHeap;
-    ComPtr<ID3D12DescriptorHeap> m_dsvHeap;
-    ComPtr<ID3D12DescriptorHeap> m_cbvsrvHeap;
-    UINT m_rtvDescriptorSize;
-    UINT m_cbvsrvDescriptorSize;
-    ComPtr<ID3D12Resource> m_renderTargets[FrameCount];
-    ComPtr<ID3D12Resource> m_depthStencil;
+    ComPtr<ID3D12DescriptorHeap> mRtvHeap;
+    ComPtr<ID3D12DescriptorHeap> mDsvHeap;
+    ComPtr<ID3D12DescriptorHeap> mCbvsrvHeap;
+    UINT mRtvDescriptorSize;
+    UINT mCbvmSrvDescriptorSize;
+    ComPtr<ID3D12Resource> mRenderTargets[mFrameCount];
+    ComPtr<ID3D12Resource> mDepthStencil;
 
-    ComPtr<ID3D12Fence> m_fence;
-    UINT64 m_fenceValue;
-    HANDLE m_fenceEvent;
+    ComPtr<ID3D12Fence> mFence;
+    UINT64 mFenceValue;
+    HANDLE mFenceEvent;
 
-    D3D12_FEATURE_DATA_ROOT_SIGNATURE rootSignature;
+    D3D12_FEATURE_DATA_ROOT_SIGNATURE mRootSignature;
 
-    CD3DX12_VIEWPORT m_viewport;
-    CD3DX12_RECT m_scissorRect;
+    CD3DX12_VIEWPORT mViewport;
+    CD3DX12_RECT mScissorRect;
 
     // General Resources
-    ComPtr<ID3D12Resource> lightWorldPositionBuffer;
+    ComPtr<ID3D12Resource> mLightWorldPositionBuffer;
 
-    D3D12_CONSTANT_BUFFER_VIEW_DESC lightView;
-    ComPtr<ID3D12Resource> lightBuffer;
-    ComPtr<ID3D12Resource> lightUploadBuffer;
+    D3D12_CONSTANT_BUFFER_VIEW_DESC mLightView;
+    ComPtr<ID3D12Resource> mLightBuffer;
+    ComPtr<ID3D12Resource> mLightUploadBuffer;
 
-    D3D12_CONSTANT_BUFFER_VIEW_DESC fogView;
-    ComPtr<ID3D12Resource> fogBuffer;
-    ComPtr<ID3D12Resource> fogUploadBuffer;
+    D3D12_CONSTANT_BUFFER_VIEW_DESC mFogView;
+    ComPtr<ID3D12Resource> mFogBuffer;
+    ComPtr<ID3D12Resource> mFogUploadBuffer;
 
     ComPtr<ID3D12Resource> mSceneRenderTargetTexture;
     D3D12_RENDER_TARGET_VIEW_DESC mSceneRenderTargetView;

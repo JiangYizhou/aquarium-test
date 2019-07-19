@@ -48,7 +48,7 @@ class ContextDawn : public Context
                          std::vector<unsigned short> *buffer,
                          bool isIndex) override;
 
-    Program *createProgram(const std::string &vId, const std::string &fId) override;
+    Program *createProgram(const std::string &mVId, const std::string &mFId) override;
 
     Texture *createTexture(const std::string &name, const std::string &url) override;
     Texture *createTexture(const std::string &name, const std::vector<std::string> &urls) override;
@@ -72,10 +72,11 @@ class ContextDawn : public Context
         std::initializer_list<dawn::BindGroupLayoutBinding> bindingsInitializer) const;
     dawn::PipelineLayout MakeBasicPipelineLayout(
         std::vector<dawn::BindGroupLayout> bindingsInitializer) const;
-    dawn::RenderPipeline createRenderPipeline(dawn::PipelineLayout pipelineLayout,
-                                              ProgramDawn *programDawn,
-                                              const dawn::VertexInputDescriptor &vertexInputDescriptor,
-                                              bool enableBlend) const;
+    dawn::RenderPipeline createRenderPipeline(
+        dawn::PipelineLayout mPipelineLayout,
+        ProgramDawn *mProgramDawn,
+        const dawn::VertexInputDescriptor &mVertexInputDescriptor,
+        bool enableBlend) const;
     dawn::TextureView createDepthStencilView() const;
     dawn::Buffer createBuffer(uint32_t size, dawn::BufferUsageBit bit) const;
     void setBufferData(const dawn::Buffer &buffer, uint32_t start, uint32_t size, const void* pixels) const;
@@ -85,7 +86,7 @@ class ContextDawn : public Context
 
     void initGeneralResources(Aquarium* aquarium) override;
     void updateWorldlUniforms(Aquarium* aquarium) override;
-    const dawn::Device &getDevice() const { return device; }
+    const dawn::Device &getDevice() const { return mDevice; }
     const dawn::RenderPassEncoder &getRenderPass() const { return mRenderPass; }
 
     std::vector<dawn::CommandBuffer> mCommandBuffers;
@@ -105,9 +106,9 @@ class ContextDawn : public Context
     void initAvailableToggleBitset(BACKENDTYPE backendType) override;
 
     GLFWwindow *mWindow;
-    std::unique_ptr<dawn_native::Instance> instance;
+    std::unique_ptr<dawn_native::Instance> mInstance;
 
-    dawn::SwapChain swapchain;
+    dawn::SwapChain mSwapchain;
     dawn::CommandEncoder mCommandEncoder;
     dawn::RenderPassEncoder mRenderPass;
     utils::ComboRenderPassDescriptor mRenderPassDescriptor;
@@ -119,11 +120,11 @@ class ContextDawn : public Context
     dawn::BindGroup mBindGroup;
     dawn::TextureFormat mPreferredSwapChainFormat;
 
-    dawn::Buffer lightWorldPositionBuffer;
-    dawn::Buffer lightBuffer;
-    dawn::Buffer fogBuffer;
+    dawn::Buffer mLightWorldPositionBuffer;
+    dawn::Buffer mLightBuffer;
+    dawn::Buffer mFogBuffer;
 
-    dawn::Device device;
+    dawn::Device mDevice;
 
     bool mEnableMSAA;
     std::string mRenderer;
