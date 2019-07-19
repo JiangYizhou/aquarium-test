@@ -29,17 +29,16 @@ class ProgramDawn : public Program
 {
 public:
     ProgramDawn() {}
-    ProgramDawn(ContextDawn *context, const std::string &vId, const std::string &fId);
+    ProgramDawn(ContextDawn *context, const std::string &mVId, const std::string &mFId);
     ~ProgramDawn() override;
 
     void loadProgram();
-    dawn::ShaderModule getVSModule() { return vsModule; }
-    dawn::ShaderModule getFSModule() { return fsModule; }
+    dawn::ShaderModule getVSModule() { return mVsModule; }
+    dawn::ShaderModule getFSModule() { return mFsModule; }
 
-private:
-
-    dawn::ShaderModule vsModule;
-    dawn::ShaderModule fsModule;
+  private:
+    dawn::ShaderModule mVsModule;
+    dawn::ShaderModule mFsModule;
 
     ContextDawn *context;
 };

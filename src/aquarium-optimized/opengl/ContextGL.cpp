@@ -407,9 +407,9 @@ Buffer *ContextGL::createBuffer(int numComponents, std::vector<unsigned short> *
     return buffer;
 }
 
-Program *ContextGL::createProgram(const std::string &vId, const std::string &fId)
+Program *ContextGL::createProgram(const std::string &mVId, const std::string &mFId)
 {
-    ProgramGL *program = new ProgramGL(this, vId, fId);
+    ProgramGL *program = new ProgramGL(this, mVId, mFId);
     program->loadProgram();
 
     return program;

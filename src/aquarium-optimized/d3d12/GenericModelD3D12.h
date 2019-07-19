@@ -34,52 +34,52 @@ class GenericModelD3D12 : public Model
 
     void updatePerInstanceUniforms(const WorldUniforms &worldUniforms) override;
 
-    TextureD3D12 *diffuseTexture;
-    TextureD3D12 *normalTexture;
-    TextureD3D12 *reflectionTexture;
-    TextureD3D12 *skyboxTexture;
+    TextureD3D12 *mDiffuseTexture;
+    TextureD3D12 *mNormalTexture;
+    TextureD3D12 *mReflectionTexture;
+    TextureD3D12 *mSkyboxTexture;
 
-    BufferD3D12 *positionBuffer;
-    BufferD3D12 *normalBuffer;
-    BufferD3D12 *texCoordBuffer;
-    BufferD3D12 *tangentBuffer;
-    BufferD3D12 *binormalBuffer;
+    BufferD3D12 *mPositionBuffer;
+    BufferD3D12 *mNormalBuffer;
+    BufferD3D12 *mTexCoordBuffer;
+    BufferD3D12 *mTangentBuffer;
+    BufferD3D12 *mBiNormalBuffer;
 
-    BufferD3D12 *indicesBuffer;
+    BufferD3D12 *mIndicesBuffer;
 
     struct LightFactorUniforms
     {
         float shininess;
         float specularFactor;
-    } lightFactorUniforms;
+    } mLightFactorUniforms;
 
     struct WorldUniformPer
     {
         WorldUniforms WorldUniforms[20];
     };
-    WorldUniformPer worldUniformPer;
+    WorldUniformPer mWorldUniformPer;
 
   private:
-    D3D12_CONSTANT_BUFFER_VIEW_DESC worldBufferView;
-    ComPtr<ID3D12Resource> worldBuffer;
+    D3D12_CONSTANT_BUFFER_VIEW_DESC mWorldBufferView;
+    ComPtr<ID3D12Resource> mWorldBuffer;
 
-    D3D12_CONSTANT_BUFFER_VIEW_DESC lightFactorView;
-    D3D12_GPU_DESCRIPTOR_HANDLE lightFactorGPUHandle;
-    ComPtr<ID3D12Resource> lightFactorBuffer;
-    ComPtr<ID3D12Resource> lightFactorUploadBuffer;
+    D3D12_CONSTANT_BUFFER_VIEW_DESC mLightFactorView;
+    D3D12_GPU_DESCRIPTOR_HANDLE mLightFactorGPUHandle;
+    ComPtr<ID3D12Resource> mLightFactorBuffer;
+    ComPtr<ID3D12Resource> mLightFactorUploadBuffer;
 
-    std::vector<D3D12_INPUT_ELEMENT_DESC> inputElementDescs;
+    std::vector<D3D12_INPUT_ELEMENT_DESC> mInputElementDescs;
 
-    D3D12_VERTEX_BUFFER_VIEW vertexBufferView[5];
+    D3D12_VERTEX_BUFFER_VIEW mVertexBufferView[5];
 
-    ComPtr<ID3D12RootSignature> m_rootSignature;
+    ComPtr<ID3D12RootSignature> mRootSignature;
 
-    ComPtr<ID3D12PipelineState> m_pipelineState;
+    ComPtr<ID3D12PipelineState> mPipelineState;
 
-    ContextD3D12 *contextD3D12;
-    ProgramD3D12 *programD3D12;
+    ContextD3D12 *mContextD3D12;
+    ProgramD3D12 *mProgramD3D12;
 
-    int instance;
+    int mInstance;
 };
 
 #endif

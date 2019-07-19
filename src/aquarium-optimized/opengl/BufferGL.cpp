@@ -14,7 +14,7 @@ BufferGL::BufferGL(ContextGL *context,
                    bool isIndex,
                    unsigned int type,
                    bool normalize)
-    : context(context),
+    : mContext(context),
       mBuf(0),
       mTarget(isIndex ? GL_ELEMENT_ARRAY_BUFFER : GL_ARRAY_BUFFER),
       mNumComponents(numComponents),
@@ -25,22 +25,22 @@ BufferGL::BufferGL(ContextGL *context,
       mStride(0),
       mOffset(nullptr)
 {
-    mBuf = context->generateBuffer();
+    mBuf = mContext->generateBuffer();
 }
 
 void BufferGL::loadBuffer(const std::vector<float> &buf)
 {
-    context->bindBuffer(mTarget, mBuf);
-    context->uploadBuffer(mTarget, buf);
+    mContext->bindBuffer(mTarget, mBuf);
+    mContext->uploadBuffer(mTarget, buf);
 }
 
 void BufferGL::loadBuffer(const std::vector<unsigned short> &buf)
 {
-    context->bindBuffer(mTarget, mBuf);
-    context->uploadBuffer(mTarget, buf);
+    mContext->bindBuffer(mTarget, mBuf);
+    mContext->uploadBuffer(mTarget, buf);
 }
 
 BufferGL::~BufferGL()
 {
-    context->deleteBuffer(mBuf);
+    mContext->deleteBuffer(mBuf);
 }

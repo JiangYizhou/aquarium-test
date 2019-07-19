@@ -12,118 +12,121 @@ InnerModelGL::InnerModelGL(const ContextGL *context,
                            MODELGROUP type,
                            MODELNAME name,
                            bool blend)
-    : Model(type, name, blend), contextGL(context)
+    : Model(type, name, blend), mContextGL(context)
 {
-    viewInverseUniform.first   = aquarium->lightWorldPositionUniform.viewInverse;
-    lightWorldPosUniform.first = aquarium->lightWorldPositionUniform.lightWorldPos;
+    mViewInverseUniform.first   = aquarium->lightWorldPositionUniform.viewInverse;
+    mLightWorldPosUniform.first = aquarium->lightWorldPositionUniform.lightWorldPos;
 
-    worldUniform.first                 = aquarium->worldUniforms.world;
-    worldViewProjectionUniform.first   = aquarium->worldUniforms.worldViewProjection;
-    worldInverseTransposeUniform.first = aquarium->worldUniforms.worldInverseTranspose;
+    mWorldUniform.first                 = aquarium->worldUniforms.world;
+    mWorldViewProjectionUniform.first   = aquarium->worldUniforms.worldViewProjection;
+    mWorldInverseTransposeUniform.first = aquarium->worldUniforms.worldInverseTranspose;
 
-    etaUniform.first = 1.0f;
-    tankColorFudgeUniform.first = 0.796f;
-    refractionFudgeUniform.first = 3.0f;
+    mEtaUniform.first             = 1.0f;
+    mTankColorFudgeUniform.first  = 0.796f;
+    mRefractionFudgeUniform.first = 3.0f;
 
-    fogPowerUniform.first = g_fogPower;
-    fogMultUniform.first = g_fogMult;
-    fogOffsetUniform.first = g_fogOffset;
-    fogColorUniform.first = aquarium->fogUniforms.fogColor;
+    mFogPowerUniform.first  = g_fogPower;
+    mFogMultUniform.first   = g_fogMult;
+    mFogOffsetUniform.first = g_fogOffset;
+    mFogColorUniform.first  = aquarium->fogUniforms.fogColor;
 }
 
 void InnerModelGL::init()
 {
     ProgramGL *programGL = static_cast<ProgramGL *>(mProgram);
-    worldViewProjectionUniform.second =
-        contextGL->getUniformLocation(programGL->getProgramId(), "worldViewProjection");
-    worldUniform.second = contextGL->getUniformLocation(programGL->getProgramId(), "world");
-    worldInverseTransposeUniform.second =
-        contextGL->getUniformLocation(programGL->getProgramId(), "worldInverseTranspose");
+    mWorldViewProjectionUniform.second =
+        mContextGL->getUniformLocation(programGL->getProgramId(), "worldViewProjection");
+    mWorldUniform.second = mContextGL->getUniformLocation(programGL->getProgramId(), "world");
+    mWorldInverseTransposeUniform.second =
+        mContextGL->getUniformLocation(programGL->getProgramId(), "worldInverseTranspose");
 
-    viewInverseUniform.second =
-        contextGL->getUniformLocation(programGL->getProgramId(), "viewInverse");
-    lightWorldPosUniform.second =
-        contextGL->getUniformLocation(programGL->getProgramId(), "lightWorldPos");
+    mViewInverseUniform.second =
+        mContextGL->getUniformLocation(programGL->getProgramId(), "viewInverse");
+    mLightWorldPosUniform.second =
+        mContextGL->getUniformLocation(programGL->getProgramId(), "lightWorldPos");
 
-    fogPowerUniform.second  = contextGL->getUniformLocation(programGL->getProgramId(), "fogPower");
-    fogMultUniform.second   = contextGL->getUniformLocation(programGL->getProgramId(), "fogMult");
-    fogOffsetUniform.second = contextGL->getUniformLocation(programGL->getProgramId(), "fogOffset");
-    fogColorUniform.second  = contextGL->getUniformLocation(programGL->getProgramId(), "fogColor");
+    mFogPowerUniform.second = mContextGL->getUniformLocation(programGL->getProgramId(), "fogPower");
+    mFogMultUniform.second  = mContextGL->getUniformLocation(programGL->getProgramId(), "fogMult");
+    mFogOffsetUniform.second =
+        mContextGL->getUniformLocation(programGL->getProgramId(), "fogOffset");
+    mFogColorUniform.second = mContextGL->getUniformLocation(programGL->getProgramId(), "fogColor");
 
-    etaUniform.second = contextGL->getUniformLocation(programGL->getProgramId(), "eta");
-    tankColorFudgeUniform.second =
-        contextGL->getUniformLocation(programGL->getProgramId(), "tankColorFudge");
-    refractionFudgeUniform.second =
-        contextGL->getUniformLocation(programGL->getProgramId(), "refractionFudge");
+    mEtaUniform.second = mContextGL->getUniformLocation(programGL->getProgramId(), "eta");
+    mTankColorFudgeUniform.second =
+        mContextGL->getUniformLocation(programGL->getProgramId(), "tankColorFudge");
+    mRefractionFudgeUniform.second =
+        mContextGL->getUniformLocation(programGL->getProgramId(), "refractionFudge");
 
-    diffuseTexture.first    = static_cast<TextureGL *>(textureMap["diffuse"]);
-    diffuseTexture.second   = contextGL->getUniformLocation(programGL->getProgramId(), "diffuse");
-    normalTexture.first     = static_cast<TextureGL *>(textureMap["normalMap"]);
-    normalTexture.second    = contextGL->getUniformLocation(programGL->getProgramId(), "normalMap");
-    reflectionTexture.first = static_cast<TextureGL *>(textureMap["reflectionMap"]);
-    reflectionTexture.second =
-        contextGL->getUniformLocation(programGL->getProgramId(), "reflectionMap");
-    skyboxTexture.first  = static_cast<TextureGL *>(textureMap["skybox"]);
-    skyboxTexture.second = contextGL->getUniformLocation(programGL->getProgramId(), "skybox");
+    mDiffuseTexture.first  = static_cast<TextureGL *>(textureMap["diffuse"]);
+    mDiffuseTexture.second = mContextGL->getUniformLocation(programGL->getProgramId(), "diffuse");
+    mNormalTexture.first   = static_cast<TextureGL *>(textureMap["normalMap"]);
+    mNormalTexture.second  = mContextGL->getUniformLocation(programGL->getProgramId(), "normalMap");
+    mReflectionTexture.first = static_cast<TextureGL *>(textureMap["reflectionMap"]);
+    mReflectionTexture.second =
+        mContextGL->getUniformLocation(programGL->getProgramId(), "reflectionMap");
+    mSkyboxTexture.first  = static_cast<TextureGL *>(textureMap["skybox"]);
+    mSkyboxTexture.second = mContextGL->getUniformLocation(programGL->getProgramId(), "skybox");
 
-    positionBuffer.first  = static_cast<BufferGL *>(bufferMap["position"]);
-    positionBuffer.second = contextGL->getAttribLocation(programGL->getProgramId(), "position");
-    normalBuffer.first    = static_cast<BufferGL *>(bufferMap["normal"]);
-    normalBuffer.second   = contextGL->getAttribLocation(programGL->getProgramId(), "normal");
-    texCoordBuffer.first  = static_cast<BufferGL *>(bufferMap["texCoord"]);
-    texCoordBuffer.second = contextGL->getAttribLocation(programGL->getProgramId(), "texCoord");
-    tangentBuffer.first   = static_cast<BufferGL *>(bufferMap["tangent"]);
-    tangentBuffer.second  = contextGL->getAttribLocation(programGL->getProgramId(), "tangent");
-    binormalBuffer.first  = static_cast<BufferGL *>(bufferMap["binormal"]);
-    binormalBuffer.second = contextGL->getAttribLocation(programGL->getProgramId(), "binormal");
+    mPositionBuffer.first  = static_cast<BufferGL *>(bufferMap["position"]);
+    mPositionBuffer.second = mContextGL->getAttribLocation(programGL->getProgramId(), "position");
+    mNormalBuffer.first    = static_cast<BufferGL *>(bufferMap["normal"]);
+    mNormalBuffer.second   = mContextGL->getAttribLocation(programGL->getProgramId(), "normal");
+    mTexCoordBuffer.first  = static_cast<BufferGL *>(bufferMap["texCoord"]);
+    mTexCoordBuffer.second = mContextGL->getAttribLocation(programGL->getProgramId(), "texCoord");
+    mTangentBuffer.first   = static_cast<BufferGL *>(bufferMap["tangent"]);
+    mTangentBuffer.second  = mContextGL->getAttribLocation(programGL->getProgramId(), "tangent");
+    mBiNormalBuffer.first  = static_cast<BufferGL *>(bufferMap["binormal"]);
+    mBiNormalBuffer.second = mContextGL->getAttribLocation(programGL->getProgramId(), "binormal");
 
-    indicesBuffer = static_cast<BufferGL *>(bufferMap["indices"]);
+    mIndicesBuffer = static_cast<BufferGL *>(bufferMap["indices"]);
 }
 
 void InnerModelGL::draw()
 {
-    contextGL->drawElements(*indicesBuffer);
+    mContextGL->drawElements(*mIndicesBuffer);
 }
 
 void InnerModelGL::prepareForDraw() const
 {
     mProgram->setProgram();
-    contextGL->enableBlend(mBlend);
+    mContextGL->enableBlend(mBlend);
 
     ProgramGL *programGL = static_cast<ProgramGL *>(mProgram);
-    contextGL->bindVAO(programGL->getVAOId());
+    mContextGL->bindVAO(programGL->getVAOId());
 
-    contextGL->setAttribs(*positionBuffer.first, positionBuffer.second);
-    contextGL->setAttribs(*normalBuffer.first, normalBuffer.second);
-    contextGL->setAttribs(*texCoordBuffer.first, texCoordBuffer.second);
+    mContextGL->setAttribs(*mPositionBuffer.first, mPositionBuffer.second);
+    mContextGL->setAttribs(*mNormalBuffer.first, mNormalBuffer.second);
+    mContextGL->setAttribs(*mTexCoordBuffer.first, mTexCoordBuffer.second);
 
-    contextGL->setAttribs(*tangentBuffer.first, tangentBuffer.second);
-    contextGL->setAttribs(*binormalBuffer.first, binormalBuffer.second);
+    mContextGL->setAttribs(*mTangentBuffer.first, mTangentBuffer.second);
+    mContextGL->setAttribs(*mBiNormalBuffer.first, mBiNormalBuffer.second);
 
-    contextGL->setIndices(*indicesBuffer);
+    mContextGL->setIndices(*mIndicesBuffer);
 
-    contextGL->setUniform(viewInverseUniform.second, viewInverseUniform.first, GL_FLOAT_MAT4);
+    mContextGL->setUniform(mViewInverseUniform.second, mViewInverseUniform.first, GL_FLOAT_MAT4);
     // lightWorldPosition is optimized away on mesa because it's not used by shader
-    //contextGL->setUniform(lightWorldPosUniform.second, lightWorldPosUniform.first, GL_FLOAT_VEC3);
-    contextGL->setUniform(fogPowerUniform.second, &fogPowerUniform.first, GL_FLOAT);
-    contextGL->setUniform(fogMultUniform.second, &fogMultUniform.first, GL_FLOAT);
-    contextGL->setUniform(fogOffsetUniform.second, &fogOffsetUniform.first, GL_FLOAT);
-    contextGL->setUniform(fogColorUniform.second, fogColorUniform.first, GL_FLOAT_VEC4);
-    contextGL->setUniform(etaUniform.second, &etaUniform.first, GL_FLOAT);
-    contextGL->setUniform(tankColorFudgeUniform.second, &tankColorFudgeUniform.first, GL_FLOAT);
-    contextGL->setUniform(refractionFudgeUniform.second, &refractionFudgeUniform.first, GL_FLOAT);
+    // mContextGL->setUniform(mLightWorldPosUniform.second, mLightWorldPosUniform.first,
+    // GL_FLOAT_VEC3);
+    mContextGL->setUniform(mFogPowerUniform.second, &mFogPowerUniform.first, GL_FLOAT);
+    mContextGL->setUniform(mFogMultUniform.second, &mFogMultUniform.first, GL_FLOAT);
+    mContextGL->setUniform(mFogOffsetUniform.second, &mFogOffsetUniform.first, GL_FLOAT);
+    mContextGL->setUniform(mFogColorUniform.second, mFogColorUniform.first, GL_FLOAT_VEC4);
+    mContextGL->setUniform(mEtaUniform.second, &mEtaUniform.first, GL_FLOAT);
+    mContextGL->setUniform(mTankColorFudgeUniform.second, &mTankColorFudgeUniform.first, GL_FLOAT);
+    mContextGL->setUniform(mRefractionFudgeUniform.second, &mRefractionFudgeUniform.first,
+                           GL_FLOAT);
 
-    contextGL->setTexture(*diffuseTexture.first, diffuseTexture.second, 0);
-    contextGL->setTexture(*normalTexture.first, normalTexture.second, 1);
-    contextGL->setTexture(*reflectionTexture.first, reflectionTexture.second, 2);
-    contextGL->setTexture(*skyboxTexture.first, skyboxTexture.second, 3);
+    mContextGL->setTexture(*mDiffuseTexture.first, mDiffuseTexture.second, 0);
+    mContextGL->setTexture(*mNormalTexture.first, mNormalTexture.second, 1);
+    mContextGL->setTexture(*mReflectionTexture.first, mReflectionTexture.second, 2);
+    mContextGL->setTexture(*mSkyboxTexture.first, mSkyboxTexture.second, 3);
 }
 
-void InnerModelGL::updatePerInstanceUniforms(const WorldUniforms &worldUniforms)
+void InnerModelGL::updatePerInstanceUniforms(const WorldUniforms &mWorldUniforms)
 {
-    contextGL->setUniform(worldUniform.second, worldUniform.first, GL_FLOAT_MAT4);
-    contextGL->setUniform(worldViewProjectionUniform.second, worldViewProjectionUniform.first,
-                          GL_FLOAT_MAT4);
-    contextGL->setUniform(worldInverseTransposeUniform.second, worldInverseTransposeUniform.first,
-                          GL_FLOAT_MAT4);
+    mContextGL->setUniform(mWorldUniform.second, mWorldUniform.first, GL_FLOAT_MAT4);
+    mContextGL->setUniform(mWorldViewProjectionUniform.second, mWorldViewProjectionUniform.first,
+                           GL_FLOAT_MAT4);
+    mContextGL->setUniform(mWorldInverseTransposeUniform.second,
+                           mWorldInverseTransposeUniform.first, GL_FLOAT_MAT4);
 }

@@ -29,7 +29,7 @@ class ProgramGL : public Program
 {
 public:
     ProgramGL() {}
-    ProgramGL(ContextGL *, std::string vId, std::string fId);
+    ProgramGL(ContextGL *, std::string mVId, std::string mFId);
     ~ProgramGL() override;
 
     void setProgram() override;
@@ -41,7 +41,7 @@ public:
     GLuint mProgramId;
     GLuint mVAO;
 
-    ContextGL *context;
+    ContextGL *mContext;
 };
 
 #endif
