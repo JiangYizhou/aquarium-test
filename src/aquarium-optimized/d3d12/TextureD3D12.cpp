@@ -11,8 +11,8 @@ TextureD3D12::TextureD3D12(ContextD3D12 *context, std::string name, std::string 
       mTextureDimension(D3D12_RESOURCE_DIMENSION_TEXTURE2D),
       mTextureViewDimension(D3D12_SRV_DIMENSION_TEXTURE2D),
       mFormat(DXGI_FORMAT_R8G8B8A8_UNORM),
-      mSrvDesc({}),
-      mContext(context)
+      srvDesc({}),
+      context(context)
 {
 }
 
@@ -23,8 +23,8 @@ TextureD3D12::TextureD3D12(ContextD3D12 *context,
       mTextureDimension(D3D12_RESOURCE_DIMENSION_TEXTURE2D),
       mTextureViewDimension(D3D12_SRV_DIMENSION_TEXTURECUBE),
       mFormat(DXGI_FORMAT_R8G8B8A8_UNORM),
-      mSrvDesc({}),
-      mContext(context)
+      srvDesc({}),
+      context(context)
 {
 }
 
@@ -45,8 +45,8 @@ void TextureD3D12::loadTexture()
         textureDesc.SampleDesc.Quality  = 0;
         textureDesc.Dimension           = mTextureDimension;
 
-        mContext->createTexture(textureDesc, mTexture, mTextureUploadHeap, mPixelVec, mWidth,
-                                mHeight, 4u, textureDesc.MipLevels, textureDesc.DepthOrArraySize);
+        context->createTexture(textureDesc, mTexture, mTextureUploadHeap, mPixelVec, mWidth,
+                               mHeight, 4u, textureDesc.MipLevels, textureDesc.DepthOrArraySize);
     }
     else
     {
@@ -64,8 +64,8 @@ void TextureD3D12::loadTexture()
         textureDesc.SampleDesc.Quality = 0;
         textureDesc.Dimension          = mTextureDimension;
 
-        mContext->createTexture(textureDesc, mTexture, mTextureUploadHeap, mResizedVec, mWidth,
-                                mHeight, 4u, textureDesc.MipLevels, textureDesc.DepthOrArraySize);
+        context->createTexture(textureDesc, mTexture, mTextureUploadHeap, mResizedVec, mWidth,
+                               mHeight, 4u, textureDesc.MipLevels, textureDesc.DepthOrArraySize);
     }
 }
 
@@ -73,19 +73,19 @@ void TextureD3D12::loadTexture()
 // binding resources.
 void TextureD3D12::createSrvDescriptor()
 {
-    mSrvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
-    mSrvDesc.Format                  = mFormat;
-    mSrvDesc.ViewDimension           = mTextureViewDimension;
+    srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
+    srvDesc.Format                  = mFormat;
+    srvDesc.ViewDimension           = mTextureViewDimension;
     if (mTextureViewDimension == D3D12_SRV_DIMENSION_TEXTURECUBE)
     {
-        mSrvDesc.Texture2D.MipLevels = 1;
+        srvDesc.Texture2D.MipLevels = 1;
     }
     else
     {
 
-        mSrvDesc.Texture2D.MipLevels =
+        srvDesc.Texture2D.MipLevels =
             static_cast<uint32_t>(std::floor(std::log2(std::max(mWidth, mHeight)))) + 1;
     }
 
-    mContext->buildSrvDescriptor(mTexture.Get(), mSrvDesc, &mTextureGPUHandle);
+    context->buildSrvDescriptor(mTexture.Get(), srvDesc, &mTextureGPUHandle);
 }

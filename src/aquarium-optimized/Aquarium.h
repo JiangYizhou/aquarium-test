@@ -435,7 +435,7 @@ class Aquarium
 
     std::bitset<static_cast<size_t>(TOGGLE::TOGGLEMAX)> toggleBitset;
     LightWorldPositionUniform lightWorldPositionUniform;
-    WorldUniforms mWorldUniforms;
+    WorldUniforms worldUniforms;
     LightUniforms lightUniforms;
     FogUniforms fogUniforms;
     Global g;
@@ -447,12 +447,12 @@ class Aquarium
     std::unordered_map<std::string, Texture *> mTextureMap;
     std::unordered_map<std::string, Program *> mProgramMap;
     Model *mAquariumModels[MODELNAME::MODELMAX];
-    Context *mContext;
-    FPSTimer mFpsTimer;  // object to measure frames per second;
+    Context *context;
+    FPSTimer fpsTimer;  // object to measure frames per second;
     int mFishCount;
     BACKENDTYPE mBackendType;
-    ContextFactory *mFactory;
-    std::vector<std::string> mSkyUrls;
+    ContextFactory *factory;
+    std::vector<std::string> skyUrls;
 
     void loadReource();
     void loadPlacement();

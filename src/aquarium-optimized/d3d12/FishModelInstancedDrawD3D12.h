@@ -43,18 +43,18 @@ class FishModelInstancedDrawD3D12 : public FishModel
                                float time,
                                int index) override;
 
-    struct mFishVertexUniforms
+    struct FishVertexUniforms
     {
         float fishLength;
         float fishWaveLength;
         float fishBendAmount;
-    } mFishVertexUniforms;
+    } fishVertexUniforms;
 
     struct LightFactorUniforms
     {
         float shininess;
         float specularFactor;
-    } mLightFactorUniforms;
+    } lightFactorUniforms;
 
     struct FishPer
     {
@@ -63,47 +63,47 @@ class FishModelInstancedDrawD3D12 : public FishModel
         float nextPosition[3];
         float time;
     };
-    FishPer *mFishPers;
+    FishPer *fishPers;
 
-    TextureD3D12 *mDiffuseTexture;
-    TextureD3D12 *mNormalTexture;
-    TextureD3D12 *mReflectionTexture;
-    TextureD3D12 *mSkyboxTexture;
+    TextureD3D12 *diffuseTexture;
+    TextureD3D12 *normalTexture;
+    TextureD3D12 *reflectionTexture;
+    TextureD3D12 *skyboxTexture;
 
-    BufferD3D12 *mPositionBuffer;
-    BufferD3D12 *mNormalBuffer;
-    BufferD3D12 *mTexCoordBuffer;
-    BufferD3D12 *mTangentBuffer;
-    BufferD3D12 *mBinormalBuffer;
+    BufferD3D12 *positionBuffer;
+    BufferD3D12 *normalBuffer;
+    BufferD3D12 *texCoordBuffer;
+    BufferD3D12 *tangentBuffer;
+    BufferD3D12 *binormalBuffer;
 
-    BufferD3D12 *mIndicesBuffer;
+    BufferD3D12 *indicesBuffer;
 
   private:
-    D3D12_VERTEX_BUFFER_VIEW mFishPersBufferView;
-    ComPtr<ID3D12Resource> mFishPersBuffer;
+    D3D12_VERTEX_BUFFER_VIEW fishPersBufferView;
+    ComPtr<ID3D12Resource> fishPersBuffer;
 
-    D3D12_CONSTANT_BUFFER_VIEW_DESC mLightFactorView;
-    D3D12_GPU_DESCRIPTOR_HANDLE mLightFactorGPUHandle;
-    ComPtr<ID3D12Resource> mLightFactorBuffer;
-    ComPtr<ID3D12Resource> mLightFactorUploadBuffer;
+    D3D12_CONSTANT_BUFFER_VIEW_DESC lightFactorView;
+    D3D12_GPU_DESCRIPTOR_HANDLE lightFactorGPUHandle;
+    ComPtr<ID3D12Resource> lightFactorBuffer;
+    ComPtr<ID3D12Resource> lightFactorUploadBuffer;
 
-    D3D12_CONSTANT_BUFFER_VIEW_DESC mFishVertexView;
-    D3D12_GPU_DESCRIPTOR_HANDLE mFishVertexGPUHandle;
-    ComPtr<ID3D12Resource> mFishVertexBuffer;
-    ComPtr<ID3D12Resource> mFishVertexUploadBuffer;
+    D3D12_CONSTANT_BUFFER_VIEW_DESC fishVertexView;
+    D3D12_GPU_DESCRIPTOR_HANDLE fishVertexGPUHandle;
+    ComPtr<ID3D12Resource> fishVertexBuffer;
+    ComPtr<ID3D12Resource> fishVertexUploadBuffer;
 
-    std::vector<D3D12_INPUT_ELEMENT_DESC> mInputElementDescs;
+    std::vector<D3D12_INPUT_ELEMENT_DESC> inputElementDescs;
 
-    D3D12_VERTEX_BUFFER_VIEW mVertexBufferView[6];
+    D3D12_VERTEX_BUFFER_VIEW vertexBufferView[6];
 
-    ComPtr<ID3D12RootSignature> mRootSignature;
+    ComPtr<ID3D12RootSignature> m_rootSignature;
 
-    ComPtr<ID3D12PipelineState> mPipelineState;
+    ComPtr<ID3D12PipelineState> m_pipelineState;
 
-    int mInstance;
+    int instance;
 
-    ProgramD3D12 *mProgramD3D12;
-    ContextD3D12 *mContextD3D12;
+    ProgramD3D12 *programD3D12;
+    ContextD3D12 *contextD3D12;
 };
 
 #endif

@@ -12,33 +12,33 @@ OutsideModelD3D12::OutsideModelD3D12(Context *context,
                                      bool blend)
     : Model(type, name, blend)
 {
-    mContextD3D12 = static_cast<ContextD3D12 *>(context);
+    contextD3D12 = static_cast<ContextD3D12 *>(context);
 
-    mLightFactorUniforms.shininess      = 50.0f;
-    mLightFactorUniforms.specularFactor = 0.0f;
+    lightFactorUniforms.shininess      = 50.0f;
+    lightFactorUniforms.specularFactor = 0.0f;
 }
 
 void OutsideModelD3D12::init()
 {
-    mProgramD3D12 = static_cast<ProgramD3D12 *>(mProgram);
+    programD3D12 = static_cast<ProgramD3D12 *>(mProgram);
 
-    mDiffuseTexture    = static_cast<TextureD3D12 *>(mTextureMap["diffuse"]);
-    mNormalTexture     = static_cast<TextureD3D12 *>(mTextureMap["normalMap"]);
-    mReflectionTexture = static_cast<TextureD3D12 *>(mTextureMap["reflectionMap"]);
-    mSkyboxTexture     = static_cast<TextureD3D12 *>(mTextureMap["skybox"]);
+    diffuseTexture    = static_cast<TextureD3D12 *>(textureMap["diffuse"]);
+    normalTexture     = static_cast<TextureD3D12 *>(textureMap["normalMap"]);
+    reflectionTexture = static_cast<TextureD3D12 *>(textureMap["reflectionMap"]);
+    skyboxTexture     = static_cast<TextureD3D12 *>(textureMap["skybox"]);
 
-    mPositionBuffer = static_cast<BufferD3D12 *>(mBufferMap["position"]);
-    mNormalBuffer   = static_cast<BufferD3D12 *>(mBufferMap["normal"]);
-    mTexCoordBuffer = static_cast<BufferD3D12 *>(mBufferMap["texCoord"]);
-    mTangentBuffer  = static_cast<BufferD3D12 *>(mBufferMap["tangent"]);
-    mBinormalBuffer = static_cast<BufferD3D12 *>(mBufferMap["binormal"]);
-    mIndicesBuffer  = static_cast<BufferD3D12 *>(mBufferMap["indices"]);
+    positionBuffer = static_cast<BufferD3D12 *>(bufferMap["position"]);
+    normalBuffer   = static_cast<BufferD3D12 *>(bufferMap["normal"]);
+    texCoordBuffer = static_cast<BufferD3D12 *>(bufferMap["texCoord"]);
+    tangentBuffer  = static_cast<BufferD3D12 *>(bufferMap["tangent"]);
+    binormalBuffer = static_cast<BufferD3D12 *>(bufferMap["binormal"]);
+    indicesBuffer  = static_cast<BufferD3D12 *>(bufferMap["indices"]);
 
-    mVertexBufferView[0] = mPositionBuffer->mVertexBufferView;
-    mVertexBufferView[1] = mNormalBuffer->mVertexBufferView;
-    mVertexBufferView[2] = mTexCoordBuffer->mVertexBufferView;
+    vertexBufferView[0] = positionBuffer->mVertexBufferView;
+    vertexBufferView[1] = normalBuffer->mVertexBufferView;
+    vertexBufferView[2] = texCoordBuffer->mVertexBufferView;
 
-    mInputElementDescs = {
+    inputElementDescs = {
         {"TEXCOORD", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0,
          D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0},
         {"TEXCOORD", 1, DXGI_FORMAT_R32G32B32_FLOAT, 1, 0,
@@ -48,18 +48,17 @@ void OutsideModelD3D12::init()
     };
 
     // create constant buffer, desc.
-    mLightFactorBuffer = mContextD3D12->createDefaultBuffer(
-        &mLightFactorUniforms,
-        mContextD3D12->CalcConstantBufferByteSize(sizeof(LightFactorUniforms)),
-        mLightFactorUploadBuffer);
-    mLightFactorView.BufferLocation = mLightFactorBuffer->GetGPUVirtualAddress();
-    mLightFactorView.SizeInBytes    = mContextD3D12->CalcConstantBufferByteSize(
+    lightFactorBuffer = contextD3D12->createDefaultBuffer(
+        &lightFactorUniforms, contextD3D12->CalcConstantBufferByteSize(sizeof(LightFactorUniforms)),
+        lightFactorUploadBuffer);
+    lightFactorView.BufferLocation = lightFactorBuffer->GetGPUVirtualAddress();
+    lightFactorView.SizeInBytes    = contextD3D12->CalcConstantBufferByteSize(
         sizeof(LightFactorUniforms));  // CB size is required to be 256-byte aligned.
-    mContextD3D12->buildCbvDescriptor(mLightFactorView, &mLightFactorGPUHandle);
-    mWorldBuffer = mContextD3D12->createUploadBuffer(
-        &mWorldUniformPer, mContextD3D12->CalcConstantBufferByteSize(sizeof(WorldUniforms)));
-    mWorldBufferView.BufferLocation = mWorldBuffer->GetGPUVirtualAddress();
-    mWorldBufferView.SizeInBytes = mContextD3D12->CalcConstantBufferByteSize(sizeof(WorldUniforms));
+    contextD3D12->buildCbvDescriptor(lightFactorView, &lightFactorGPUHandle);
+    worldBuffer = contextD3D12->createUploadBuffer(
+        &worldUniformPer, contextD3D12->CalcConstantBufferByteSize(sizeof(WorldUniforms)));
+    worldBufferView.BufferLocation = worldBuffer->GetGPUVirtualAddress();
+    worldBufferView.SizeInBytes = contextD3D12->CalcConstantBufferByteSize(sizeof(WorldUniforms));
 
     // Create root signature to bind resources.
     // Bind textures, samplers and immutable constant buffers in a descriptor table.
@@ -67,10 +66,10 @@ void OutsideModelD3D12::init()
     CD3DX12_VERSIONED_ROOT_SIGNATURE_DESC rootSignatureDesc;
     CD3DX12_ROOT_PARAMETER1 rootParameters[5];
     CD3DX12_DESCRIPTOR_RANGE1 ranges[2];
-    rootParameters[0] = mContextD3D12->rootParameterGeneral;
-    rootParameters[1] = mContextD3D12->rootParameterWorld;
+    rootParameters[0] = contextD3D12->rootParameterGeneral;
+    rootParameters[1] = contextD3D12->rootParameterWorld;
 
-    mDiffuseTexture->createSrvDescriptor();
+    diffuseTexture->createSrvDescriptor();
 
     ranges[0].Init(D3D12_DESCRIPTOR_RANGE_TYPE_CBV, 1, 0, 2,
                    D3D12_DESCRIPTOR_RANGE_FLAG_DATA_STATIC);
@@ -83,46 +82,46 @@ void OutsideModelD3D12::init()
                                                D3D12_SHADER_VISIBILITY_VERTEX);
 
     rootSignatureDesc.Init_1_1(_countof(rootParameters), rootParameters, 2u,
-                               mContextD3D12->staticSamplers.data(),
+                               contextD3D12->staticSamplers.data(),
                                D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT);
 
-    mContextD3D12->createRootSignature(&rootSignatureDesc, mRootSignature);
+    contextD3D12->createRootSignature(&rootSignatureDesc, m_rootSignature);
 
-    mContextD3D12->createGraphicsPipelineState(
-        mInputElementDescs, mRootSignature, mProgramD3D12->getVSModule(),
-        mProgramD3D12->getFSModule(), mPipelineState, mBlend);
+    contextD3D12->createGraphicsPipelineState(inputElementDescs, m_rootSignature,
+                                              programD3D12->getVSModule(),
+                                              programD3D12->getFSModule(), m_pipelineState, mBlend);
 }
 
 void OutsideModelD3D12::prepareForDraw() const {}
 
 void OutsideModelD3D12::draw()
 {
-    auto &commandList = mContextD3D12->mCommandList;
+    auto &commandList = contextD3D12->mCommandList;
 
-    commandList->SetPipelineState(mPipelineState.Get());
-    commandList->SetGraphicsRootSignature(mRootSignature.Get());
+    commandList->SetPipelineState(m_pipelineState.Get());
+    commandList->SetGraphicsRootSignature(m_rootSignature.Get());
 
-    commandList->SetGraphicsRootDescriptorTable(0, mContextD3D12->lightGPUHandle);
+    commandList->SetGraphicsRootDescriptorTable(0, contextD3D12->lightGPUHandle);
     commandList->SetGraphicsRootConstantBufferView(
-        1, mContextD3D12->lightWorldPositionView.BufferLocation);
-    commandList->SetGraphicsRootDescriptorTable(2, mLightFactorGPUHandle);
-    commandList->SetGraphicsRootDescriptorTable(3, mDiffuseTexture->getTextureGPUHandle());
-    commandList->SetGraphicsRootConstantBufferView(4, mWorldBufferView.BufferLocation);
+        1, contextD3D12->lightWorldPositionView.BufferLocation);
+    commandList->SetGraphicsRootDescriptorTable(2, lightFactorGPUHandle);
+    commandList->SetGraphicsRootDescriptorTable(3, diffuseTexture->getTextureGPUHandle());
+    commandList->SetGraphicsRootConstantBufferView(4, worldBufferView.BufferLocation);
 
     commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-    commandList->IASetVertexBuffers(0, 3, mVertexBufferView);
+    commandList->IASetVertexBuffers(0, 3, vertexBufferView);
 
-    commandList->IASetIndexBuffer(&mIndicesBuffer->mIndexBufferView);
+    commandList->IASetIndexBuffer(&indicesBuffer->mIndexBufferView);
 
-    commandList->DrawIndexedInstanced(mIndicesBuffer->getTotalComponents(), 1, 0, 0, 0);
+    commandList->DrawIndexedInstanced(indicesBuffer->getTotalComponents(), 1, 0, 0, 0);
 }
 
 void OutsideModelD3D12::updatePerInstanceUniforms(WorldUniforms *worldUniforms)
 {
-    memcpy(&mWorldUniformPer, worldUniforms, sizeof(WorldUniforms));
+    memcpy(&worldUniformPer, worldUniforms, sizeof(WorldUniforms));
 
     CD3DX12_RANGE readRange(0, 0);
     UINT8 *m_pCbvDataBegin;
-    mWorldBuffer->Map(0, &readRange, reinterpret_cast<void **>(&m_pCbvDataBegin));
-    memcpy(m_pCbvDataBegin, &mWorldUniformPer, sizeof(WorldUniforms));
+    worldBuffer->Map(0, &readRange, reinterpret_cast<void **>(&m_pCbvDataBegin));
+    memcpy(m_pCbvDataBegin, &worldUniformPer, sizeof(WorldUniforms));
 }

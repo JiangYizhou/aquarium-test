@@ -13,107 +13,107 @@ GenericModelDawn::GenericModelDawn(const Context *context,
                                    MODELGROUP type,
                                    MODELNAME name,
                                    bool blend)
-    : Model(type, name, blend), mInstance(0)
+    : Model(type, name, blend), instance(0)
 {
-    mContextDawn = static_cast<const ContextDawn *>(context);
+    contextDawn = static_cast<const ContextDawn *>(context);
 
-    mLightFactorUniforms.shininess      = 50.0f;
-    mLightFactorUniforms.specularFactor = 1.0f;
+    lightFactorUniforms.shininess      = 50.0f;
+    lightFactorUniforms.specularFactor = 1.0f;
 }
 
 GenericModelDawn::~GenericModelDawn()
 {
-    mPipeline          = nullptr;
-    mGroupLayoutModel  = nullptr;
-    mGroupLayoutPer    = nullptr;
-    mPipelineLayout    = nullptr;
-    mBindGroupModel    = nullptr;
-    mBindGroupPer      = nullptr;
-    mLightFactorBuffer = nullptr;
-    mWorldBuffer       = nullptr;
+    pipeline          = nullptr;
+    groupLayoutModel  = nullptr;
+    groupLayoutPer    = nullptr;
+    pipelineLayout    = nullptr;
+    bindGroupModel    = nullptr;
+    bindGroupPer      = nullptr;
+    lightFactorBuffer = nullptr;
+    worldBuffer       = nullptr;
 }
 
 void GenericModelDawn::init()
 {
-    mProgramDawn = static_cast<ProgramDawn *>(mProgram);
+    programDawn = static_cast<ProgramDawn *>(mProgram);
 
-    mDiffuseTexture    = static_cast<TextureDawn *>(mTextureMap["diffuse"]);
-    mNormalTexture     = static_cast<TextureDawn *>(mTextureMap["normalMap"]);
-    mReflectionTexture = static_cast<TextureDawn *>(mTextureMap["reflectionMap"]);
-    mSkyboxTexture     = static_cast<TextureDawn *>(mTextureMap["skybox"]);
+    diffuseTexture    = static_cast<TextureDawn *>(textureMap["diffuse"]);
+    normalTexture     = static_cast<TextureDawn *>(textureMap["normalMap"]);
+    reflectionTexture = static_cast<TextureDawn *>(textureMap["reflectionMap"]);
+    skyboxTexture     = static_cast<TextureDawn *>(textureMap["skybox"]);
 
-    mPositionBuffer = static_cast<BufferDawn *>(mBufferMap["position"]);
-    mNormalBuffer   = static_cast<BufferDawn *>(mBufferMap["normal"]);
-    mTexCoordBuffer = static_cast<BufferDawn *>(mBufferMap["texCoord"]);
-    mTangentBuffer  = static_cast<BufferDawn *>(mBufferMap["tangent"]);
-    mBinormalBuffer = static_cast<BufferDawn *>(mBufferMap["binormal"]);
-    mIndicesBuffer  = static_cast<BufferDawn *>(mBufferMap["indices"]);
+    positionBuffer = static_cast<BufferDawn *>(bufferMap["position"]);
+    normalBuffer   = static_cast<BufferDawn *>(bufferMap["normal"]);
+    texCoordBuffer = static_cast<BufferDawn *>(bufferMap["texCoord"]);
+    tangentBuffer  = static_cast<BufferDawn *>(bufferMap["tangent"]);
+    binormalBuffer = static_cast<BufferDawn *>(bufferMap["binormal"]);
+    indicesBuffer  = static_cast<BufferDawn *>(bufferMap["indices"]);
 
     // Generic models use reflection, normal or diffuse shaders, of which groupLayouts are
     // diiferent in texture binding.  MODELGLOBEBASE use diffuse shader though it contains
     // normal and reflection textures.
-    if (mNormalTexture && mName != MODELNAME::MODELGLOBEBASE)
+    if (normalTexture && mName != MODELNAME::MODELGLOBEBASE)
     {
-        mVertexInputDescriptor.cBuffers[0].attributeCount    = 1;
-        mVertexInputDescriptor.cBuffers[0].stride            = mPositionBuffer->getDataSize();
-        mVertexInputDescriptor.cAttributes[0].format         = dawn::VertexFormat::Float3;
-        mVertexInputDescriptor.cAttributes[0].shaderLocation = 0;
-        mVertexInputDescriptor.cAttributes[0].offset         = 0;
-        mVertexInputDescriptor.cBuffers[0].attributes     = &mVertexInputDescriptor.cAttributes[0];
-        mVertexInputDescriptor.cBuffers[1].attributeCount = 1;
-        mVertexInputDescriptor.cBuffers[1].stride         = mNormalBuffer->getDataSize();
-        mVertexInputDescriptor.cAttributes[1].format      = dawn::VertexFormat::Float3;
-        mVertexInputDescriptor.cAttributes[1].shaderLocation = 1;
-        mVertexInputDescriptor.cAttributes[1].offset         = 0;
-        mVertexInputDescriptor.cBuffers[1].attributes     = &mVertexInputDescriptor.cAttributes[1];
-        mVertexInputDescriptor.cBuffers[2].attributeCount = 1;
-        mVertexInputDescriptor.cBuffers[2].stride         = mTexCoordBuffer->getDataSize();
-        mVertexInputDescriptor.cAttributes[2].format      = dawn::VertexFormat::Float2;
-        mVertexInputDescriptor.cAttributes[2].shaderLocation = 2;
-        mVertexInputDescriptor.cAttributes[2].offset         = 0;
-        mVertexInputDescriptor.cBuffers[2].attributes     = &mVertexInputDescriptor.cAttributes[2];
-        mVertexInputDescriptor.cBuffers[3].attributeCount = 1;
-        mVertexInputDescriptor.cBuffers[3].stride         = mTangentBuffer->getDataSize();
-        mVertexInputDescriptor.cAttributes[3].format      = dawn::VertexFormat::Float3;
-        mVertexInputDescriptor.cAttributes[3].shaderLocation = 3;
-        mVertexInputDescriptor.cAttributes[3].offset         = 0;
-        mVertexInputDescriptor.cBuffers[3].attributes     = &mVertexInputDescriptor.cAttributes[3];
-        mVertexInputDescriptor.cBuffers[4].attributeCount = 1;
-        mVertexInputDescriptor.cBuffers[4].stride         = mBinormalBuffer->getDataSize();
-        mVertexInputDescriptor.cAttributes[4].format      = dawn::VertexFormat::Float3;
-        mVertexInputDescriptor.cAttributes[4].shaderLocation = 4;
-        mVertexInputDescriptor.cAttributes[4].offset         = 0;
-        mVertexInputDescriptor.cBuffers[4].attributes = &mVertexInputDescriptor.cAttributes[4];
-        mVertexInputDescriptor.bufferCount            = 5;
-        mVertexInputDescriptor.indexFormat            = dawn::IndexFormat::Uint16;
+        vertexInputDescriptor.cBuffers[0].attributeCount    = 1;
+        vertexInputDescriptor.cBuffers[0].stride            = positionBuffer->getDataSize();
+        vertexInputDescriptor.cAttributes[0].format         = dawn::VertexFormat::Float3;
+        vertexInputDescriptor.cAttributes[0].shaderLocation = 0;
+        vertexInputDescriptor.cAttributes[0].offset         = 0;
+        vertexInputDescriptor.cBuffers[0].attributes        = &vertexInputDescriptor.cAttributes[0];
+        vertexInputDescriptor.cBuffers[1].attributeCount    = 1;
+        vertexInputDescriptor.cBuffers[1].stride            = normalBuffer->getDataSize();
+        vertexInputDescriptor.cAttributes[1].format         = dawn::VertexFormat::Float3;
+        vertexInputDescriptor.cAttributes[1].shaderLocation = 1;
+        vertexInputDescriptor.cAttributes[1].offset         = 0;
+        vertexInputDescriptor.cBuffers[1].attributes        = &vertexInputDescriptor.cAttributes[1];
+        vertexInputDescriptor.cBuffers[2].attributeCount    = 1;
+        vertexInputDescriptor.cBuffers[2].stride            = texCoordBuffer->getDataSize();
+        vertexInputDescriptor.cAttributes[2].format         = dawn::VertexFormat::Float2;
+        vertexInputDescriptor.cAttributes[2].shaderLocation = 2;
+        vertexInputDescriptor.cAttributes[2].offset         = 0;
+        vertexInputDescriptor.cBuffers[2].attributes        = &vertexInputDescriptor.cAttributes[2];
+        vertexInputDescriptor.cBuffers[3].attributeCount    = 1;
+        vertexInputDescriptor.cBuffers[3].stride            = tangentBuffer->getDataSize();
+        vertexInputDescriptor.cAttributes[3].format         = dawn::VertexFormat::Float3;
+        vertexInputDescriptor.cAttributes[3].shaderLocation = 3;
+        vertexInputDescriptor.cAttributes[3].offset         = 0;
+        vertexInputDescriptor.cBuffers[3].attributes        = &vertexInputDescriptor.cAttributes[3];
+        vertexInputDescriptor.cBuffers[4].attributeCount    = 1;
+        vertexInputDescriptor.cBuffers[4].stride            = binormalBuffer->getDataSize();
+        vertexInputDescriptor.cAttributes[4].format         = dawn::VertexFormat::Float3;
+        vertexInputDescriptor.cAttributes[4].shaderLocation = 4;
+        vertexInputDescriptor.cAttributes[4].offset         = 0;
+        vertexInputDescriptor.cBuffers[4].attributes        = &vertexInputDescriptor.cAttributes[4];
+        vertexInputDescriptor.bufferCount                   = 5;
+        vertexInputDescriptor.indexFormat                   = dawn::IndexFormat::Uint16;
     }
     else
     {
-        mVertexInputDescriptor.cBuffers[0].attributeCount    = 1;
-        mVertexInputDescriptor.cBuffers[0].stride            = mPositionBuffer->getDataSize();
-        mVertexInputDescriptor.cAttributes[0].format         = dawn::VertexFormat::Float3;
-        mVertexInputDescriptor.cAttributes[0].shaderLocation = 0;
-        mVertexInputDescriptor.cAttributes[0].offset         = 0;
-        mVertexInputDescriptor.cBuffers[0].attributes     = &mVertexInputDescriptor.cAttributes[0];
-        mVertexInputDescriptor.cBuffers[1].attributeCount = 1;
-        mVertexInputDescriptor.cBuffers[1].stride         = mNormalBuffer->getDataSize();
-        mVertexInputDescriptor.cAttributes[1].format      = dawn::VertexFormat::Float3;
-        mVertexInputDescriptor.cAttributes[1].shaderLocation = 1;
-        mVertexInputDescriptor.cAttributes[1].offset         = 0;
-        mVertexInputDescriptor.cBuffers[1].attributes     = &mVertexInputDescriptor.cAttributes[1];
-        mVertexInputDescriptor.cBuffers[2].attributeCount = 1;
-        mVertexInputDescriptor.cBuffers[2].stride         = mTexCoordBuffer->getDataSize();
-        mVertexInputDescriptor.cAttributes[2].format      = dawn::VertexFormat::Float2;
-        mVertexInputDescriptor.cAttributes[2].shaderLocation = 2;
-        mVertexInputDescriptor.cAttributes[2].offset         = 0;
-        mVertexInputDescriptor.cBuffers[2].attributes = &mVertexInputDescriptor.cAttributes[2];
-        mVertexInputDescriptor.bufferCount            = 3;
-        mVertexInputDescriptor.indexFormat            = dawn::IndexFormat::Uint16;
+        vertexInputDescriptor.cBuffers[0].attributeCount    = 1;
+        vertexInputDescriptor.cBuffers[0].stride            = positionBuffer->getDataSize();
+        vertexInputDescriptor.cAttributes[0].format         = dawn::VertexFormat::Float3;
+        vertexInputDescriptor.cAttributes[0].shaderLocation = 0;
+        vertexInputDescriptor.cAttributes[0].offset         = 0;
+        vertexInputDescriptor.cBuffers[0].attributes        = &vertexInputDescriptor.cAttributes[0];
+        vertexInputDescriptor.cBuffers[1].attributeCount    = 1;
+        vertexInputDescriptor.cBuffers[1].stride            = normalBuffer->getDataSize();
+        vertexInputDescriptor.cAttributes[1].format         = dawn::VertexFormat::Float3;
+        vertexInputDescriptor.cAttributes[1].shaderLocation = 1;
+        vertexInputDescriptor.cAttributes[1].offset         = 0;
+        vertexInputDescriptor.cBuffers[1].attributes        = &vertexInputDescriptor.cAttributes[1];
+        vertexInputDescriptor.cBuffers[2].attributeCount    = 1;
+        vertexInputDescriptor.cBuffers[2].stride            = texCoordBuffer->getDataSize();
+        vertexInputDescriptor.cAttributes[2].format         = dawn::VertexFormat::Float2;
+        vertexInputDescriptor.cAttributes[2].shaderLocation = 2;
+        vertexInputDescriptor.cAttributes[2].offset         = 0;
+        vertexInputDescriptor.cBuffers[2].attributes        = &vertexInputDescriptor.cAttributes[2];
+        vertexInputDescriptor.bufferCount                   = 3;
+        vertexInputDescriptor.indexFormat                   = dawn::IndexFormat::Uint16;
     }
 
-    if (mSkyboxTexture && mReflectionTexture && mName != MODELNAME::MODELGLOBEBASE)
+    if (skyboxTexture && reflectionTexture && mName != MODELNAME::MODELGLOBEBASE)
     {
-        mGroupLayoutModel = mContextDawn->MakeBindGroupLayout({
+        groupLayoutModel = contextDawn->MakeBindGroupLayout({
             {0, dawn::ShaderStageBit::Fragment, dawn::BindingType::UniformBuffer},
             {1, dawn::ShaderStageBit::Fragment, dawn::BindingType::Sampler},
             {2, dawn::ShaderStageBit::Fragment, dawn::BindingType::Sampler},
@@ -123,9 +123,9 @@ void GenericModelDawn::init()
             {6, dawn::ShaderStageBit::Fragment, dawn::BindingType::SampledTexture},
         });
     }
-    else if (mNormalTexture && mName != MODELNAME::MODELGLOBEBASE)
+    else if (normalTexture && mName != MODELNAME::MODELGLOBEBASE)
     {
-        mGroupLayoutModel = mContextDawn->MakeBindGroupLayout({
+        groupLayoutModel = contextDawn->MakeBindGroupLayout({
             {0, dawn::ShaderStageBit::Fragment, dawn::BindingType::UniformBuffer},
             {1, dawn::ShaderStageBit::Fragment, dawn::BindingType::Sampler},
             {2, dawn::ShaderStageBit::Fragment, dawn::BindingType::SampledTexture},
@@ -134,109 +134,109 @@ void GenericModelDawn::init()
     }
     else
     {
-        mGroupLayoutModel = mContextDawn->MakeBindGroupLayout({
+        groupLayoutModel = contextDawn->MakeBindGroupLayout({
             {0, dawn::ShaderStageBit::Fragment, dawn::BindingType::UniformBuffer},
             {1, dawn::ShaderStageBit::Fragment, dawn::BindingType::Sampler},
             {2, dawn::ShaderStageBit::Fragment, dawn::BindingType::SampledTexture},
         });
     }
 
-    mGroupLayoutPer = mContextDawn->MakeBindGroupLayout({
+    groupLayoutPer = contextDawn->MakeBindGroupLayout({
         {0, dawn::ShaderStageBit::Vertex, dawn::BindingType::UniformBuffer},
     });
 
-    mPipelineLayout = mContextDawn->MakeBasicPipelineLayout({
-        mContextDawn->groupLayoutGeneral,
-        mContextDawn->groupLayoutWorld,
-        mGroupLayoutModel,
-        mGroupLayoutPer,
+    pipelineLayout = contextDawn->MakeBasicPipelineLayout({
+        contextDawn->groupLayoutGeneral,
+        contextDawn->groupLayoutWorld,
+        groupLayoutModel,
+        groupLayoutPer,
     });
 
-    mPipeline = mContextDawn->createRenderPipeline(mPipelineLayout, mProgramDawn,
-                                                   mVertexInputDescriptor, mBlend);
+    pipeline = contextDawn->createRenderPipeline(pipelineLayout, programDawn, vertexInputDescriptor,
+                                                 mBlend);
 
-    mLightFactorBuffer = mContextDawn->createBufferFromData(
-        &mLightFactorUniforms, sizeof(mLightFactorUniforms),
+    lightFactorBuffer = contextDawn->createBufferFromData(
+        &lightFactorUniforms, sizeof(lightFactorUniforms),
         dawn::BufferUsageBit::CopyDst | dawn::BufferUsageBit::Uniform);
-    mWorldBuffer = mContextDawn->createBufferFromData(
-        &mWorldUniformPer, sizeof(mWorldUniformPer),
+    worldBuffer = contextDawn->createBufferFromData(
+        &worldUniformPer, sizeof(worldUniformPer),
         dawn::BufferUsageBit::CopyDst | dawn::BufferUsageBit::Uniform);
 
     // Generic models use reflection, normal or diffuse shaders, of which grouplayouts are
     // diiferent in texture binding. MODELGLOBEBASE use diffuse shader though it contains
     // normal and reflection textures.
-    if (mSkyboxTexture && mReflectionTexture && mName != MODELNAME::MODELGLOBEBASE)
+    if (skyboxTexture && reflectionTexture && mName != MODELNAME::MODELGLOBEBASE)
     {
-        mBindGroupModel = mContextDawn->makeBindGroup(
-            mGroupLayoutModel, {{0, mLightFactorBuffer, 0, sizeof(LightFactorUniforms)},
-                                {1, mReflectionTexture->getSampler()},
-                                {2, mSkyboxTexture->getSampler()},
-                                {3, mDiffuseTexture->getTextureView()},
-                                {4, mNormalTexture->getTextureView()},
-                                {5, mReflectionTexture->getTextureView()},
-                                {6, mSkyboxTexture->getTextureView()}});
+        bindGroupModel = contextDawn->makeBindGroup(
+            groupLayoutModel, {{0, lightFactorBuffer, 0, sizeof(LightFactorUniforms)},
+                               {1, reflectionTexture->getSampler()},
+                               {2, skyboxTexture->getSampler()},
+                               {3, diffuseTexture->getTextureView()},
+                               {4, normalTexture->getTextureView()},
+                               {5, reflectionTexture->getTextureView()},
+                               {6, skyboxTexture->getTextureView()}});
     }
-    else if (mNormalTexture && mName != MODELNAME::MODELGLOBEBASE)
+    else if (normalTexture && mName != MODELNAME::MODELGLOBEBASE)
     {
-        mBindGroupModel = mContextDawn->makeBindGroup(
-            mGroupLayoutModel, {
-                                   {0, mLightFactorBuffer, 0, sizeof(LightFactorUniforms)},
-                                   {1, mDiffuseTexture->getSampler()},
-                                   {2, mDiffuseTexture->getTextureView()},
-                                   {3, mNormalTexture->getTextureView()},
-                               });
+        bindGroupModel = contextDawn->makeBindGroup(
+            groupLayoutModel, {
+                                  {0, lightFactorBuffer, 0, sizeof(LightFactorUniforms)},
+                                  {1, diffuseTexture->getSampler()},
+                                  {2, diffuseTexture->getTextureView()},
+                                  {3, normalTexture->getTextureView()},
+                              });
     }
     else
     {
-        mBindGroupModel = mContextDawn->makeBindGroup(
-            mGroupLayoutModel, {
-                                   {0, mLightFactorBuffer, 0, sizeof(LightFactorUniforms)},
-                                   {1, mDiffuseTexture->getSampler()},
-                                   {2, mDiffuseTexture->getTextureView()},
-                               });
+        bindGroupModel = contextDawn->makeBindGroup(
+            groupLayoutModel, {
+                                  {0, lightFactorBuffer, 0, sizeof(LightFactorUniforms)},
+                                  {1, diffuseTexture->getSampler()},
+                                  {2, diffuseTexture->getTextureView()},
+                              });
     }
 
-    mBindGroupPer = mContextDawn->makeBindGroup(mGroupLayoutPer,
-                                                {
-                                                    {0, mWorldBuffer, 0, sizeof(WorldUniformPer)},
-                                                });
+    bindGroupPer =
+        contextDawn->makeBindGroup(groupLayoutPer, {
+                                                       {0, worldBuffer, 0, sizeof(WorldUniformPer)},
+                                                   });
 
-    mContextDawn->setBufferData(mLightFactorBuffer, 0, sizeof(LightFactorUniforms),
-                                &mLightFactorUniforms);
+    contextDawn->setBufferData(lightFactorBuffer, 0, sizeof(LightFactorUniforms),
+                               &lightFactorUniforms);
 }
 
 void GenericModelDawn::prepareForDraw() const
 {
-    mContextDawn->setBufferData(mWorldBuffer, 0, sizeof(WorldUniformPer), &mWorldUniformPer);
+    contextDawn->setBufferData(worldBuffer, 0, sizeof(WorldUniformPer), &worldUniformPer);
 }
 
 void GenericModelDawn::draw()
 {
     uint64_t vertexBufferOffsets[1] = {0};
 
-    dawn::RenderPassEncoder pass = mContextDawn->getRenderPass();
-    pass.SetPipeline(mPipeline);
-    pass.SetBindGroup(0, mContextDawn->bindGroupGeneral, 0, nullptr);
-    pass.SetBindGroup(1, mContextDawn->bindGroupWorld, 0, nullptr);
-    pass.SetBindGroup(2, mBindGroupModel, 0, nullptr);
-    pass.SetBindGroup(3, mBindGroupPer, 0, nullptr);
-    pass.SetVertexBuffers(0, 1, &mPositionBuffer->getBuffer(), vertexBufferOffsets);
-    pass.SetVertexBuffers(1, 1, &mNormalBuffer->getBuffer(), vertexBufferOffsets);
-    pass.SetVertexBuffers(2, 1, &mTexCoordBuffer->getBuffer(), vertexBufferOffsets);
+    dawn::RenderPassEncoder pass = contextDawn->getRenderPass();
+    pass.SetPipeline(pipeline);
+    pass.SetBindGroup(0, contextDawn->bindGroupGeneral, 0, nullptr);
+    pass.SetBindGroup(1, contextDawn->bindGroupWorld, 0, nullptr);
+    pass.SetBindGroup(2, bindGroupModel, 0, nullptr);
+    pass.SetBindGroup(3, bindGroupPer, 0, nullptr);
+    pass.SetVertexBuffers(0, 1, &positionBuffer->getBuffer(), vertexBufferOffsets);
+    pass.SetVertexBuffers(1, 1, &normalBuffer->getBuffer(), vertexBufferOffsets);
+    pass.SetVertexBuffers(2, 1, &texCoordBuffer->getBuffer(), vertexBufferOffsets);
     // diffuseShader doesn't have to input tangent buffer or binormal buffer.
-    if (mTangentBuffer && mBinormalBuffer && mName != MODELNAME::MODELGLOBEBASE)
+    if (tangentBuffer && binormalBuffer && mName != MODELNAME::MODELGLOBEBASE)
     {
-        pass.SetVertexBuffers(3, 1, &mTangentBuffer->getBuffer(), vertexBufferOffsets);
-        pass.SetVertexBuffers(4, 1, &mBinormalBuffer->getBuffer(), vertexBufferOffsets);
+        pass.SetVertexBuffers(3, 1, &tangentBuffer->getBuffer(), vertexBufferOffsets);
+        pass.SetVertexBuffers(4, 1, &binormalBuffer->getBuffer(), vertexBufferOffsets);
     }
-    pass.SetIndexBuffer(mIndicesBuffer->getBuffer(), 0);
-    pass.DrawIndexed(mIndicesBuffer->getTotalComponents(), mInstance, 0, 0, 0);
-    mInstance = 0;
+    pass.SetIndexBuffer(indicesBuffer->getBuffer(), 0);
+    pass.DrawIndexed(indicesBuffer->getTotalComponents(), instance, 0, 0, 0);
+    instance = 0;
 }
 
 void GenericModelDawn::updatePerInstanceUniforms(WorldUniforms *worldUniforms)
 {
-    mWorldUniformPer.WorldUniforms[mInstance] = *worldUniforms;
+    worldUniformPer.WorldUniforms[instance] = *worldUniforms;
 
-    mInstance++;
+    instance++;
 }

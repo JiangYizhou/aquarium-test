@@ -10,12 +10,12 @@
 
 // Copy size must be a multiple of 4 bytes on dawn mac backend.
 BufferDawn::BufferDawn(ContextDawn *context,
-                       int totalComponents,
+                       int totalCmoponents,
                        int numComponents,
                        std::vector<float> &buffer,
                        bool isIndex)
     : mUsageBit(isIndex ? dawn::BufferUsageBit::Index : dawn::BufferUsageBit::Vertex),
-      mTotoalComponents(totalComponents),
+      mTotoalComponents(totalCmoponents),
       mStride(0),
       mOffset(nullptr)
 {
@@ -32,12 +32,12 @@ BufferDawn::BufferDawn(ContextDawn *context,
 }
 
 BufferDawn::BufferDawn(ContextDawn *context,
-                       int totalComponents,
+                       int totalCmoponents,
                        int numComponents,
                        std::vector<unsigned short> &buffer,
                        bool isIndex)
     : mUsageBit(isIndex ? dawn::BufferUsageBit::Index : dawn::BufferUsageBit::Vertex),
-      mTotoalComponents(totalComponents),
+      mTotoalComponents(totalCmoponents),
       mStride(0),
       mOffset(nullptr)
 {

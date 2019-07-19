@@ -33,14 +33,15 @@ public:
     ~ProgramDawn() override;
 
     void loadProgram();
-    dawn::ShaderModule getVSModule() { return mVsModule; }
-    dawn::ShaderModule getFSModule() { return mFsModule; }
+    dawn::ShaderModule getVSModule() { return vsModule; }
+    dawn::ShaderModule getFSModule() { return fsModule; }
 
-  private:
-    dawn::ShaderModule mVsModule;
-    dawn::ShaderModule mFsModule;
+private:
 
-    ContextDawn *mContext;
+    dawn::ShaderModule vsModule;
+    dawn::ShaderModule fsModule;
+
+    ContextDawn *context;
 };
 
 #endif

@@ -41,7 +41,7 @@ public:
     GLuint mProgramId;
     GLuint mVAO;
 
-    ContextGL *mContext;
+    ContextGL *context;
 };
 
 #endif

@@ -17,15 +17,15 @@ class Program
   public:
     Program(){}
     Program(std::string vertexShader, std::string fragmentShader)
-        : mVId(vertexShader), mFId(fragmentShader)
+        : vId(vertexShader), fId(fragmentShader)
     {
     }
     virtual ~Program() {}
     virtual void setProgram() {}
 
   protected:
-    std::string mVId;
-    std::string mFId;
+    std::string vId;
+    std::string fId;
 };
 
 #endif // !PROGRAM_H

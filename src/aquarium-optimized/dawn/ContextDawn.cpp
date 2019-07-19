@@ -40,8 +40,8 @@
 ContextDawn::ContextDawn(BACKENDTYPE backendType)
     : queue(nullptr),
       mWindow(nullptr),
-      mInstance(),
-      mSwapchain(nullptr),
+      instance(),
+      swapchain(nullptr),
       mCommandEncoder(nullptr),
       mRenderPass(nullptr),
       mRenderPassDescriptor({}),
@@ -51,7 +51,7 @@ ContextDawn::ContextDawn(BACKENDTYPE backendType)
       mPipeline(nullptr),
       mBindGroup(nullptr),
       mPreferredSwapChainFormat(dawn::TextureFormat::RGBA8Unorm),
-      mDevice(nullptr),
+      device(nullptr),
       mEnableMSAA(false)
 {
     mResourceHelper = new ResourceHelper("dawn", "");
@@ -71,9 +71,9 @@ ContextDawn::~ContextDawn()
     mBackbuffer              = nullptr;
     mPipeline                = nullptr;
     mBindGroup               = nullptr;
-    mLightWorldPositionBuffer = nullptr;
-    mLightBuffer              = nullptr;
-    mFogBuffer                = nullptr;
+    lightWorldPositionBuffer = nullptr;
+    lightBuffer              = nullptr;
+    fogBuffer                = nullptr;
     mCommandEncoder          = nullptr;
     mCommandBuffers.clear();
     mRenderPass              = nullptr;
@@ -82,9 +82,9 @@ ContextDawn::~ContextDawn()
     bindGroupGeneral         = nullptr;
     groupLayoutWorld         = nullptr;
     bindGroupWorld           = nullptr;
-    mSwapchain               = nullptr;
+    swapchain                = nullptr;
     queue                    = nullptr;
-    mDevice                  = nullptr;
+    device                   = nullptr;
 }
 
 bool ContextDawn::initialize(
@@ -163,11 +163,11 @@ bool ContextDawn::initialize(
     // Get the resolution of screen
     glfwGetFramebufferSize(mWindow, &mClientWidth, &mClientHeight);
 
-    mInstance = std::make_unique<dawn_native::Instance>();
-    utils::DiscoverAdapter(mInstance.get(), mWindow, backendType);
+    instance = std::make_unique<dawn_native::Instance>();
+    utils::DiscoverAdapter(instance.get(), mWindow, backendType);
 
     dawn_native::Adapter backendAdapter;
-    if (!GetHardwareAdapter(mInstance, &backendAdapter, backendType, toggleBitset))
+    if (!GetHardwareAdapter(instance, &backendAdapter, backendType, toggleBitset))
     {
         return false;
     }
@@ -182,17 +182,17 @@ bool ContextDawn::initialize(
     }
 
     dawnSetProcs(&backendProcs);
-    mDevice = dawn::Device::Acquire(backendDevice);
+    device = dawn::Device::Acquire(backendDevice);
 
-    queue = mDevice.CreateQueue();
+    queue = device.CreateQueue();
     dawn::SwapChainDescriptor swapChainDesc;
     swapChainDesc.implementation = binding->GetSwapChainImplementation();
-    mSwapchain                   = mDevice.CreateSwapChain(&swapChainDesc);
+    swapchain                    = device.CreateSwapChain(&swapChainDesc);
 
     mPreferredSwapChainFormat =
         static_cast<dawn::TextureFormat>(binding->GetPreferredSwapChainTextureFormat());
-    mSwapchain.Configure(mPreferredSwapChainFormat, dawn::TextureUsageBit::OutputAttachment,
-                         mClientWidth, mClientHeight);
+    swapchain.Configure(mPreferredSwapChainFormat, dawn::TextureUsageBit::OutputAttachment,
+                        mClientWidth, mClientHeight);
 
     dawn_native::PCIInfo info = backendAdapter.GetPCIInfo();
     mRenderer                 = info.name;
@@ -212,7 +212,7 @@ bool ContextDawn::initialize(
         descriptor.mipLevelCount   = 1;
         descriptor.usage           = dawn::TextureUsageBit::OutputAttachment;
 
-        mSceneRenderTargetView = mDevice.CreateTexture(&descriptor).CreateDefaultView();
+        mSceneRenderTargetView = device.CreateTexture(&descriptor).CreateDefaultView();
     }
 
     mSceneDepthStencilView = createDepthStencilView();
@@ -235,7 +235,7 @@ bool ContextDawn::initialize(
 }
 
 bool ContextDawn::GetHardwareAdapter(
-    std::unique_ptr<dawn_native::Instance> &mInstance,
+    std::unique_ptr<dawn_native::Instance> &instance,
     dawn_native::Adapter *backendAdapter,
     dawn_native::BackendType backendType,
     const std::bitset<static_cast<size_t>(TOGGLE::TOGGLEMAX)> &toggleBitset)
@@ -245,8 +245,8 @@ bool ContextDawn::GetHardwareAdapter(
     bool useDefaultGpu       = (enableDiscreteGpu | enableIntegratedGpu) == false ? true : false;
     bool result             = false;
 
-    // Get an adapter for the backend to use, and create the mDevice.
-    for (auto &adapter : mInstance->GetAdapters())
+    // Get an adapter for the backend to use, and create the device.
+    for (auto &adapter : instance->GetAdapters())
     {
         if (adapter.GetBackendType() == backendType)
         {
@@ -302,17 +302,17 @@ Texture *ContextDawn::createTexture(std::string name, const std::vector<std::str
 
 dawn::Texture ContextDawn::createTexture(const dawn::TextureDescriptor & descriptor) const
 {
-    return mDevice.CreateTexture(&descriptor);
+    return device.CreateTexture(&descriptor);
 }
 
 dawn::Sampler ContextDawn::createSampler(const dawn::SamplerDescriptor & descriptor) const
 {
-    return mDevice.CreateSampler(&descriptor);
+    return device.CreateSampler(&descriptor);
 }
 
 dawn::Buffer ContextDawn::createBufferFromData(const void * pixels, int size, dawn::BufferUsageBit usage) const
 {
-    return utils::CreateBufferFromData(mDevice, pixels, size, usage);
+    return utils::CreateBufferFromData(device, pixels, size, usage);
 }
 
 dawn::BufferCopyView ContextDawn::createBufferCopyView(const dawn::Buffer& buffer,
@@ -334,7 +334,7 @@ dawn::TextureCopyView ContextDawn::createTextureCopyView(dawn::Texture texture,
 
 dawn::CommandBuffer ContextDawn::copyBufferToTexture(const dawn::BufferCopyView &bufferCopyView, const dawn::TextureCopyView &textureCopyView, const dawn::Extent3D& ext3D) const
 {
-    dawn::CommandEncoder encoder = mDevice.CreateCommandEncoder();
+    dawn::CommandEncoder encoder = device.CreateCommandEncoder();
     encoder.CopyBufferToTexture(&bufferCopyView, &textureCopyView, &ext3D);
     dawn::CommandBuffer copy = encoder.Finish();
     return copy;
@@ -343,13 +343,13 @@ dawn::CommandBuffer ContextDawn::copyBufferToTexture(const dawn::BufferCopyView 
 dawn::ShaderModule ContextDawn::createShaderModule(utils::ShaderStage stage,
                                                    const std::string &str) const
 {
-    return utils::CreateShaderModule(mDevice, stage, str.c_str());
+    return utils::CreateShaderModule(device, stage, str.c_str());
 }
 
 dawn::BindGroupLayout ContextDawn::MakeBindGroupLayout(
     std::initializer_list<dawn::BindGroupLayoutBinding> bindingsInitializer) const {
 
-    return utils::MakeBindGroupLayout(mDevice, bindingsInitializer);
+    return utils::MakeBindGroupLayout(device, bindingsInitializer);
 }
 
 dawn::PipelineLayout ContextDawn::MakeBasicPipelineLayout(
@@ -358,26 +358,26 @@ dawn::PipelineLayout ContextDawn::MakeBasicPipelineLayout(
 
     descriptor.bindGroupLayoutCount = static_cast<uint32_t>(bindingsInitializer.size());
     descriptor.bindGroupLayouts = bindingsInitializer.data();
-
-    return mDevice.CreatePipelineLayout(&descriptor);
+    
+    return device.CreatePipelineLayout(&descriptor);
 }
 
 dawn::RenderPipeline ContextDawn::createRenderPipeline(
-    dawn::PipelineLayout mPipelineLayout,
-    ProgramDawn *mProgramDawn,
-    dawn::VertexInputDescriptor &mVertexInputDescriptor,
+    dawn::PipelineLayout pipelineLayout,
+    ProgramDawn *programDawn,
+    dawn::VertexInputDescriptor &vertexInputDescriptor,
     bool enableBlend) const
 {
-    const dawn::ShaderModule &mVsModule = mProgramDawn->getVSModule();
-    const dawn::ShaderModule &mFsModule = mProgramDawn->getFSModule();
+    const dawn::ShaderModule &vsModule = programDawn->getVSModule();
+    const dawn::ShaderModule &fsModule = programDawn->getFSModule();
 
     dawn::PipelineStageDescriptor cVertexStage;
     cVertexStage.entryPoint = "main";
-    cVertexStage.module     = mVsModule;
+    cVertexStage.module     = vsModule;
 
     dawn::PipelineStageDescriptor cFragmentStage;
     cFragmentStage.entryPoint = "main";
-    cFragmentStage.module     = mFsModule;
+    cFragmentStage.module     = fsModule;
 
     dawn::BlendDescriptor blendDescriptor;
     blendDescriptor.operation = dawn::BlendOperation::Add;
@@ -406,11 +406,11 @@ dawn::RenderPipeline ContextDawn::createRenderPipeline(
     rasterizationState.depthBiasClamp      = 0.0;
 
     // test
-    utils::ComboRenderPipelineDescriptor descriptor(mDevice);
-    descriptor.layout                               = mPipelineLayout;
-    descriptor.cVertexStage.module                  = mVsModule;
-    descriptor.cFragmentStage.module                = mFsModule;
-    descriptor.vertexInput                          = &mVertexInputDescriptor;
+    utils::ComboRenderPipelineDescriptor descriptor(device);
+    descriptor.layout                               = pipelineLayout;
+    descriptor.cVertexStage.module                  = vsModule;
+    descriptor.cFragmentStage.module                = fsModule;
+    descriptor.vertexInput                          = &vertexInputDescriptor;
     descriptor.depthStencilState                    = &descriptor.cDepthStencilState;
     descriptor.cDepthStencilState.format            = dawn::TextureFormat::Depth24PlusStencil8;
     descriptor.cColorStates[0]                      = &ColorStateDescriptor;
@@ -421,9 +421,9 @@ dawn::RenderPipeline ContextDawn::createRenderPipeline(
     descriptor.sampleCount                          = mEnableMSAA ? 4 : 1;
     descriptor.rasterizationState                   = &rasterizationState;
 
-    dawn::RenderPipeline mPipeline = mDevice.CreateRenderPipeline(&descriptor);
+    dawn::RenderPipeline pipeline = device.CreateRenderPipeline(&descriptor);
 
-    return mPipeline;
+    return pipeline;
 }
 
 dawn::TextureView ContextDawn::createDepthStencilView() const
@@ -438,7 +438,7 @@ dawn::TextureView ContextDawn::createDepthStencilView() const
     descriptor.format          = dawn::TextureFormat::Depth24PlusStencil8;
     descriptor.mipLevelCount   = 1;
     descriptor.usage           = dawn::TextureUsageBit::OutputAttachment;
-    auto depthStencilTexture   = mDevice.CreateTexture(&descriptor);
+    auto depthStencilTexture   = device.CreateTexture(&descriptor);
     return depthStencilTexture.CreateDefaultView();
 }
 
@@ -448,7 +448,7 @@ dawn::Buffer ContextDawn::createBuffer(uint32_t size, dawn::BufferUsageBit bit) 
     descriptor.size = size;
     descriptor.usage = bit;
 
-    dawn::Buffer buffer = mDevice.CreateBuffer(&descriptor);
+    dawn::Buffer buffer = device.CreateBuffer(&descriptor);
     return buffer;
 }
 
@@ -461,7 +461,7 @@ dawn::BindGroup ContextDawn::makeBindGroup(
     const dawn::BindGroupLayout &layout,
     std::initializer_list<utils::BindingInitializationHelper> bindingsInitializer) const
 {
-    return utils::MakeBindGroup(mDevice, layout, bindingsInitializer);
+    return utils::MakeBindGroup(device, layout, bindingsInitializer);
 }
 
 void ContextDawn::initGeneralResources(Aquarium* aquarium)
@@ -472,43 +472,34 @@ void ContextDawn::initGeneralResources(Aquarium* aquarium)
         { 1, dawn::ShaderStageBit::Fragment, dawn::BindingType::UniformBuffer },
     });
 
-    mLightBuffer =
-        createBufferFromData(&aquarium->lightUniforms, sizeof(aquarium->lightUniforms),
-                             dawn::BufferUsageBit::CopyDst | dawn::BufferUsageBit::Uniform);
-    mFogBuffer =
-        createBufferFromData(&aquarium->fogUniforms, sizeof(aquarium->fogUniforms),
-                             dawn::BufferUsageBit::CopyDst | dawn::BufferUsageBit::Uniform);
+    lightBuffer = createBufferFromData(&aquarium->lightUniforms, sizeof(aquarium->lightUniforms), dawn::BufferUsageBit::CopyDst | dawn::BufferUsageBit::Uniform);
+    fogBuffer = createBufferFromData(&aquarium->fogUniforms, sizeof(aquarium->fogUniforms), dawn::BufferUsageBit::CopyDst | dawn::BufferUsageBit::Uniform);
 
-    bindGroupGeneral =
-        makeBindGroup(groupLayoutGeneral, {{0, mLightBuffer, 0, sizeof(aquarium->lightUniforms)},
-                                           {1, mFogBuffer, 0, sizeof(aquarium->fogUniforms)}});
+    bindGroupGeneral = makeBindGroup(groupLayoutGeneral, {
+        { 0, lightBuffer, 0, sizeof(aquarium->lightUniforms) },
+        { 1, fogBuffer , 0, sizeof(aquarium->fogUniforms) }
+    });
 
-    setBufferData(mLightBuffer, 0, sizeof(LightUniforms), &aquarium->lightUniforms);
-    setBufferData(mFogBuffer, 0, sizeof(FogUniforms), &aquarium->fogUniforms);
+    setBufferData(lightBuffer, 0, sizeof(LightUniforms), &aquarium->lightUniforms);
+    setBufferData(fogBuffer, 0, sizeof(FogUniforms), &aquarium->fogUniforms);
 
     // initilize world uniform buffers
     groupLayoutWorld = MakeBindGroupLayout({ 
         { 0, dawn::ShaderStageBit::Vertex, dawn::BindingType::UniformBuffer },
     });
 
-    mLightWorldPositionBuffer = createBufferFromData(
-        &aquarium->lightWorldPositionUniform, sizeof(aquarium->lightWorldPositionUniform),
-        dawn::BufferUsageBit::CopyDst | dawn::BufferUsageBit::Uniform);
+    lightWorldPositionBuffer = createBufferFromData(&aquarium->lightWorldPositionUniform, sizeof(aquarium->lightWorldPositionUniform), dawn::BufferUsageBit::CopyDst | dawn::BufferUsageBit::Uniform);
+    
+    bindGroupWorld = makeBindGroup(groupLayoutWorld, {
+        {0, lightWorldPositionBuffer, 0, sizeof(aquarium->lightWorldPositionUniform) },
+    });
 
-    bindGroupWorld = makeBindGroup(
-        groupLayoutWorld,
-        {
-            {0, mLightWorldPositionBuffer, 0, sizeof(aquarium->lightWorldPositionUniform)},
-        });
-
-    setBufferData(mLightWorldPositionBuffer, 0, sizeof(LightWorldPositionUniform),
-                  &aquarium->lightWorldPositionUniform);
+    setBufferData(lightWorldPositionBuffer, 0, sizeof(LightWorldPositionUniform), &aquarium->lightWorldPositionUniform);
 }
 
 void ContextDawn::updateWorldlUniforms(Aquarium* aquarium)
 {
-    setBufferData(mLightWorldPositionBuffer, 0, sizeof(LightWorldPositionUniform),
-                  &aquarium->lightWorldPositionUniform);
+    setBufferData(lightWorldPositionBuffer, 0, sizeof(LightWorldPositionUniform), &aquarium->lightWorldPositionUniform);
 }
 
 Buffer *ContextDawn::createBuffer(int numComponents, std::vector<float> &buf, bool isIndex)
@@ -554,7 +545,7 @@ void ContextDawn::DoFlush()
     dawn::CommandBuffer cmd = mCommandEncoder.Finish();
     queue.Submit(1, &cmd);
 
-    mSwapchain.Present(mBackbuffer);
+    swapchain.Present(mBackbuffer);
 
     glfwPollEvents();
 }
@@ -626,8 +617,8 @@ void ContextDawn::destoryImgUI()
 
 void ContextDawn::preFrame()
 {
-    mCommandEncoder = mDevice.CreateCommandEncoder();
-    mBackbuffer     = mSwapchain.GetNextTexture();
+    mCommandEncoder = device.CreateCommandEncoder();
+    mBackbuffer = swapchain.GetNextTexture();
 
     if (mEnableMSAA)
     {

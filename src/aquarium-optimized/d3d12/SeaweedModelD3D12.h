@@ -31,23 +31,23 @@ class SeaweedModelD3D12 : public SeaweedModel
 
     void updatePerInstanceUniforms(WorldUniforms *worldUniforms) override;
 
-    TextureD3D12 *mDiffuseTexture;
-    TextureD3D12 *mNormalTexture;
-    TextureD3D12 *mReflectionTexture;
-    TextureD3D12 *mSkyboxTexture;
+    TextureD3D12 *diffuseTexture;
+    TextureD3D12 *normalTexture;
+    TextureD3D12 *reflectionTexture;
+    TextureD3D12 *skyboxTexture;
 
-    BufferD3D12 *mPositionBuffer;
-    BufferD3D12 *mNormalBuffer;
-    BufferD3D12 *mTexCoordBuffer;
+    BufferD3D12 *positionBuffer;
+    BufferD3D12 *normalBuffer;
+    BufferD3D12 *texCoordBuffer;
 
-    BufferD3D12 *mIndicesBuffer;
+    BufferD3D12 *indicesBuffer;
     void updateSeaweedModelTime(float time) override;
 
     struct LightFactorUniforms
     {
         float shininess;
         float specularFactor;
-    } mLightFactorUniforms;
+    } lightFactorUniforms;
 
     struct Seaweed
     {
@@ -57,38 +57,40 @@ class SeaweedModelD3D12 : public SeaweedModel
     struct SeaweedPer
     {
         Seaweed seaweed[20];
-    } mSeaweedPer;
+    } seaweedPer;
 
     struct WorldUniformPer
     {
-        WorldUniforms mWorldUniforms[20];
+        WorldUniforms worldUniforms[20];
     };
-    WorldUniformPer mWorldUniformPer;
+    WorldUniformPer worldUniformPer;
 
   private:
-    D3D12_CONSTANT_BUFFER_VIEW_DESC mWorldBufferView;
-    ComPtr<ID3D12Resource> mWorldBuffer;
-    D3D12_CONSTANT_BUFFER_VIEW_DESC mSeaweedBufferView;
-    ComPtr<ID3D12Resource> mSeaweedBuffer;
+    D3D12_CONSTANT_BUFFER_VIEW_DESC worldBufferView;
+    ComPtr<ID3D12Resource> worldBuffer;
+    D3D12_CONSTANT_BUFFER_VIEW_DESC seaweedBufferView;
+    ComPtr<ID3D12Resource> seaweedBuffer;
 
-    D3D12_CONSTANT_BUFFER_VIEW_DESC mLightFactorView;
-    D3D12_GPU_DESCRIPTOR_HANDLE mLightFactorGPUHandle;
-    ComPtr<ID3D12Resource> mLightFactorBuffer;
-    ComPtr<ID3D12Resource> mLightFactorUploadBuffer;
+    D3D12_CONSTANT_BUFFER_VIEW_DESC lightFactorView;
+    D3D12_GPU_DESCRIPTOR_HANDLE lightFactorGPUHandle;
+    ComPtr<ID3D12Resource> lightFactorBuffer;
+    ComPtr<ID3D12Resource> lightFactorUploadBuffer;
 
-    std::vector<D3D12_INPUT_ELEMENT_DESC> mInputElementDescs;
+    std::vector<D3D12_INPUT_ELEMENT_DESC> inputElementDescs;
 
-    D3D12_VERTEX_BUFFER_VIEW mVertexBufferView[3];
+    D3D12_VERTEX_BUFFER_VIEW vertexBufferView[3];
 
-    ComPtr<ID3D12RootSignature> mRootSignature;
+    ComPtr<ID3D12RootSignature> m_rootSignature;
 
-    ComPtr<ID3D12PipelineState> mPipelineState;
+    ComPtr<ID3D12PipelineState> m_pipelineState;
 
-    ContextD3D12 *mContextD3D12;
-    ProgramD3D12 *mProgramD3D12;
+    
+
+    ContextD3D12 *contextD3D12;
+    ProgramD3D12 *programD3D12;
     Aquarium *mAquarium;
 
-    int mInstance;
+    int instance;
 };
 
 #endif  // !SEAWEEDMODEL_H

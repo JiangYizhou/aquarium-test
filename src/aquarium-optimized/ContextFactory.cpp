@@ -15,11 +15,13 @@
 #include "d3d12/ContextD3D12.h"
 #endif
 
-ContextFactory::ContextFactory() : mContext(nullptr) {}
+ContextFactory::ContextFactory()
+    :context(nullptr)
+{}
 
 ContextFactory::~ContextFactory()
 {
-    delete mContext;
+    delete context;
 }
 
 Context *ContextFactory::createContext(BACKENDTYPE backendType)
@@ -29,7 +31,7 @@ Context *ContextFactory::createContext(BACKENDTYPE backendType)
         case BACKENDTYPE::BACKENDTYPEOPENGL:
         case BACKENDTYPE::BACKENDTYPEANGLE:
             {
-                mContext = new ContextGL(backendType);
+                context = new ContextGL(backendType);
                 break;
             }
         case BACKENDTYPE::BACKENDTYPEDAWND3D12:
@@ -37,14 +39,14 @@ Context *ContextFactory::createContext(BACKENDTYPE backendType)
         case BACKENDTYPE::BACKENDTYPEDAWNVULKAN:
             {
 #ifdef ENABLE_DAWN_BACKEND
-                mContext = new ContextDawn(backendType);
+                context = new ContextDawn(backendType);
 #endif
                 break;
             }
             case BACKENDTYPE::BACKENDTYPED3D12:
             {
 #ifdef ENABLE_D3D12_BACKEND
-                mContext = new ContextD3D12(backendType);
+                context = new ContextD3D12(backendType);
                 break;
 #endif
             }
@@ -52,5 +54,5 @@ Context *ContextFactory::createContext(BACKENDTYPE backendType)
                 break;
     }
 
-    return mContext;
+    return context;
 }

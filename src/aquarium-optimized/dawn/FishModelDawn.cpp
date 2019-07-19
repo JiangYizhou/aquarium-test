@@ -13,88 +13,88 @@ FishModelDawn::FishModelDawn(const Context *context,
                              MODELGROUP type,
                              MODELNAME name,
                              bool blend)
-    : FishModel(type, name, blend), mInstance(0)
+    : FishModel(type, name, blend), instance(0)
 {
-    mContextDawn = static_cast<const ContextDawn *>(context);
+    contextDawn = static_cast<const ContextDawn *>(context);
 
-    mEnableDynamicBufferOffset =
+    enableDynamicBufferOffset =
         aquarium->toggleBitset.test(static_cast<size_t>(TOGGLE::ENABLEDYNAMICBUFFEROFFSET));
 
-    mLightFactorUniforms.shininess      = 5.0f;
-    mLightFactorUniforms.specularFactor = 0.3f;
+    lightFactorUniforms.shininess      = 5.0f;
+    lightFactorUniforms.specularFactor = 0.3f;
 
     const Fish &fishInfo              = fishTable[name - MODELNAME::MODELSMALLFISHA];
-    mFishVertexUniforms.fishLength     = fishInfo.fishLength;
-    mFishVertexUniforms.fishBendAmount = fishInfo.fishBendAmount;
-    mFishVertexUniforms.fishWaveLength = fishInfo.fishWaveLength;
+    fishVertexUniforms.fishLength     = fishInfo.fishLength;
+    fishVertexUniforms.fishBendAmount = fishInfo.fishBendAmount;
+    fishVertexUniforms.fishWaveLength = fishInfo.fishWaveLength;
 
-    mInstance = aquarium->fishCount[fishInfo.modelName - MODELNAME::MODELSMALLFISHA];
-    mFishPers = new FishPer[mInstance];
-    if (mEnableDynamicBufferOffset)
+    instance      = aquarium->fishCount[fishInfo.modelName - MODELNAME::MODELSMALLFISHA];
+    fishPers      = new FishPer[instance];
+    if (enableDynamicBufferOffset)
     {
-        mBindGroupPers = new dawn::BindGroup[1];
+        bindGroupPers = new dawn::BindGroup[1];
     }
     else
     {
-        mBindGroupPers = new dawn::BindGroup[mInstance];
+        bindGroupPers = new dawn::BindGroup[instance];
     }
 }
 
 void FishModelDawn::init()
 {
-    if (mInstance == 0)
+    if (instance == 0)
         return;
 
-    mProgramDawn = static_cast<ProgramDawn *>(mProgram);
+    programDawn = static_cast<ProgramDawn *>(mProgram);
 
-    mDiffuseTexture    = static_cast<TextureDawn *>(mTextureMap["diffuse"]);
-    mNormalTexture     = static_cast<TextureDawn *>(mTextureMap["normalMap"]);
-    mReflectionTexture = static_cast<TextureDawn *>(mTextureMap["reflectionMap"]);
-    mSkyboxTexture     = static_cast<TextureDawn *>(mTextureMap["skybox"]);
+    diffuseTexture    = static_cast<TextureDawn *>(textureMap["diffuse"]);
+    normalTexture     = static_cast<TextureDawn *>(textureMap["normalMap"]);
+    reflectionTexture = static_cast<TextureDawn *>(textureMap["reflectionMap"]);
+    skyboxTexture     = static_cast<TextureDawn *>(textureMap["skybox"]);
 
-    mPositionBuffer = static_cast<BufferDawn *>(mBufferMap["position"]);
-    mNormalBuffer   = static_cast<BufferDawn *>(mBufferMap["normal"]);
-    mTexCoordBuffer = static_cast<BufferDawn *>(mBufferMap["texCoord"]);
-    mTangentBuffer  = static_cast<BufferDawn *>(mBufferMap["tangent"]);
-    mBinormalBuffer = static_cast<BufferDawn *>(mBufferMap["binormal"]);
-    mIndicesBuffer  = static_cast<BufferDawn *>(mBufferMap["indices"]);
+    positionBuffer = static_cast<BufferDawn *>(bufferMap["position"]);
+    normalBuffer   = static_cast<BufferDawn *>(bufferMap["normal"]);
+    texCoordBuffer = static_cast<BufferDawn *>(bufferMap["texCoord"]);
+    tangentBuffer  = static_cast<BufferDawn *>(bufferMap["tangent"]);
+    binormalBuffer = static_cast<BufferDawn *>(bufferMap["binormal"]);
+    indicesBuffer  = static_cast<BufferDawn *>(bufferMap["indices"]);
 
-    mVertexInputDescriptor.cBuffers[0].attributeCount    = 1;
-    mVertexInputDescriptor.cBuffers[0].stride            = mPositionBuffer->getDataSize();
-    mVertexInputDescriptor.cAttributes[0].format         = dawn::VertexFormat::Float3;
-    mVertexInputDescriptor.cAttributes[0].shaderLocation = 0;
-    mVertexInputDescriptor.cAttributes[0].offset         = 0;
-    mVertexInputDescriptor.cBuffers[0].attributes        = &mVertexInputDescriptor.cAttributes[0];
-    mVertexInputDescriptor.cBuffers[1].attributeCount    = 1;
-    mVertexInputDescriptor.cBuffers[1].stride            = mNormalBuffer->getDataSize();
-    mVertexInputDescriptor.cAttributes[1].format         = dawn::VertexFormat::Float3;
-    mVertexInputDescriptor.cAttributes[1].shaderLocation = 1;
-    mVertexInputDescriptor.cAttributes[1].offset         = 0;
-    mVertexInputDescriptor.cBuffers[1].attributes        = &mVertexInputDescriptor.cAttributes[1];
-    mVertexInputDescriptor.cBuffers[2].attributeCount    = 1;
-    mVertexInputDescriptor.cBuffers[2].stride            = mTexCoordBuffer->getDataSize();
-    mVertexInputDescriptor.cAttributes[2].format         = dawn::VertexFormat::Float2;
-    mVertexInputDescriptor.cAttributes[2].shaderLocation = 2;
-    mVertexInputDescriptor.cAttributes[2].offset         = 0;
-    mVertexInputDescriptor.cBuffers[2].attributes        = &mVertexInputDescriptor.cAttributes[2];
-    mVertexInputDescriptor.cBuffers[3].attributeCount    = 1;
-    mVertexInputDescriptor.cBuffers[3].stride            = mTangentBuffer->getDataSize();
-    mVertexInputDescriptor.cAttributes[3].format         = dawn::VertexFormat::Float3;
-    mVertexInputDescriptor.cAttributes[3].shaderLocation = 3;
-    mVertexInputDescriptor.cAttributes[3].offset         = 0;
-    mVertexInputDescriptor.cBuffers[3].attributes        = &mVertexInputDescriptor.cAttributes[3];
-    mVertexInputDescriptor.cBuffers[4].attributeCount    = 1;
-    mVertexInputDescriptor.cBuffers[4].stride            = mBinormalBuffer->getDataSize();
-    mVertexInputDescriptor.cAttributes[4].format         = dawn::VertexFormat::Float3;
-    mVertexInputDescriptor.cAttributes[4].shaderLocation = 4;
-    mVertexInputDescriptor.cAttributes[4].offset         = 0;
-    mVertexInputDescriptor.cBuffers[4].attributes        = &mVertexInputDescriptor.cAttributes[4];
-    mVertexInputDescriptor.bufferCount                   = 5;
-    mVertexInputDescriptor.indexFormat                   = dawn::IndexFormat::Uint16;
+    vertexInputDescriptor.cBuffers[0].attributeCount    = 1;
+    vertexInputDescriptor.cBuffers[0].stride            = positionBuffer->getDataSize();
+    vertexInputDescriptor.cAttributes[0].format         = dawn::VertexFormat::Float3;
+    vertexInputDescriptor.cAttributes[0].shaderLocation = 0;
+    vertexInputDescriptor.cAttributes[0].offset         = 0;
+    vertexInputDescriptor.cBuffers[0].attributes        = &vertexInputDescriptor.cAttributes[0];
+    vertexInputDescriptor.cBuffers[1].attributeCount    = 1;
+    vertexInputDescriptor.cBuffers[1].stride            = normalBuffer->getDataSize();
+    vertexInputDescriptor.cAttributes[1].format         = dawn::VertexFormat::Float3;
+    vertexInputDescriptor.cAttributes[1].shaderLocation = 1;
+    vertexInputDescriptor.cAttributes[1].offset         = 0;
+    vertexInputDescriptor.cBuffers[1].attributes        = &vertexInputDescriptor.cAttributes[1];
+    vertexInputDescriptor.cBuffers[2].attributeCount    = 1;
+    vertexInputDescriptor.cBuffers[2].stride            = texCoordBuffer->getDataSize();
+    vertexInputDescriptor.cAttributes[2].format         = dawn::VertexFormat::Float2;
+    vertexInputDescriptor.cAttributes[2].shaderLocation = 2;
+    vertexInputDescriptor.cAttributes[2].offset         = 0;
+    vertexInputDescriptor.cBuffers[2].attributes        = &vertexInputDescriptor.cAttributes[2];
+    vertexInputDescriptor.cBuffers[3].attributeCount    = 1;
+    vertexInputDescriptor.cBuffers[3].stride            = tangentBuffer->getDataSize();
+    vertexInputDescriptor.cAttributes[3].format         = dawn::VertexFormat::Float3;
+    vertexInputDescriptor.cAttributes[3].shaderLocation = 3;
+    vertexInputDescriptor.cAttributes[3].offset         = 0;
+    vertexInputDescriptor.cBuffers[3].attributes        = &vertexInputDescriptor.cAttributes[3];
+    vertexInputDescriptor.cBuffers[4].attributeCount    = 1;
+    vertexInputDescriptor.cBuffers[4].stride            = binormalBuffer->getDataSize();
+    vertexInputDescriptor.cAttributes[4].format         = dawn::VertexFormat::Float3;
+    vertexInputDescriptor.cAttributes[4].shaderLocation = 4;
+    vertexInputDescriptor.cAttributes[4].offset         = 0;
+    vertexInputDescriptor.cBuffers[4].attributes        = &vertexInputDescriptor.cAttributes[4];
+    vertexInputDescriptor.bufferCount                   = 5;
+    vertexInputDescriptor.indexFormat                   = dawn::IndexFormat::Uint16;
 
-    if (mSkyboxTexture && mReflectionTexture)
+    if (skyboxTexture && reflectionTexture)
     {
-        mGroupLayoutModel = mContextDawn->MakeBindGroupLayout({
+        groupLayoutModel = contextDawn->MakeBindGroupLayout({
             {0, dawn::ShaderStageBit::Vertex, dawn::BindingType::UniformBuffer},
             {1, dawn::ShaderStageBit::Fragment, dawn::BindingType::UniformBuffer},
             {2, dawn::ShaderStageBit::Fragment, dawn::BindingType::Sampler},
@@ -107,7 +107,7 @@ void FishModelDawn::init()
     }
     else
     {
-        mGroupLayoutModel = mContextDawn->MakeBindGroupLayout({
+        groupLayoutModel = contextDawn->MakeBindGroupLayout({
             {0, dawn::ShaderStageBit::Vertex, dawn::BindingType::UniformBuffer},
             {1, dawn::ShaderStageBit::Fragment, dawn::BindingType::UniformBuffer},
             {2, dawn::ShaderStageBit::Fragment, dawn::BindingType::Sampler},
@@ -116,121 +116,121 @@ void FishModelDawn::init()
         });
     }
 
-    if (mEnableDynamicBufferOffset)
+    if (enableDynamicBufferOffset)
     {
-        mGroupLayoutPer = mContextDawn->MakeBindGroupLayout({
+        groupLayoutPer = contextDawn->MakeBindGroupLayout({
             {0, dawn::ShaderStageBit::Vertex, dawn::BindingType::UniformBuffer, true},
         });
     }
     else
     {
-        mGroupLayoutPer = mContextDawn->MakeBindGroupLayout({
+        groupLayoutPer = contextDawn->MakeBindGroupLayout({
             {0, dawn::ShaderStageBit::Vertex, dawn::BindingType::UniformBuffer},
         });
     }
 
-    mPipelineLayout = mContextDawn->MakeBasicPipelineLayout({
-        mContextDawn->groupLayoutGeneral,
-        mContextDawn->groupLayoutWorld,
-        mGroupLayoutModel,
-        mGroupLayoutPer,
+    pipelineLayout = contextDawn->MakeBasicPipelineLayout({
+        contextDawn->groupLayoutGeneral,
+        contextDawn->groupLayoutWorld,
+        groupLayoutModel,
+        groupLayoutPer,
     });
 
-    mPipeline = mContextDawn->createRenderPipeline(mPipelineLayout, mProgramDawn,
-                                                   mVertexInputDescriptor, mBlend);
+    pipeline = contextDawn->createRenderPipeline(pipelineLayout, programDawn, vertexInputDescriptor,
+                                                 mBlend);
 
-    mFishVertexBuffer = mContextDawn->createBufferFromData(
-        &mFishVertexUniforms, sizeof(mFishVertexUniforms),
+    fishVertexBuffer = contextDawn->createBufferFromData(
+        &fishVertexUniforms, sizeof(FishVertexUniforms),
         dawn::BufferUsageBit::CopyDst | dawn::BufferUsageBit::Uniform);
-    mLightFactorBuffer = mContextDawn->createBufferFromData(
-        &mLightFactorUniforms, sizeof(LightFactorUniforms),
+    lightFactorBuffer = contextDawn->createBufferFromData(
+        &lightFactorUniforms, sizeof(LightFactorUniforms),
         dawn::BufferUsageBit::CopyDst | dawn::BufferUsageBit::Uniform);
-    mFishPersBuffer = mContextDawn->createBufferFromData(
-        mFishPers, sizeof(FishPer) * mInstance,
+    fishPersBuffer = contextDawn->createBufferFromData(
+        fishPers, sizeof(FishPer) * instance,
         dawn::BufferUsageBit::CopyDst | dawn::BufferUsageBit::Uniform);
 
     // Fish models includes small, medium and big. Some of them contains reflection and skybox
     // texture, but some doesn't.
-    if (mSkyboxTexture && mReflectionTexture)
+    if (skyboxTexture && reflectionTexture)
     {
-        mBindGroupModel = mContextDawn->makeBindGroup(
-            mGroupLayoutModel, {{0, mFishVertexBuffer, 0, sizeof(mFishVertexUniforms)},
-                                {1, mLightFactorBuffer, 0, sizeof(LightFactorUniforms)},
-                                {2, mReflectionTexture->getSampler()},
-                                {3, mSkyboxTexture->getSampler()},
-                                {4, mDiffuseTexture->getTextureView()},
-                                {5, mNormalTexture->getTextureView()},
-                                {6, mReflectionTexture->getTextureView()},
-                                {7, mSkyboxTexture->getTextureView()}});
+        bindGroupModel = contextDawn->makeBindGroup(
+            groupLayoutModel, {{0, fishVertexBuffer, 0, sizeof(FishVertexUniforms)},
+                               {1, lightFactorBuffer, 0, sizeof(LightFactorUniforms)},
+                               {2, reflectionTexture->getSampler()},
+                               {3, skyboxTexture->getSampler()},
+                               {4, diffuseTexture->getTextureView()},
+                               {5, normalTexture->getTextureView()},
+                               {6, reflectionTexture->getTextureView()},
+                               {7, skyboxTexture->getTextureView()}});
     }
     else
     {
-        mBindGroupModel = mContextDawn->makeBindGroup(
-            mGroupLayoutModel, {{0, mFishVertexBuffer, 0, sizeof(mFishVertexUniforms)},
-                                {1, mLightFactorBuffer, 0, sizeof(LightFactorUniforms)},
-                                {2, mDiffuseTexture->getSampler()},
-                                {3, mDiffuseTexture->getTextureView()},
-                                {4, mNormalTexture->getTextureView()}});
+        bindGroupModel = contextDawn->makeBindGroup(
+            groupLayoutModel, {{0, fishVertexBuffer, 0, sizeof(FishVertexUniforms)},
+                               {1, lightFactorBuffer, 0, sizeof(LightFactorUniforms)},
+                               {2, diffuseTexture->getSampler()},
+                               {3, diffuseTexture->getTextureView()},
+                               {4, normalTexture->getTextureView()}});
     }
 
-    if (mEnableDynamicBufferOffset)
+    if (enableDynamicBufferOffset)
     {
-        mBindGroupPers[0] = mContextDawn->makeBindGroup(mGroupLayoutPer,
-                                                        {{0, mFishPersBuffer, 0, sizeof(FishPer)}});
+        bindGroupPers[0] = contextDawn->makeBindGroup(
+            groupLayoutPer, {{0, fishPersBuffer, 0, sizeof(FishPer)}});
     }
     else
     {
-        for (int i = 0; i < mInstance; i++)
+        for (int i = 0; i < instance; i++)
         {
-            mBindGroupPers[i] = mContextDawn->makeBindGroup(
-                mGroupLayoutPer, {{0, mFishPersBuffer, sizeof(FishPer) * i, sizeof(FishPer)}});
+            bindGroupPers[i] = contextDawn->makeBindGroup(
+                groupLayoutPer, {{0, fishPersBuffer, sizeof(FishPer) * i, sizeof(FishPer)}});
         }
     }
 
-    mContextDawn->setBufferData(mLightFactorBuffer, 0, sizeof(LightFactorUniforms),
-                                &mLightFactorUniforms);
-    mContextDawn->setBufferData(mFishVertexBuffer, 0, sizeof(mFishVertexUniforms),
-                                &mFishVertexUniforms);
+    contextDawn->setBufferData(lightFactorBuffer, 0, sizeof(LightFactorUniforms),
+                               &lightFactorUniforms);
+    contextDawn->setBufferData(fishVertexBuffer, 0, sizeof(FishVertexUniforms),
+                               &fishVertexUniforms);
 }
 
 void FishModelDawn::prepareForDraw() const {}
 
 void FishModelDawn::draw()
 {
-    if (mInstance == 0)
+    if (instance == 0)
         return;
 
     uint64_t vertexBufferOffsets[1] = {0};
 
-    mContextDawn->setBufferData(mFishPersBuffer, 0, sizeof(FishPer) * mInstance, mFishPers);
+    contextDawn->setBufferData(fishPersBuffer, 0, sizeof(FishPer) * instance, fishPers);
 
-    dawn::RenderPassEncoder pass = mContextDawn->getRenderPass();
-    pass.SetPipeline(mPipeline);
-    pass.SetBindGroup(0, mContextDawn->bindGroupGeneral, 0, nullptr);
-    pass.SetBindGroup(1, mContextDawn->bindGroupWorld, 0, nullptr);
-    pass.SetBindGroup(2, mBindGroupModel, 0, nullptr);
-    pass.SetVertexBuffers(0, 1, &mPositionBuffer->getBuffer(), vertexBufferOffsets);
-    pass.SetVertexBuffers(1, 1, &mNormalBuffer->getBuffer(), vertexBufferOffsets);
-    pass.SetVertexBuffers(2, 1, &mTexCoordBuffer->getBuffer(), vertexBufferOffsets);
-    pass.SetVertexBuffers(3, 1, &mTangentBuffer->getBuffer(), vertexBufferOffsets);
-    pass.SetVertexBuffers(4, 1, &mBinormalBuffer->getBuffer(), vertexBufferOffsets);
-    pass.SetIndexBuffer(mIndicesBuffer->getBuffer(), 0);
+    dawn::RenderPassEncoder pass = contextDawn->getRenderPass();
+    pass.SetPipeline(pipeline);
+    pass.SetBindGroup(0, contextDawn->bindGroupGeneral, 0, nullptr);
+    pass.SetBindGroup(1, contextDawn->bindGroupWorld, 0, nullptr);
+    pass.SetBindGroup(2, bindGroupModel, 0, nullptr);
+    pass.SetVertexBuffers(0, 1, &positionBuffer->getBuffer(), vertexBufferOffsets);
+    pass.SetVertexBuffers(1, 1, &normalBuffer->getBuffer(), vertexBufferOffsets);
+    pass.SetVertexBuffers(2, 1, &texCoordBuffer->getBuffer(), vertexBufferOffsets);
+    pass.SetVertexBuffers(3, 1, &tangentBuffer->getBuffer(), vertexBufferOffsets);
+    pass.SetVertexBuffers(4, 1, &binormalBuffer->getBuffer(), vertexBufferOffsets);
+    pass.SetIndexBuffer(indicesBuffer->getBuffer(), 0);
 
-    if (mEnableDynamicBufferOffset)
+    if (enableDynamicBufferOffset)
     {
-        for (int i = 0; i < mInstance; i++)
+        for (int i = 0; i < instance; i++)
         {
             uint64_t offset = 256u * i;
-            pass.SetBindGroup(3, mBindGroupPers[0], 1, &offset);
-            pass.DrawIndexed(mIndicesBuffer->getTotalComponents(), 1, 0, 0, 0);
+            pass.SetBindGroup(3, bindGroupPers[0], 1, &offset);
+            pass.DrawIndexed(indicesBuffer->getTotalComponents(), 1, 0, 0, 0);
         }
     }
     else
     {
-        for (int i = 0; i < mInstance; i++)
+        for (int i = 0; i < instance; i++)
         {
-            pass.SetBindGroup(3, mBindGroupPers[i], 0, nullptr);
-            pass.DrawIndexed(mIndicesBuffer->getTotalComponents(), 1, 0, 0, 0);
+            pass.SetBindGroup(3, bindGroupPers[i], 0, nullptr);
+            pass.DrawIndexed(indicesBuffer->getTotalComponents(), 1, 0, 0, 0);
         }
     }
 }
@@ -247,38 +247,38 @@ void FishModelDawn::updateFishPerUniforms(float x,
                                           float time,
                                           int index)
 {
-    mFishPers[index].worldPosition[0] = x;
-    mFishPers[index].worldPosition[1] = y;
-    mFishPers[index].worldPosition[2] = z;
-    mFishPers[index].nextPosition[0]  = nextX;
-    mFishPers[index].nextPosition[1]  = nextY;
-    mFishPers[index].nextPosition[2]  = nextZ;
-    mFishPers[index].scale            = scale;
-    mFishPers[index].time             = time;
+    fishPers[index].worldPosition[0] = x;
+    fishPers[index].worldPosition[1] = y;
+    fishPers[index].worldPosition[2] = z;
+    fishPers[index].nextPosition[0]  = nextX;
+    fishPers[index].nextPosition[1]  = nextY;
+    fishPers[index].nextPosition[2]  = nextZ;
+    fishPers[index].scale            = scale;
+    fishPers[index].time             = time;
 }
 
 FishModelDawn::~FishModelDawn()
 {
-    mPipeline          = nullptr;
-    mGroupLayoutModel  = nullptr;
-    mGroupLayoutPer    = nullptr;
-    mPipelineLayout    = nullptr;
-    mBindGroupModel    = nullptr;
-    mFishVertexBuffer  = nullptr;
-    mLightFactorBuffer = nullptr;
-    mFishPersBuffer    = nullptr;
-    delete mFishPers;
-    if (mEnableDynamicBufferOffset)
+    pipeline          = nullptr;
+    groupLayoutModel  = nullptr;
+    groupLayoutPer    = nullptr;
+    pipelineLayout    = nullptr;
+    bindGroupModel    = nullptr;
+    fishVertexBuffer  = nullptr;
+    lightFactorBuffer = nullptr;
+    fishPersBuffer    = nullptr;
+    delete fishPers;
+    if (enableDynamicBufferOffset)
     {
-        mBindGroupPers[0] = nullptr;
+        bindGroupPers[0] = nullptr;
     }
     else
     {
-        for (int i = 0; i < mInstance; i++)
+        for (int i = 0; i < instance; i++)
         {
-            mBindGroupPers[i] = nullptr;
+            bindGroupPers[i] = nullptr;
         }
     }
 
-    mBindGroupPers = nullptr;
+    bindGroupPers = nullptr;
 }
