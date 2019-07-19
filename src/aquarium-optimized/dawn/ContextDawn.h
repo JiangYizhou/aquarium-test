@@ -72,9 +72,9 @@ class ContextDawn : public Context
         std::initializer_list<dawn::BindGroupLayoutBinding> bindingsInitializer) const;
     dawn::PipelineLayout MakeBasicPipelineLayout(
         std::vector<dawn::BindGroupLayout> bindingsInitializer) const;
-    dawn::RenderPipeline createRenderPipeline(dawn::PipelineLayout pipelineLayout,
-                                              ProgramDawn *programDawn,
-                                              dawn::VertexInputDescriptor &vertexInputDescriptor,
+    dawn::RenderPipeline createRenderPipeline(dawn::PipelineLayout mPipelineLayout,
+                                              ProgramDawn *mProgramDawn,
+                                              dawn::VertexInputDescriptor &mVertexInputDescriptor,
                                               bool enableBlend) const;
     dawn::TextureView createDepthStencilView() const;
     dawn::Buffer createBuffer(uint32_t size, dawn::BufferUsageBit bit) const;
@@ -85,7 +85,7 @@ class ContextDawn : public Context
 
     void initGeneralResources(Aquarium* aquarium) override;
     void updateWorldlUniforms(Aquarium* aquarium) override;
-    const dawn::Device &getDevice() const { return device; }
+    const dawn::Device &getDevice() const { return mDevice; }
     const dawn::RenderPassEncoder &getRenderPass() const { return mRenderPass; }
     std::vector<dawn::CommandBuffer> mCommandBuffers;
     dawn::Queue queue;
@@ -97,16 +97,16 @@ class ContextDawn : public Context
 
   private:
     bool GetHardwareAdapter(
-        std::unique_ptr<dawn_native::Instance> &instance,
+        std::unique_ptr<dawn_native::Instance> &mInstance,
         dawn_native::Adapter *backendAdapter,
         dawn_native::BackendType backendType,
         const std::bitset<static_cast<size_t>(TOGGLE::TOGGLEMAX)> &toggleBitset);
     void initAvailableToggleBitset(BACKENDTYPE backendType) override;
 
     GLFWwindow *mWindow;
-    std::unique_ptr<dawn_native::Instance> instance;
+    std::unique_ptr<dawn_native::Instance> mInstance;
 
-    dawn::SwapChain swapchain;
+    dawn::SwapChain mSwapchain;
     dawn::CommandEncoder mCommandEncoder;
     dawn::RenderPassEncoder mRenderPass;
     utils::ComboRenderPassDescriptor mRenderPassDescriptor;
@@ -118,11 +118,11 @@ class ContextDawn : public Context
     dawn::BindGroup mBindGroup;
     dawn::TextureFormat mPreferredSwapChainFormat;
 
-    dawn::Buffer lightWorldPositionBuffer;
-    dawn::Buffer lightBuffer;
-    dawn::Buffer fogBuffer;
+    dawn::Buffer mLightWorldPositionBuffer;
+    dawn::Buffer mLightBuffer;
+    dawn::Buffer mFogBuffer;
 
-    dawn::Device device;
+    dawn::Device mDevice;
 
     bool mEnableMSAA;
     std::string mRenderer;

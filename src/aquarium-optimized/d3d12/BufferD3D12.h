@@ -24,12 +24,12 @@ class BufferD3D12 : public Buffer
 {
   public:
     BufferD3D12(ContextD3D12 *context,
-                int totalCmoponents,
+                int totalComponents,
                 int numComponents,
                 const std::vector<float> &buffer,
                 bool isIndex);
     BufferD3D12(ContextD3D12 *context,
-                int totalCmoponents,
+                int totalComponents,
                 int numComponents,
                 const std::vector<unsigned short> &buffer,
                 bool isIndex);

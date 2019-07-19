@@ -33,7 +33,7 @@ class BufferGL : public Buffer
 {
   public:
     BufferGL(ContextGL *context,
-             int totalCmoponents,
+             int totalComponents,
              int numComponents,
              bool isIndex,
              unsigned int type,
@@ -53,7 +53,7 @@ class BufferGL : public Buffer
     void loadBuffer(const std::vector<unsigned short> &buf);
 
   private:
-    ContextGL *context;
+    ContextGL *mContext;
     unsigned int mBuf;
     unsigned int mTarget;
     int mNumComponents;

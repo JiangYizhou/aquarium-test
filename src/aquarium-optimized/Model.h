@@ -8,7 +8,6 @@
 // Apply program for its model. Update uniforms, textures
 // and buffers for each frame.
 
-
 #ifndef MODEL_H
 #define MODEL_H 1
 
@@ -31,24 +30,29 @@ class Model
   public:
     Model();
     Model(MODELGROUP type, MODELNAME name, bool blend)
-        : mProgram(nullptr), mBlend(blend), mName(name) {}
+        : mProgram(nullptr), mBlend(blend), mName(name)
+    {
+    }
     virtual ~Model();
-    virtual void prepareForDraw() const     = 0;
-    virtual void updatePerInstanceUniforms(WorldUniforms* worldUniforms) = 0;
-    virtual void draw() = 0;
+    virtual void prepareForDraw() const                                   = 0;
+    virtual void updatePerInstanceUniforms(WorldUniforms *worldUniforms) = 0;
+    virtual void draw()                                                   = 0;
 
     void setProgram(Program *program);
     virtual void init() = 0;
 
-    std::vector<std::vector<float>> worldmatrices;
-    std::unordered_map<std::string, Texture *> textureMap;
-    std::unordered_map<std::string, Buffer *> bufferMap;
+    std::vector<std::vector<float>> &getWorldMatrix() { return mWorldmatrices; }
+    std::unordered_map<std::string, Texture *> &getTextureMap() { return mTextureMap; }
+    std::unordered_map<std::string, Buffer *> &getBufferMap() { return mBufferMap; }
 
   protected:
     Program *mProgram;
     bool mBlend;
     MODELNAME mName;
 
+    std::vector<std::vector<float>> mWorldmatrices;
+    std::unordered_map<std::string, Texture *> mTextureMap;
+    std::unordered_map<std::string, Buffer *> mBufferMap;
 };
 
 #endif

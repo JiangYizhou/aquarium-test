@@ -34,14 +34,14 @@ class ProgramD3D12 : public Program
     ~ProgramD3D12() override;
 
     void loadProgram();
-    ComPtr<ID3DBlob> getVSModule() { return vertexShader; }
-    ComPtr<ID3DBlob> getFSModule() { return pixelShader; }
+    ComPtr<ID3DBlob> getVSModule() { return mVertexShader; }
+    ComPtr<ID3DBlob> getFSModule() { return mPixelShader; }
 
   private:
-    ComPtr<ID3DBlob> vertexShader;
-    ComPtr<ID3DBlob> pixelShader;
+    ComPtr<ID3DBlob> mVertexShader;
+    ComPtr<ID3DBlob> mPixelShader;
 
-    ContextD3D12 *context;
+    ContextD3D12 *mContext;
 };
 
 #endif

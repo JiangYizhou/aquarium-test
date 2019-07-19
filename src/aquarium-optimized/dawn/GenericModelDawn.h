@@ -32,49 +32,49 @@ class GenericModelDawn : public Model
 
     void updatePerInstanceUniforms(WorldUniforms *worldUniforms) override;
 
-    TextureDawn *diffuseTexture;
-    TextureDawn *normalTexture;
-    TextureDawn *reflectionTexture;
-    TextureDawn *skyboxTexture;
+    TextureDawn *mDiffuseTexture;
+    TextureDawn *mNormalTexture;
+    TextureDawn *mReflectionTexture;
+    TextureDawn *mSkyboxTexture;
 
-    BufferDawn *positionBuffer;
-    BufferDawn *normalBuffer;
-    BufferDawn *texCoordBuffer;
-    BufferDawn *tangentBuffer;
-    BufferDawn *binormalBuffer;
+    BufferDawn *mPositionBuffer;
+    BufferDawn *mNormalBuffer;
+    BufferDawn *mTexCoordBuffer;
+    BufferDawn *mTangentBuffer;
+    BufferDawn *mBinormalBuffer;
 
-    BufferDawn *indicesBuffer;
+    BufferDawn *mIndicesBuffer;
 
     struct LightFactorUniforms
     {
         float shininess;
         float specularFactor;
-    } lightFactorUniforms;
+    } mLightFactorUniforms;
 
     struct WorldUniformPer
     {
         WorldUniforms WorldUniforms[20];
     };
-    WorldUniformPer worldUniformPer;
+    WorldUniformPer mWorldUniformPer;
 
-private:
-  utils::ComboVertexInputDescriptor vertexInputDescriptor;
-  dawn::RenderPipeline pipeline;
+  private:
+    utils::ComboVertexInputDescriptor mVertexInputDescriptor;
+    dawn::RenderPipeline mPipeline;
 
-  dawn::BindGroupLayout groupLayoutModel;
-  dawn::BindGroupLayout groupLayoutPer;
-  dawn::PipelineLayout pipelineLayout;
+    dawn::BindGroupLayout mGroupLayoutModel;
+    dawn::BindGroupLayout mGroupLayoutPer;
+    dawn::PipelineLayout mPipelineLayout;
 
-  dawn::BindGroup bindGroupModel;
-  dawn::BindGroup bindGroupPer;
+    dawn::BindGroup mBindGroupModel;
+    dawn::BindGroup mBindGroupPer;
 
-  dawn::Buffer lightFactorBuffer;
-  dawn::Buffer worldBuffer;
+    dawn::Buffer mLightFactorBuffer;
+    dawn::Buffer mWorldBuffer;
 
-  const ContextDawn *contextDawn;
-  ProgramDawn *programDawn;
+    const ContextDawn *mContextDawn;
+    ProgramDawn *mProgramDawn;
 
-  int instance;
+    int mInstance;
 };
 
 #endif

@@ -49,7 +49,7 @@ class TextureGL : public Texture
     unsigned int mTarget;
     unsigned int mTextureId;
     unsigned int mFormat;
-    ContextGL *context;
+    ContextGL *mContext;
 };
 
 #endif // !TEXTUREGL_H

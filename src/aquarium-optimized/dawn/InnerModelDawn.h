@@ -25,7 +25,7 @@ class InnerModelDawn : public Model
     void init() override;
     void prepareForDraw() const override;
     void draw() override;
-    void updatePerInstanceUniforms(WorldUniforms *WorldUniforms) override;
+    void updatePerInstanceUniforms(WorldUniforms *worldUniforms) override;
 
     struct InnerUniforms
     {
@@ -33,40 +33,39 @@ class InnerModelDawn : public Model
         float tankColorFudge;
         float refractionFudge;
         float padding;
-    } innerUniforms;
+    } mInnerUniforms;
 
-    WorldUniforms worldUniformPer;
+    WorldUniforms mWorldUniformPer;
 
-    TextureDawn *diffuseTexture;
-    TextureDawn *normalTexture;
-    TextureDawn *reflectionTexture;
-    TextureDawn *skyboxTexture;
+    TextureDawn *mDiffuseTexture;
+    TextureDawn *mNormalTexture;
+    TextureDawn *mReflectionTexture;
+    TextureDawn *mSkyboxTexture;
 
-    BufferDawn *positionBuffer;
-    BufferDawn *normalBuffer;
-    BufferDawn *texCoordBuffer;
-    BufferDawn *tangentBuffer;
-    BufferDawn *binormalBuffer;
+    BufferDawn *mPositionBuffer;
+    BufferDawn *mNormalBuffer;
+    BufferDawn *mTexCoordBuffer;
+    BufferDawn *mTangentBuffer;
+    BufferDawn *mBinormalBuffer;
 
-    BufferDawn *indicesBuffer;
+    BufferDawn *mIndicesBuffer;
 
+  private:
+    utils::ComboVertexInputDescriptor mVertexInputDescriptor;
+    dawn::RenderPipeline mPipeline;
 
-private:
-  utils::ComboVertexInputDescriptor vertexInputDescriptor;
-  dawn::RenderPipeline pipeline;
+    dawn::BindGroupLayout mGroupLayoutModel;
+    dawn::BindGroupLayout mGroupLayoutPer;
+    dawn::PipelineLayout mPipelineLayout;
 
-  dawn::BindGroupLayout groupLayoutModel;
-  dawn::BindGroupLayout groupLayoutPer;
-  dawn::PipelineLayout pipelineLayout;
+    dawn::BindGroup mBindGroupModel;
+    dawn::BindGroup mBindGroupPer;
 
-  dawn::BindGroup bindGroupModel;
-  dawn::BindGroup bindGroupPer;
+    dawn::Buffer mInnerBuffer;
+    dawn::Buffer mViewBuffer;
 
-  dawn::Buffer innerBuffer;
-  dawn::Buffer viewBuffer;
-
-  const ContextDawn *contextDawn;
-  ProgramDawn *programDawn;
+    const ContextDawn *mContextDawn;
+    ProgramDawn *mProgramDawn;
 };
 
 #endif // !INNERMODELDAWN_H
