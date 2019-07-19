@@ -30,7 +30,7 @@ TextureDawn::TextureDawn(ContextDawn *context, std::string name, std::string url
       mSampler(nullptr),
       mFormat(dawn::TextureFormat::RGBA8Unorm),
       mTextureView(nullptr),
-      mContext(context)
+      context(context)
 {
 }
 
@@ -41,7 +41,7 @@ TextureDawn::TextureDawn(ContextDawn *context,
       mTextureDimension(dawn::TextureDimension::e2D),
       mTextureViewDimension(dawn::TextureViewDimension::Cube),
       mFormat(dawn::TextureFormat::RGBA8Unorm),
-      mContext(context)
+      context(context)
 {
 }
 
@@ -63,19 +63,16 @@ void TextureDawn::loadTexture()
         descriptor.format = mFormat;
         descriptor.mipLevelCount   = 1;
         descriptor.usage = dawn::TextureUsageBit::CopyDst | dawn::TextureUsageBit::Sampled;
-        mTexture                   = mContext->createTexture(descriptor);
+        mTexture = context->createTexture(descriptor);
 
         for (unsigned int i = 0; i < 6; i++)
         {
-            dawn::Buffer stagingBuffer = mContext->createBufferFromData(
-                mPixelVec[i], mWidth * mHeight * 4, dawn::BufferUsageBit::CopySrc);
-            dawn::BufferCopyView bufferCopyView =
-                mContext->createBufferCopyView(stagingBuffer, 0, mWidth * 4, mHeight);
-            dawn::TextureCopyView textureCopyView =
-                mContext->createTextureCopyView(mTexture, 0, i, {0, 0, 0});
+            dawn::Buffer stagingBuffer = context->createBufferFromData(mPixelVec[i], mWidth * mHeight * 4, dawn::BufferUsageBit::CopySrc);
+            dawn::BufferCopyView bufferCopyView = context->createBufferCopyView(stagingBuffer, 0, mWidth * 4, mHeight);
+            dawn::TextureCopyView textureCopyView = context->createTextureCopyView(mTexture, 0, i, { 0, 0, 0 });
             dawn::Extent3D copySize = { static_cast<uint32_t>(mWidth), static_cast<uint32_t>(mHeight), 1 };
-            mContext->mCommandBuffers.emplace_back(
-                mContext->copyBufferToTexture(bufferCopyView, textureCopyView, copySize));
+            context->mCommandBuffers.emplace_back(
+                context->copyBufferToTexture(bufferCopyView, textureCopyView, copySize));
         }
 
         dawn::TextureViewDescriptor viewDescriptor;
@@ -99,7 +96,7 @@ void TextureDawn::loadTexture()
         samplerDesc.lodMaxClamp  = 1000.0f;
         samplerDesc.compare = dawn::CompareFunction::Never;
 
-        mSampler = mContext->createSampler(samplerDesc);
+        mSampler = context->createSampler(samplerDesc);
     }
     else  // dawn::TextureViewDimension::e2D
     {
@@ -127,7 +124,7 @@ void TextureDawn::loadTexture()
                                        static_cast<float>(std::log2(std::min(mWidth, mHeight))))) +
                                    1;
         descriptor.usage = dawn::TextureUsageBit::CopyDst | dawn::TextureUsageBit::Sampled;
-        mTexture         = mContext->createTexture(descriptor);
+        mTexture = context->createTexture(descriptor);
 
         int count = 0;
         for (unsigned int i = 0; i < descriptor.mipLevelCount; ++i, ++count)
@@ -139,17 +136,14 @@ void TextureDawn::loadTexture()
                 height = 1;
             }
 
-            dawn::Buffer stagingBuffer = mContext->createBufferFromData(
-                mResizedVec[i], resizedWidth * height * 4, dawn::BufferUsageBit::CopySrc);
-            dawn::BufferCopyView bufferCopyView =
-                mContext->createBufferCopyView(stagingBuffer, 0, resizedWidth * 4, height);
-            dawn::TextureCopyView textureCopyView =
-                mContext->createTextureCopyView(mTexture, i, 0, {0, 0, 0});
+            dawn::Buffer stagingBuffer = context->createBufferFromData(mResizedVec[i], resizedWidth * height * 4, dawn::BufferUsageBit::CopySrc);
+            dawn::BufferCopyView bufferCopyView = context->createBufferCopyView(stagingBuffer, 0, resizedWidth * 4, height);
+            dawn::TextureCopyView textureCopyView = context->createTextureCopyView(mTexture, i, 0, { 0, 0, 0 });
             dawn::Extent3D copySize = {static_cast<uint32_t>(width),
                                        static_cast<uint32_t>(height),
                                        1};
-            mContext->mCommandBuffers.emplace_back(
-                mContext->copyBufferToTexture(bufferCopyView, textureCopyView, copySize));
+            context->mCommandBuffers.emplace_back(
+                context->copyBufferToTexture(bufferCopyView, textureCopyView, copySize));
         }
 
         dawn::TextureViewDescriptor viewDescriptor;
@@ -184,7 +178,7 @@ void TextureDawn::loadTexture()
             samplerDesc.mipmapFilter = dawn::FilterMode::Nearest;
         }
 
-        mSampler = mContext->createSampler(samplerDesc);
+        mSampler = context->createSampler(samplerDesc);
     }
 
     // TODO(yizhou): check if the pixel destory should delay or fence

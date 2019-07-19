@@ -36,11 +36,11 @@ Aquarium::Aquarium()
       mTextureMap(),
       mProgramMap(),
       mAquariumModels(),
-      mContext(nullptr),
-      mFpsTimer(),
+      context(nullptr),
+      fpsTimer(),
       mFishCount(1),
       mBackendType(BACKENDTYPE::BACKENDTYPELAST),
-      mFactory(nullptr)
+      factory(nullptr)
 {
     g.then     = 0.0f;
     g.mclock   = 0.0f;
@@ -98,7 +98,7 @@ Aquarium::~Aquarium()
         delete mAquariumModels[i];
     }
 
-    delete mFactory;
+    delete factory;
 }
 
 BACKENDTYPE Aquarium::getBackendType(std::string& backendPath)
@@ -143,7 +143,7 @@ BACKENDTYPE Aquarium::getBackendType(std::string& backendPath)
 
 bool Aquarium::init(int argc, char **argv)
 {
-    mFactory = new ContextFactory();
+    factory = new ContextFactory();
 
     // Create context of different backends through the cmd args.
     // "--backend" {backend}: create different backends. currently opengl is supported.
@@ -171,7 +171,7 @@ bool Aquarium::init(int argc, char **argv)
                 return false;
             }
 
-            mContext = mFactory->createContext(mBackendType);
+            context = factory->createContext(mBackendType);
         }
         else
         {
@@ -179,7 +179,7 @@ bool Aquarium::init(int argc, char **argv)
     }
 
     std::bitset<static_cast<size_t>(TOGGLE::TOGGLEMAX)> availableToggleBitset =
-        mContext->getAvailableToggleBitset();
+        context->getAvailableToggleBitset();
     if (availableToggleBitset.test(static_cast<size_t>(TOGGLE::UPATEANDDRAWFOREACHMODEL)))
     {
         toggleBitset.set(static_cast<size_t>(TOGGLE::UPATEANDDRAWFOREACHMODEL));
@@ -276,7 +276,7 @@ bool Aquarium::init(int argc, char **argv)
         }
     }
 
-    if (!mContext->initialize(mBackendType, toggleBitset))
+    if (!context->initialize(mBackendType, toggleBitset))
     {
         return false;
     }
@@ -286,35 +286,35 @@ bool Aquarium::init(int argc, char **argv)
     std::cout << "Init resources ..." << std::endl;
     getElapsedTime();
 
-    const ResourceHelper *resourceHelper = mContext->getResourceHelper();
+    const ResourceHelper *resourceHelper = context->getResourceHelper();
     std::vector<std::string> skyUrls;
     resourceHelper->getSkyBoxUrls(&skyUrls);
-    mTextureMap["skybox"] = mContext->createTexture("skybox", skyUrls);
+    mTextureMap["skybox"] = context->createTexture("skybox", skyUrls);
 
     // Init general buffer and binding groups for dawn backend.
-    mContext->initGeneralResources(this);
+    context->initGeneralResources(this);
 
     setupModelEnumMap();
     loadReource();
-    mContext->FlushInit();
+    context->FlushInit();
 
     std::cout << "End loading.\nCost " << getElapsedTime() << "s totally." << std::endl;
-    mContext->showWindow();
+    context->showWindow();
 
     return true;
 }
 
 void Aquarium::display()
 {
-    while (!mContext->ShouldQuit())
+    while (!context->ShouldQuit())
     {
-        mContext->KeyBoardQuit();
+        context->KeyBoardQuit();
         render();
 
-        mContext->DoFlush();
+        context->DoFlush();
     }
 
-    mContext->Terminate();
+    context->Terminate();
 }
 
 void Aquarium::loadReource()
@@ -334,7 +334,7 @@ void Aquarium::setupModelEnumMap()
 // Load world matrices of models from json file.
 void Aquarium::loadPlacement()
 {
-    const ResourceHelper *resourceHelper = mContext->getResourceHelper();
+    const ResourceHelper *resourceHelper = context->getResourceHelper();
     std::string proppath                 = resourceHelper->getPropPlacementPath();
     std::ifstream PlacementStream(proppath, std::ios::in);
     rapidjson::IStreamWrapper isPlacement(PlacementStream);
@@ -360,13 +360,10 @@ void Aquarium::loadPlacement()
         }
 
         MODELNAME modelname = mModelEnumMap[name.GetString()];
-
-        std::vector<std::vector<float>> &worldmatrices =
-            mAquariumModels[modelname]->getWorldMatrix();
         // MODELFIRST means the model is not found in the Map
         if (modelname != MODELNAME::MODELFIRST)
         {
-            worldmatrices.push_back(matrix);
+            mAquariumModels[modelname]->worldmatrices.push_back(matrix);
         }
     }
 }
@@ -388,7 +385,7 @@ void Aquarium::loadModels()
 // Load vertex and index buffers, textures and program for each model.
 void Aquarium::loadModel(const G_sceneInfo &info)
 {
-    const ResourceHelper *resourceHelper = mContext->getResourceHelper();
+    const ResourceHelper *resourceHelper = context->getResourceHelper();
     const std::string &imagePath         = resourceHelper->getImagePath();
     const std::string &programPath       = resourceHelper->getProgramPath();
     const std::string &modelPath         = resourceHelper->getModelPath(std::string(info.namestr));
@@ -401,10 +398,8 @@ void Aquarium::loadModel(const G_sceneInfo &info)
     const rapidjson::Value &models = document["models"];
     ASSERT(models.IsArray());
 
-    Model *model               = mContext->createModel(this, info.type, info.name, info.blend);
+    Model *model               = context->createModel(this, info.type, info.name, info.blend);
     mAquariumModels[info.name] = model;
-    std::unordered_map<std::string, Texture *> &textureMap = model->getTextureMap();
-    std::unordered_map<std::string, Buffer *> &bufferMap   = model->getBufferMap();
 
     auto &value = models.GetArray()[models.GetArray().Size() - 1];
     {
@@ -418,10 +413,10 @@ void Aquarium::loadModel(const G_sceneInfo &info)
 
             if (mTextureMap.find(image) == mTextureMap.end())
             {
-                mTextureMap[image] = mContext->createTexture(name, imagePath + image);
+                mTextureMap[image] = context->createTexture(name, imagePath + image);
             }
 
-            textureMap[name] = mTextureMap[image];
+            model->textureMap[name] = mTextureMap[image];
         }
 
         // set up vertices
@@ -440,7 +435,7 @@ void Aquarium::loadModel(const G_sceneInfo &info)
                 {
                     vec.push_back(data.GetInt());
                 }
-                buffer = mContext->createBuffer(numComponents, vec, true);
+                buffer = context->createBuffer(numComponents, vec, true);
             }
             else
             {
@@ -449,9 +444,10 @@ void Aquarium::loadModel(const G_sceneInfo &info)
                 {
                     vec.push_back(data.GetFloat());
                 }
-                buffer = mContext->createBuffer(numComponents, vec, false);
+                buffer = context->createBuffer(numComponents, vec, false);
             }
-            bufferMap[name] = buffer;
+
+            model->bufferMap[name] = buffer;
         }
 
         // setup program
@@ -467,16 +463,16 @@ void Aquarium::loadModel(const G_sceneInfo &info)
 
         if (vsId != "" && fsId != "")
         {
-            textureMap["skybox"] = mTextureMap["skybox"];
+            model->textureMap["skybox"] = mTextureMap["skybox"];
         }
-        else if (textureMap["reflection"] != nullptr)
+        else if (model->textureMap["reflection"] != nullptr)
         {
             vsId = "reflectionMapVertexShader";
             fsId = "reflectionMapFragmentShader";
 
-            textureMap["skybox"] = mTextureMap["skybox"];
+            model->textureMap["skybox"] = mTextureMap["skybox"];
         }
-        else if (textureMap["normalMap"] != nullptr)
+        else if (model->textureMap["normalMap"] != nullptr)
         {
             vsId = "normalMapVertexShader";
             fsId = "normalMapFragmentShader";
@@ -494,7 +490,7 @@ void Aquarium::loadModel(const G_sceneInfo &info)
         }
         else
         {
-            program = mContext->createProgram(programPath + vsId, programPath + fsId);
+            program = context->createProgram(programPath + vsId, programPath + fsId);
             mProgramMap[vsId + fsId] = program;
         }
 
@@ -573,7 +569,7 @@ void Aquarium::updateGlobalUniforms()
 {
 
     float elapsedTime = getElapsedTime();
-    mFpsTimer.update(elapsedTime);
+    fpsTimer.update(elapsedTime);
 
     g.mclock += elapsedTime * g_speed;
     g.eyeClock += elapsedTime * g_eyeSpeed;
@@ -587,8 +583,8 @@ void Aquarium::updateGlobalUniforms()
 
     float nearPlane = 1;
     float farPlane  = 25000.0f;
-    float aspect    = static_cast<float>(mContext->getClientWidth()) /
-                   static_cast<float>(mContext->getclientHeight());
+    float aspect    = static_cast<float>(context->getClientWidth()) /
+                   static_cast<float>(context->getclientHeight());
     float top    = tan(degToRad(g_fieldOfView * g_fovFudge) * 0.5f) * nearPlane;
     float bottom = -top;
     float left   = aspect * bottom;
@@ -622,7 +618,7 @@ void Aquarium::updateGlobalUniforms()
                       lightWorldPositionUniform.lightWorldPos, g.v3t1, 3);
 
     // update world uniforms for dawn backend
-    mContext->updateWorldlUniforms(this);
+    context->updateWorldlUniforms(this);
 }
 
 void Aquarium::render()
@@ -631,7 +627,7 @@ void Aquarium::render()
 
     matrix::resetPseudoRandom();
 
-    mContext->preFrame();
+    context->preFrame();
 
     drawBackground();
 
@@ -643,7 +639,7 @@ void Aquarium::render()
 
     drawOutside();
 
-    mContext->showFPS(mFpsTimer);
+    context->showFPS(fpsTimer);
 }
 
 void Aquarium::drawBackground()
@@ -728,7 +724,7 @@ void Aquarium::drawFishes()
                 ii);
             if (updateAndDrawForEachFish)
             {
-                model->updatePerInstanceUniforms(&mWorldUniforms);
+                model->updatePerInstanceUniforms(&worldUniforms);
                 model->draw();
             }
         }
@@ -756,11 +752,11 @@ void Aquarium::drawOutside()
 
 void Aquarium::updateWorldProjections(const float *w)
 {
-    memcpy(mWorldUniforms.world, w, 16 * sizeof(float));
-    matrix::mulMatrixMatrix4(mWorldUniforms.worldViewProjection, mWorldUniforms.world,
+    memcpy(worldUniforms.world, w, 16 * sizeof(float));
+    matrix::mulMatrixMatrix4(worldUniforms.worldViewProjection, worldUniforms.world,
                              lightWorldPositionUniform.viewProjection);
-    matrix::inverse4(g.worldInverse, mWorldUniforms.world);
-    matrix::transpose4(mWorldUniforms.worldInverseTranspose, g.worldInverse);
+    matrix::inverse4(g.worldInverse, worldUniforms.world);
+    matrix::transpose4(worldUniforms.worldInverseTranspose, g.worldInverse);
 }
 
 void Aquarium::updateWorldMatrixAndDraw(Model *model)
@@ -768,21 +764,20 @@ void Aquarium::updateWorldMatrixAndDraw(Model *model)
     bool updateAndDrawForEachFish =
         toggleBitset.test(static_cast<size_t>(TOGGLE::UPATEANDDRAWFOREACHMODEL));
 
-    std::vector<std::vector<float>> &worldmatrices = model->getWorldMatrix();
-    if (worldmatrices.size())
+    if (model->worldmatrices.size())
     {
-        for (auto &world : worldmatrices)
+        for (auto &world : model->worldmatrices)
         {
             updateWorldProjections(world.data());
             if (updateAndDrawForEachFish)
             {
                 model->prepareForDraw();
-                model->updatePerInstanceUniforms(&mWorldUniforms);
+                model->updatePerInstanceUniforms(&worldUniforms);
                 model->draw();
             }
             else
             {
-                model->updatePerInstanceUniforms(&mWorldUniforms);
+                model->updatePerInstanceUniforms(&worldUniforms);
             }
         }
     }

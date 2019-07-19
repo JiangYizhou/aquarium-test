@@ -34,7 +34,9 @@
 #include "../Texture.h"
 
 ProgramGL::ProgramGL(ContextGL *context, std::string vId, std::string fId)
-    : Program(vId, fId), mProgramId(0u), mContext(context)
+    : Program(vId, fId),
+    mProgramId(0u),
+    context(context)
 {
     context->generateProgram(&mProgramId);
     context->generateVAO(&mVAO);
@@ -42,19 +44,19 @@ ProgramGL::ProgramGL(ContextGL *context, std::string vId, std::string fId)
 
 ProgramGL::~ProgramGL()
 {
-    mContext->deleteVAO(&mVAO);
-    mContext->deleteProgram(&mProgramId);
+    context->deleteVAO(&mVAO);
+    context->deleteProgram(&mProgramId);
 }
 
 void ProgramGL::loadProgram()
 {
-    std::ifstream VertexShaderStream(mVId, std::ios::in);
+    std::ifstream VertexShaderStream(vId, std::ios::in);
     std::string VertexShaderCode((std::istreambuf_iterator<char>(VertexShaderStream)),
                                  std::istreambuf_iterator<char>());
     VertexShaderStream.close();
 
     // Read the Fragment Shader code from the file
-    std::ifstream FragmentShaderStream(mFId, std::ios::in);
+    std::ifstream FragmentShaderStream(fId, std::ios::in);
     std::string FragmentShaderCode((std::istreambuf_iterator<char>(FragmentShaderStream)),
                                    std::istreambuf_iterator<char>());
     FragmentShaderStream.close();
@@ -86,7 +88,7 @@ void ProgramGL::loadProgram()
     FragmentShaderCode =
         std::regex_replace(FragmentShaderCode, std::regex(R"(\n.*?// #noNormalMap)"), "");
 
-    bool status = mContext->compileProgram(mProgramId, VertexShaderCode, FragmentShaderCode);
+    bool status = context->compileProgram(mProgramId, VertexShaderCode, FragmentShaderCode);
     ASSERT(status);
     if (!status) {
         std::cout << "Error occurs in compiling program!" << std::endl;
@@ -95,5 +97,5 @@ void ProgramGL::loadProgram()
 
 void ProgramGL::setProgram()
 {
-    mContext->setProgram(mProgramId);
+    context->setProgram(mProgramId);
 }

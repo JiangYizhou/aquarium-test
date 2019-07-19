@@ -19,7 +19,7 @@ class ContextFactory
     Context *createContext(BACKENDTYPE backendType);
 
   private:
-    Context *mContext;
+    Context *context;
 };
 
 #endif

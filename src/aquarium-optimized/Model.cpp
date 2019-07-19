@@ -18,7 +18,7 @@ Model::Model()
 
 Model::~Model()
 {
-    for (auto buf : mBufferMap)
+    for (auto buf : bufferMap)
     {
         if (buf.second != nullptr)
         {

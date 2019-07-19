@@ -39,7 +39,7 @@ class TextureDawn : public Texture
     dawn::TextureView mTextureView;
     std::vector<unsigned char *> mPixelVec;
     std::vector<unsigned char *> mResizedVec;
-    ContextDawn *mContext;
+    ContextDawn *context;
 };
 
 #endif // !TEXTUREDAWN_H

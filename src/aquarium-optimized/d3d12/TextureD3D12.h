@@ -38,12 +38,12 @@ class TextureD3D12 : public Texture
     DXGI_FORMAT mFormat;
     ComPtr<ID3D12Resource> mTexture;
     ComPtr<ID3D12Resource> mTextureUploadHeap;
-    D3D12_SHADER_RESOURCE_VIEW_DESC mSrvDesc;
+    D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc;
     D3D12_GPU_DESCRIPTOR_HANDLE mTextureGPUHandle;
 
     std::vector<unsigned char *> mPixelVec;
     std::vector<unsigned char *> mResizedVec;
-    ContextD3D12 *mContext;
+    ContextD3D12 *context;
 };
 
 #endif  // !TEXTURED3D12_H

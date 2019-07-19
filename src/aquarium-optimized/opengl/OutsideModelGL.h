@@ -27,34 +27,34 @@ class OutsideModelGL : public Model
     void init() override;
     void draw() override;
 
-    std::pair<float *, int> mWorldViewProjectionUniform;
-    std::pair<float *, int> mWorldUniform;
-    std::pair<float *, int> mWorldInverseTransposeUniform;
+    std::pair<float *, int> worldViewProjectionUniform;
+    std::pair<float *, int> worldUniform;
+    std::pair<float *, int> worldInverseTransposeUniform;
 
-    std::pair<float *, int> mViewInverseUniform;
-    std::pair<float *, int> mLightWorldPosUniform;
-    std::pair<float *, int> mLightColorUniform;
-    std::pair<float *, int> mSpecularUniform;
-    std::pair<float, int> mShininessUniform;
-    std::pair<float, int> mSpecularFactorUniform;
+    std::pair<float *, int> viewInverseUniform;
+    std::pair<float *, int> lightWorldPosUniform;
+    std::pair<float *, int> lightColorUniform;
+    std::pair<float *, int> specularUniform;
+    std::pair<float, int> shininessUniform;
+    std::pair<float, int> specularFactorUniform;
 
-    std::pair<float *, int> mAmbientUniform;
+    std::pair<float *, int> ambientUniform;
 
-    std::pair<float, int> mFogPowerUniform;
-    std::pair<float, int> mFogMultUniform;
-    std::pair<float, int> mFogOffsetUniform;
-    std::pair<float *, int> mFogColorUniform;
+    std::pair<float, int> fogPowerUniform;
+    std::pair<float, int> fogMultUniform;
+    std::pair<float, int> fogOffsetUniform;
+    std::pair<float *, int> fogColorUniform;
 
-    std::pair<TextureGL *, int> mDiffuseTexture;
+    std::pair<TextureGL *, int> diffuseTexture;
 
-    std::pair<BufferGL *, int> mPositionBuffer;
-    std::pair<BufferGL *, int> mNormalBuffer;
-    std::pair<BufferGL *, int> mTexCoordBuffer;
+    std::pair<BufferGL *, int> positionBuffer;
+    std::pair<BufferGL *, int> normalBuffer;
+    std::pair<BufferGL *, int> texCoordBuffer;
 
-    BufferGL *mIndicesBuffer;
+    BufferGL * indicesBuffer;
 
   private:
-    const ContextGL *mContextGL;
+    const ContextGL *contextGL;
 };
 
 #endif

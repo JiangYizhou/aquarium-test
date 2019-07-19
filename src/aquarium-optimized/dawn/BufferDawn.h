@@ -20,12 +20,12 @@ class BufferDawn : public Buffer
 {
   public:
     BufferDawn(ContextDawn *context,
-               int totalComponents,
+               int totalCmoponents,
                int numComponents,
                std::vector<float> &buffer,
                bool isIndex);
     BufferDawn(ContextDawn *context,
-               int totalComponents,
+               int totalCmoponents,
                int numComponents,
                std::vector<unsigned short> &buffer,
                bool isIndex);
