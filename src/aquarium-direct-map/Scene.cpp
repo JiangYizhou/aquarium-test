@@ -11,11 +11,11 @@
 #include <iostream>
 #include <sstream>
 
-#include "common/AQUARIUM_ASSERT.h"
 #include "Globals.h"
 #include "Model.h"
 #include "Program.h"
 #include "Scene.h"
+#include "common/AQUARIUM_ASSERT.h"
 
 #include "rapidjson/document.h"
 #include "rapidjson/filereadstream.h"
@@ -24,11 +24,12 @@
 
 std::vector<std::string> g_skyBoxUrls = {
     "GlobeOuter_EM_positive_x.jpg", "GlobeOuter_EM_negative_x.jpg", "GlobeOuter_EM_positive_y.jpg",
-    "GlobeOuter_EM_negative_y.jpg", "GlobeOuter_EM_positive_z.jpg", "GlobeOuter_EM_negative_z.jpg" };
+    "GlobeOuter_EM_negative_y.jpg", "GlobeOuter_EM_positive_z.jpg", "GlobeOuter_EM_negative_z.jpg"};
 
-Scene::Scene(std::string *opt_programIds)
-    : programIds(opt_programIds), url(), models(), textureMap(), arrayMap()
+Scene::Scene(const std::string opt_programIds[2]) : url(), models(), textureMap(), arrayMap()
 {
+    programIds[0] = opt_programIds[0];
+    programIds[1] = opt_programIds[1];
 }
 
 Scene::~Scene()
@@ -215,7 +216,7 @@ void Scene::load(const std::string &path, const std::string &name)
             g_programMap[vsId + fsId] = program;
         }
 
-        Model *model = new Model(program, &arrayMap, &textureMap);
+        Model *model = new Model(program, arrayMap, &textureMap);
         models.push_back(model);
     }
 }

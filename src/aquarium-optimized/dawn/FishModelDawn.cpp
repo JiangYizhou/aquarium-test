@@ -235,7 +235,7 @@ void FishModelDawn::draw()
     }
 }
 
-void FishModelDawn::updatePerInstanceUniforms(WorldUniforms *worldUniforms) {}
+void FishModelDawn::updatePerInstanceUniforms(const WorldUniforms &worldUniforms) {}
 
 void FishModelDawn::updateFishPerUniforms(float x,
                                           float y,

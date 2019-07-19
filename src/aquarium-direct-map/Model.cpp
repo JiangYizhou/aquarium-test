@@ -12,8 +12,8 @@
 #include "common/AQUARIUM_ASSERT.h"
 
 Model::Model(Program *program_,
-             std::unordered_map<std::string, AttribBuffer *> *arrays,
-             std::unordered_map<std::string, Texture *> *textures)
+             const std::unordered_map<std::string, const AttribBuffer *> &arrays,
+             const std::unordered_map<std::string, Texture *> *textures)
     : buffers(),
     textures(textures),
     program(program_),
@@ -26,30 +26,28 @@ Model::Model(Program *program_,
 
 Model::~Model()
 {
-    for (auto buffer : buffers)
+    for (auto &buffer : buffers)
     {
         delete buffer.second;
         buffer.second = nullptr;
     }
 }
 
-void Model::setBuffer(const std::string &name, AttribBuffer *array)
+void Model::setBuffer(const std::string &name, const AttribBuffer &array)
 {
     GLenum target = name == "indices" ? GL_ELEMENT_ARRAY_BUFFER : GL_ARRAY_BUFFER;
 
     if (buffers.find(name) == buffers.end())
     {
-        Buffer *b = new Buffer(array, target);
-        buffers[name] = b;
+        buffers[name] = new Buffer(array, target);
     }
 }
 
-void Model::setBuffers(std::unordered_map<std::string, AttribBuffer *> *arrays)
+void Model::setBuffers(const std::unordered_map<std::string, const AttribBuffer *> &arrays)
 {
-    for (std::unordered_map<std::string, AttribBuffer *>::iterator iter = arrays->begin();
-         iter != arrays->end(); ++iter)
+    for (auto iter = arrays.cbegin(); iter != arrays.cend(); ++iter)
     {
-        setBuffer(iter->first, iter->second);
+        setBuffer(iter->first, *iter->second);
     }
 }
 
@@ -82,10 +80,9 @@ void Model::applyBuffers() const
 void Model::applyTextures() const
 {
     // Apply textures
-    for (std::unordered_map<std::string, Texture *>::iterator it = textures->begin();
-         it != textures->end(); ++it)
+    for (auto it = textures->cbegin(); it != textures->cend(); ++it)
     {
-        program->setUniform(it->first, it->second);
+        program->setUniform(it->first, *it->second);
     }
 }
 
@@ -97,18 +94,18 @@ void Model::prepareForDraw(const GenericConst &constUniforms)
     applyTextures();
 
     // Apply other uniforms
-    program->setUniform("ambient", constUniforms.ambient);
-    program->setUniform("fogColor", constUniforms.fogColor);
+    program->setUniform("ambient", *constUniforms.ambient);
+    program->setUniform("fogColor", *constUniforms.fogColor);
     program->setUniform("fogMult", constUniforms.fogMult);
     program->setUniform("fogOffset", constUniforms.fogOffset);
     program->setUniform("fogPower", constUniforms.fogPower);
-    program->setUniform("lightColor", constUniforms.lightColor);
+    program->setUniform("lightColor", *constUniforms.lightColor);
     program->setUniform("shininess", constUniforms.shininess);
-    program->setUniform("specular", constUniforms.specular);
+    program->setUniform("specular", *constUniforms.specular);
     program->setUniform("specularFactor", constUniforms.specularFactor);
-    program->setUniform("lightWorldPos", constUniforms.lightWorldPos);
-    program->setUniform("viewInverse", constUniforms.viewInverse);
-    program->setUniform("viewProjection", constUniforms.viewProjection);
+    program->setUniform("lightWorldPos", *constUniforms.lightWorldPos);
+    program->setUniform("viewInverse", *constUniforms.viewInverse);
+    program->setUniform("viewProjection", *constUniforms.viewProjection);
 
     // The belowing uniforms belongs to innerConst
     program->setUniform("eta", constUniforms.eta);
@@ -144,10 +141,10 @@ void Model::drawFunc()
 
 void Model::draw(const GenericPer &perUniforms)
 {
-    program->setUniform("world", perUniforms.world);
-    program->setUniform("worldInverse", perUniforms.worldInverse);
-    program->setUniform("worldInverseTranspose", perUniforms.worldInverseTranspose);
-    program->setUniform("worldViewProjection", perUniforms.worldViewProjection);
+    program->setUniform("world", *perUniforms.world);
+    program->setUniform("worldInverse", *perUniforms.worldInverse);
+    program->setUniform("worldInverseTranspose", *perUniforms.worldInverseTranspose);
+    program->setUniform("worldViewProjection", *perUniforms.worldViewProjection);
 
     drawFunc();
     ASSERT(glGetError() == GL_NO_ERROR);
@@ -155,8 +152,8 @@ void Model::draw(const GenericPer &perUniforms)
 
 void Model::draw(const FishPer &fishPer)
 {
-    program->setUniform("worldPosition", &fishPer.worldPosition);
-    program->setUniform("nextPosition", &fishPer.nextPosition);
+    program->setUniform("worldPosition", fishPer.worldPosition);
+    program->setUniform("nextPosition", fishPer.nextPosition);
     program->setUniform("scale", fishPer.scale);
     program->setUniform("time", fishPer.time);
 

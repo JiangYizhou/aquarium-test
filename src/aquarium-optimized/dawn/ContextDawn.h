@@ -43,15 +43,15 @@ class ContextDawn : public Context
     void preFrame() override;
 
     Model *createModel(Aquarium* aquarium, MODELGROUP type, MODELNAME name, bool blend) override;
-    Buffer *createBuffer(int numComponents, std::vector<float> &buffer, bool isIndex) override;
+    Buffer *createBuffer(int numComponents, std::vector<float> *buffer, bool isIndex) override;
     Buffer *createBuffer(int numComponents,
-                         std::vector<unsigned short> &buffer,
+                         std::vector<unsigned short> *buffer,
                          bool isIndex) override;
 
-    Program *createProgram(std::string vId, std::string fId) override;
+    Program *createProgram(const std::string &vId, const std::string &fId) override;
 
-    Texture *createTexture(std::string name, std::string url) override;
-    Texture *createTexture(std::string name, const std::vector<std::string> &urls) override;
+    Texture *createTexture(const std::string &name, const std::string &url) override;
+    Texture *createTexture(const std::string &name, const std::vector<std::string> &urls) override;
     dawn::Texture createTexture(const dawn::TextureDescriptor &descriptor) const;
     dawn::Sampler createSampler(const dawn::SamplerDescriptor &descriptor) const;
     dawn::Buffer createBufferFromData(const void* pixels, int size, dawn::BufferUsageBit usage) const;
@@ -74,11 +74,11 @@ class ContextDawn : public Context
         std::vector<dawn::BindGroupLayout> bindingsInitializer) const;
     dawn::RenderPipeline createRenderPipeline(dawn::PipelineLayout pipelineLayout,
                                               ProgramDawn *programDawn,
-                                              dawn::VertexInputDescriptor &vertexInputDescriptor,
+                                              const dawn::VertexInputDescriptor &vertexInputDescriptor,
                                               bool enableBlend) const;
     dawn::TextureView createDepthStencilView() const;
     dawn::Buffer createBuffer(uint32_t size, dawn::BufferUsageBit bit) const;
-    void setBufferData(const dawn::Buffer& buffer, uint32_t start, uint32_t size, const void* pixels) const;
+    void setBufferData(const dawn::Buffer &buffer, uint32_t start, uint32_t size, const void* pixels) const;
     dawn::BindGroup makeBindGroup(
         const dawn::BindGroupLayout &layout,
         std::initializer_list<utils::BindingInitializationHelper> bindingsInitializer) const;
@@ -87,6 +87,7 @@ class ContextDawn : public Context
     void updateWorldlUniforms(Aquarium* aquarium) override;
     const dawn::Device &getDevice() const { return device; }
     const dawn::RenderPassEncoder &getRenderPass() const { return mRenderPass; }
+
     std::vector<dawn::CommandBuffer> mCommandBuffers;
     dawn::Queue queue;
 

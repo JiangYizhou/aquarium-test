@@ -25,7 +25,7 @@ BufferGL::BufferGL(ContextGL *context,
       mStride(0),
       mOffset(nullptr)
 {
-    context->generateBuffer(&mBuf);
+    mBuf = context->generateBuffer();
 }
 
 void BufferGL::loadBuffer(const std::vector<float> &buf)
@@ -42,5 +42,5 @@ void BufferGL::loadBuffer(const std::vector<unsigned short> &buf)
 
 BufferGL::~BufferGL()
 {
-    context->deleteBuffer(&mBuf);
+    context->deleteBuffer(mBuf);
 }

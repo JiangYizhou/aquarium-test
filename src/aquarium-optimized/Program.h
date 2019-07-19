@@ -16,7 +16,7 @@ class Program
 {
   public:
     Program(){}
-    Program(std::string vertexShader, std::string fragmentShader)
+    Program(const std::string &vertexShader, const std::string &fragmentShader)
         : vId(vertexShader), fId(fragmentShader)
     {
     }

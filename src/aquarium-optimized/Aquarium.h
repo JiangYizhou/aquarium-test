@@ -443,6 +443,23 @@ class Aquarium
 
   private:
     void render();
+    void loadReource();
+    void loadPlacement();
+    void loadModels();
+    void loadModel(const G_sceneInfo &info);
+    void setupModelEnumMap();
+    void calculateFishCount();
+    void updateWorldMatrixAndDraw(Model *model);
+    void updateGlobalUniforms();
+    void drawBackground();
+    void drawFishes();
+    void drawSeaweed();
+    void drawInner();
+    void drawOutside();
+    void updateWorldProjections(const std::vector<float> &w);
+    BACKENDTYPE getBackendType(const std::string &backendPath);
+    float getElapsedTime();
+
     std::unordered_map<std::string, MODELNAME> mModelEnumMap;
     std::unordered_map<std::string, Texture *> mTextureMap;
     std::unordered_map<std::string, Program *> mProgramMap;
@@ -453,24 +470,6 @@ class Aquarium
     BACKENDTYPE mBackendType;
     ContextFactory *factory;
     std::vector<std::string> skyUrls;
-
-    void loadReource();
-    void loadPlacement();
-    void loadModels();
-    void loadModel(const G_sceneInfo &info);
-    void setupModelEnumMap();
-    void calculateFishCount();
-    float degToRad(float degrees);
-    void updateWorldMatrixAndDraw(Model *model);
-    void updateGlobalUniforms();
-    void drawBackground();
-    void drawFishes();
-    void drawSeaweed();
-    void drawInner();
-    void drawOutside();
-    void updateWorldProjections(const float *world);
-    BACKENDTYPE getBackendType(std::string &backendPath);
-    float getElapsedTime();
 };
 
 #endif

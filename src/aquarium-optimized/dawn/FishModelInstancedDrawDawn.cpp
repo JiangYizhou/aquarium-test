@@ -202,7 +202,7 @@ void FishModelInstancedDrawDawn::draw()
     pass.DrawIndexed(indicesBuffer->getTotalComponents(), instance, 0, 0, 0);
 }
 
-void FishModelInstancedDrawDawn::updatePerInstanceUniforms(WorldUniforms *worldUniforms) {}
+void FishModelInstancedDrawDawn::updatePerInstanceUniforms(const WorldUniforms &worldUniforms) {}
 
 void FishModelInstancedDrawDawn::updateFishPerUniforms(float x,
                                                        float y,

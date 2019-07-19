@@ -19,14 +19,14 @@
 class SeaweedModelDawn : public SeaweedModel
 {
   public:
-    SeaweedModelDawn(const Context* context, Aquarium* aquarium, MODELGROUP type, MODELNAME name, bool blend);
+    SeaweedModelDawn(const Context *context, Aquarium *aquarium, MODELGROUP type, MODELNAME name, bool blend);
     ~SeaweedModelDawn();
 
     void init() override;
     void prepareForDraw() const override;
     void draw() override;
 
-    void updatePerInstanceUniforms(WorldUniforms *worldUniforms) override;
+    void updatePerInstanceUniforms(const WorldUniforms &worldUniforms) override;
 
 
     TextureDawn *diffuseTexture;

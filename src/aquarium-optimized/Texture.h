@@ -17,8 +17,8 @@ class Texture
   public:
     virtual ~Texture(){}
     Texture() {}
-    Texture(std::string name, const std::vector<std::string> &urls, bool flip) : mUrls(urls), mFlip(flip), mName(name) {}
-    Texture(std::string name, const std::string &url, bool flip);
+    Texture(const std::string &name, const std::vector<std::string> &urls, bool flip) : mUrls(urls), mFlip(flip), mName(name) {}
+    Texture(const std::string &name, const std::string &url, bool flip);
     std::string getName() { return mName; }
     virtual void loadTexture() = 0;
     void generateMipmap(uint8_t *input_pixels,

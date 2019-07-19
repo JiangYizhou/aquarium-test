@@ -12,7 +12,7 @@
 #include "ProgramDawn.h"
 #include "common/AQUARIUM_ASSERT.h"
 
-ProgramDawn::ProgramDawn(ContextDawn *context, std::string vId, std::string fId)
+ProgramDawn::ProgramDawn(ContextDawn *context, const std::string &vId, const std::string &fId)
     : Program(vId, fId), vsModule(nullptr), fsModule(nullptr), context(context)
 {
 }

@@ -19,13 +19,13 @@
 class InnerModelDawn : public Model
 {
   public:
-    InnerModelDawn(const Context* context, Aquarium* aquarium, MODELGROUP type, MODELNAME name, bool blend);
+    InnerModelDawn(const Context *context, Aquarium *aquarium, MODELGROUP type, MODELNAME name, bool blend);
     ~InnerModelDawn();
 
     void init() override;
     void prepareForDraw() const override;
     void draw() override;
-    void updatePerInstanceUniforms(WorldUniforms *WorldUniforms) override;
+    void updatePerInstanceUniforms(const WorldUniforms &WorldUniforms) override;
 
     struct InnerUniforms
     {

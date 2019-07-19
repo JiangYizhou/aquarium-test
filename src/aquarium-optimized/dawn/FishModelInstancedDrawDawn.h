@@ -30,7 +30,7 @@ class FishModelInstancedDrawDawn : public FishModel
     void prepareForDraw() const override;
     void draw() override;
 
-    void updatePerInstanceUniforms(WorldUniforms *WorldUniforms) override;
+    void updatePerInstanceUniforms(const WorldUniforms &WorldUniforms) override;
     void updateFishPerUniforms(float x,
                                float y,
                                float z,

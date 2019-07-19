@@ -39,13 +39,14 @@ class Context
     virtual bool initialize(
         BACKENDTYPE backend,
         const std::bitset<static_cast<size_t>(TOGGLE::TOGGLEMAX)> &toggleBitset)              = 0;
-    virtual Texture *createTexture(std::string name, std::string url)                         = 0;
-    virtual Texture *createTexture(std::string name, const std::vector<std::string> &urls)    = 0;
-    virtual Buffer *createBuffer(int numComponents, std::vector<float> &buffer, bool isIndex) = 0;
+    virtual Texture *createTexture(const std::string &name, const std::string &url)           = 0;
+    virtual Texture *createTexture(const std::string &name,
+                                   const std::vector<std::string> &urls)                      = 0;
+    virtual Buffer *createBuffer(int numComponents, std::vector<float> *buffer, bool isIndex) = 0;
     virtual Buffer *createBuffer(int numComponents,
-                                 std::vector<unsigned short> &buffer,
+                                 std::vector<unsigned short> *buffer,
                                  bool isIndex)                                                = 0;
-    virtual Program *createProgram(std::string vId, std::string fId)                          = 0;
+    virtual Program *createProgram(const std::string &vId, const std::string &fId)            = 0;
     virtual void setWindowTitle(const std::string &text)                                      = 0;
     virtual bool ShouldQuit()                                                                 = 0;
     virtual void KeyBoardQuit()                                                               = 0;

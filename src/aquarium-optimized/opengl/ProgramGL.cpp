@@ -38,14 +38,14 @@ ProgramGL::ProgramGL(ContextGL *context, std::string vId, std::string fId)
     mProgramId(0u),
     context(context)
 {
-    context->generateProgram(&mProgramId);
-    context->generateVAO(&mVAO);
+    mProgramId= context->generateProgram();
+    mVAO = context->generateVAO();
 }
 
 ProgramGL::~ProgramGL()
 {
-    context->deleteVAO(&mVAO);
-    context->deleteProgram(&mProgramId);
+    context->deleteVAO(mVAO);
+    context->deleteProgram(mProgramId);
 }
 
 void ProgramGL::loadProgram()

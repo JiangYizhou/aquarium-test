@@ -77,7 +77,7 @@ void GenericModelGL::init()
 
 void GenericModelGL::draw()
 {
-    contextGL->drawElements(indicesBuffer);
+    contextGL->drawElements(*indicesBuffer);
 }
 
 void GenericModelGL::prepareForDraw() const
@@ -88,19 +88,19 @@ void GenericModelGL::prepareForDraw() const
     ProgramGL *programGL = static_cast<ProgramGL *>(mProgram);
     contextGL->bindVAO(programGL->getVAOId());
 
-    contextGL->setAttribs(positionBuffer.first, positionBuffer.second);
-    contextGL->setAttribs(normalBuffer.first, normalBuffer.second);
-    contextGL->setAttribs(texCoordBuffer.first, texCoordBuffer.second);
+    contextGL->setAttribs(*positionBuffer.first, positionBuffer.second);
+    contextGL->setAttribs(*normalBuffer.first, normalBuffer.second);
+    contextGL->setAttribs(*texCoordBuffer.first, texCoordBuffer.second);
 
     // diffuseVertexShader doesn't contains tangent and binormal but normalMapVertexShader
     // contains the two buffers.
     if (tangentBuffer.second != -1 && binormalBuffer.second != -1)
     {
-        contextGL->setAttribs(tangentBuffer.first, tangentBuffer.second);
-        contextGL->setAttribs(binormalBuffer.first, binormalBuffer.second);
+        contextGL->setAttribs(*tangentBuffer.first, tangentBuffer.second);
+        contextGL->setAttribs(*binormalBuffer.first, binormalBuffer.second);
     }
 
-    contextGL->setIndices(indicesBuffer);
+    contextGL->setIndices(*indicesBuffer);
 
     contextGL->setUniform(viewInverseUniform.second, viewInverseUniform.first, GL_FLOAT_MAT4);
     contextGL->setUniform(lightWorldPosUniform.second, lightWorldPosUniform.first, GL_FLOAT_VEC3);
@@ -114,16 +114,16 @@ void GenericModelGL::prepareForDraw() const
     contextGL->setUniform(fogOffsetUniform.second, &fogOffsetUniform.first, GL_FLOAT);
     contextGL->setUniform(fogColorUniform.second, fogColorUniform.first, GL_FLOAT_VEC4);
 
-    contextGL->setTexture(diffuseTexture.first, diffuseTexture.second, 0);
+    contextGL->setTexture(*diffuseTexture.first, diffuseTexture.second, 0);
     // Generic models includes Arch, coral, rock, ship, etc. diffuseFragmentShader doesn't contain
     // normalMap texture but normalMapFragmentShader contains.
     if (normalTexture.second != -1)
     {
-        contextGL->setTexture(normalTexture.first, normalTexture.second, 1);
+        contextGL->setTexture(*normalTexture.first, normalTexture.second, 1);
     }
 }
 
-void GenericModelGL::updatePerInstanceUniforms(WorldUniforms *worldUniforms)
+void GenericModelGL::updatePerInstanceUniforms(const WorldUniforms &worldUniforms)
 {
     contextGL->setUniform(worldUniform.second, worldUniform.first, GL_FLOAT_MAT4);
     contextGL->setUniform(worldViewProjectionUniform.second, worldViewProjectionUniform.first,

@@ -23,7 +23,7 @@ class GenericModelGL : public Model
                    MODELNAME name,
                    bool blend);
     void prepareForDraw() const override;
-    void updatePerInstanceUniforms(WorldUniforms *worldUniforms) override;
+    void updatePerInstanceUniforms(const WorldUniforms &worldUniforms) override;
     void init() override;
     void draw() override;
 
@@ -55,7 +55,7 @@ class GenericModelGL : public Model
     std::pair<BufferGL *, int> tangentBuffer;
     std::pair<BufferGL *, int> binormalBuffer;
 
-    BufferGL * indicesBuffer;
+    BufferGL *indicesBuffer;
 
   private:
     const ContextGL *contextGL;

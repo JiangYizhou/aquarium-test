@@ -374,5 +374,10 @@ void translate(float *m, const float *v)
     m[14] = m02 * v0 + m12 * v1 + m22 * v2 + m32;
     m[15] = m03 * v0 + m13 * v1 + m23 * v2 + m33;
 }
+
+float degToRad(float degrees)
+{
+    return static_cast<float>(degrees * M_PI / 180.0);
+}
 }
 #endif

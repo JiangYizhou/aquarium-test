@@ -27,8 +27,8 @@ public:
   Model() {}
   ~Model();
   Model(Program *program,
-        std::unordered_map<std::string, AttribBuffer *> *arrays,
-        std::unordered_map<std::string, Texture *> *textures);
+        const std::unordered_map<std::string, const AttribBuffer *> &arrays,
+        const std::unordered_map<std::string, Texture *> *textures);
 
   void prepareForDraw(const GenericConst &constUniforms);
   void prepareForDraw(const FishConst &fishConst);
@@ -36,14 +36,14 @@ public:
   void draw(const FishPer &fishPer);
 
 private:
-  void setBuffers(std::unordered_map<std::string, AttribBuffer *> *arrays);
-  void setBuffer(const std::string &name, AttribBuffer *array);
+  void setBuffers(const std::unordered_map<std::string, const AttribBuffer *> &arrays);
+  void setBuffer(const std::string &name, const AttribBuffer &array);
   void applyBuffers() const;
   void applyTextures() const;
   void drawFunc();
 
   std::unordered_map<std::string, Buffer *> buffers;
-  std::unordered_map<std::string, Texture *> *textures;
+  const std::unordered_map<std::string, Texture *> *textures;
   Program *program;
 
   GLenum mode;

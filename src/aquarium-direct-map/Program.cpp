@@ -17,7 +17,7 @@
 
 #include "common/AQUARIUM_ASSERT.h"
 
-Program::Program(std::string vId, std::string fId)
+Program::Program(const std::string &vId, const std::string &fId)
     : program(0u),
     attribLocs(),
     uniforms(),
@@ -206,7 +206,7 @@ void Program::setUniform(const std::string &name, float v)
     ASSERT(glGetError() == GL_NO_ERROR);
 }
 
-void Program::setUniform(const std::string &name, const std::vector<float> *v)
+void Program::setUniform(const std::string &name, const std::vector<float> &v)
 {
     if (uniforms.find(name) == uniforms.end())
     {
@@ -221,22 +221,22 @@ void Program::setUniform(const std::string &name, const std::vector<float> *v)
     {
         case GL_FLOAT_VEC4:
         {
-            glUniform4fv(loc, 1, v->data());
+            glUniform4fv(loc, 1, v.data());
             break;
         }
         case GL_FLOAT_VEC3:
         {
-            glUniform3fv(loc, 1, v->data());
+            glUniform3fv(loc, 1, v.data());
             break;
         }
         case GL_FLOAT_VEC2:
         {
-            glUniform2fv(loc, 1, v->data());
+            glUniform2fv(loc, 1, v.data());
             break;
         }
         case GL_FLOAT_MAT4:
         {
-            glUniformMatrix4fv(loc, 1, false, v->data());
+            glUniformMatrix4fv(loc, 1, false, v.data());
             break;
         }
         default:
@@ -248,7 +248,7 @@ void Program::setUniform(const std::string &name, const std::vector<float> *v)
     ASSERT(glGetError() == GL_NO_ERROR);
 }
 
-void Program::setUniform(const std::string &name, const Texture *texture)
+void Program::setUniform(const std::string &name, const Texture &texture)
 {
     if (uniforms.find(name) == uniforms.end())
     {
@@ -262,7 +262,7 @@ void Program::setUniform(const std::string &name, const Texture *texture)
     glUniform1i(loc, textureUnits[name]);
     glActiveTexture(GL_TEXTURE0 + textureUnits[name]);
     ASSERT(textureUnits[name] < 16);
-    glBindTexture(texture->getTarget(), texture->getTexture());
+    glBindTexture(texture.getTarget(), texture.getTexture());
 
     ASSERT(glGetError() == GL_NO_ERROR);
 }

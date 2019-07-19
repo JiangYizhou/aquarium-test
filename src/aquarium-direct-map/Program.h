@@ -20,12 +20,12 @@ class Program
 {
 public:
   Program() {}
-  Program(std::string vId, std::string fId);
+  Program(const std::string &vId, const std::string &fId);
   ~Program();
   void use();
   void setUniform(const std::string &name, float v);
-  void setUniform(const std::string &name, const std::vector<float> *v);
-  void setUniform(const std::string &name, const Texture *texture);
+  void setUniform(const std::string &name, const std::vector<float> &v);
+  void setUniform(const std::string &name, const Texture &texture);
 
   const std::unordered_map<std::string, GLint> &getAttribLocs() const { return attribLocs; }
   const std::unordered_map<std::string, Uniform *> &getUniforms() const { return uniforms; }

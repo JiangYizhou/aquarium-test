@@ -151,9 +151,9 @@ void InnerModelDawn::draw()
     pass.DrawIndexed(indicesBuffer->getTotalComponents(), 1, 0, 0, 0);
 }
 
-void InnerModelDawn::updatePerInstanceUniforms(WorldUniforms* worldUniforms)
+void InnerModelDawn::updatePerInstanceUniforms(const WorldUniforms &worldUniforms)
 {
-    std::memcpy(&worldUniformPer, worldUniforms, sizeof(WorldUniforms));
+    std::memcpy(&worldUniformPer, &worldUniforms, sizeof(WorldUniforms));
 
     contextDawn->setBufferData(viewBuffer, 0, sizeof(WorldUniforms), &worldUniformPer);
 }

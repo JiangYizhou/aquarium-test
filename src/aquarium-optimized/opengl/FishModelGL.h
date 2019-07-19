@@ -20,7 +20,7 @@ class FishModelGL : public FishModel
   public:
     FishModelGL(const ContextGL *context, Aquarium *aquarium, MODELGROUP type, MODELNAME name, bool blend);
     void prepareForDraw() const override;
-    void updatePerInstanceUniforms(WorldUniforms *worldUniforms) override;
+    void updatePerInstanceUniforms(const WorldUniforms &worldUniforms) override;
 
     void init() override;
     void draw() override;
@@ -71,7 +71,7 @@ class FishModelGL : public FishModel
     std::pair<BufferGL *, int> tangentBuffer;
     std::pair<BufferGL *, int> binormalBuffer;
 
-    BufferGL * indicesBuffer;
+    BufferGL *indicesBuffer;
 
   private:
     const ContextGL *contextGL;

@@ -109,22 +109,22 @@ Fish g_fishTable[] = { { "SmallFishA", 1.0f, 1.5f, 30.0f, 25.0f, 10.0f, 0.0f, 16
 { "BigFishA", 0.5f, 0.5f, 50.0f, 3.0f, 1.5f, 0.0f, 16.0f,{ 10.0f, -1.0f, 0.5f }, true, 0.04f,{ 0.0f, 0.1f, 9.0f },{ 0.3f, 0.3f, 1000.0f } },
 { "BigFishB", 0.5f, 0.5f, 45.0f, 3.0f, 1.0f, 0.0f, 16.0f,{ 10.0f, -0.7f, 0.3f }, true, 0.04f,{ 0.0f, -0.3f, 9.0f },{ 0.3f, 0.3f, 1000.0f } } };
 
-void setGenericConstMatrix(GenericConst& genericConst) {
-    genericConst.viewProjection = &viewProjection;
-    genericConst.viewInverse    = &viewInverse;
-    genericConst.lightWorldPos  = &lightWorldPos;
-    genericConst.lightColor     = &lightColor;
-    genericConst.specular       = &specular;
-    genericConst.ambient        = &ambient;
-    genericConst.fogColor       = &fogColor;
+void setGenericConstMatrix(GenericConst *genericConst) {
+    genericConst->viewProjection = &viewProjection;
+    genericConst->viewInverse    = &viewInverse;
+    genericConst->lightWorldPos  = &lightWorldPos;
+    genericConst->lightColor     = &lightColor;
+    genericConst->specular       = &specular;
+    genericConst->ambient        = &ambient;
+    genericConst->fogColor       = &fogColor;
 }
 
-void setGenericPer(GenericPer& genericPer)
+void setGenericPer(GenericPer *genericPer)
 {
-    genericPer.world                 = &world;
-    genericPer.worldViewProjection   = &worldViewProjection;
-    genericPer.worldInverse          = &worldInverse;
-    genericPer.worldInverseTranspose = &worldInverseTraspose;
+    genericPer->world                 = &world;
+    genericPer->worldViewProjection  = &worldViewProjection;
+    genericPer->worldInverse          = &worldInverse;
+    genericPer->worldInverseTranspose = &worldInverseTraspose;
 }
 
 void initializeUniforms() {
@@ -149,18 +149,18 @@ void initializeUniforms() {
     fishConst.genericConst.shininess      = fish_shininess;
     fishConst.genericConst.specularFactor = fish_specularFactor;
 
-    setGenericConstMatrix(sandConst);
-    setGenericConstMatrix(genericConst);
-    setGenericConstMatrix(seaweedConst);
-    setGenericConstMatrix(innerConst);
-    setGenericConstMatrix(outsideConst);
-    setGenericConstMatrix(fishConst.genericConst);
-    setGenericPer(sandPer);
-    setGenericPer(genericPer);
-    setGenericPer(seaweedPer);
-    setGenericPer(innerPer);
-    setGenericPer(outsidePer);
-    setGenericPer(laserPer);
+    setGenericConstMatrix(&sandConst);
+    setGenericConstMatrix(&genericConst);
+    setGenericConstMatrix(&seaweedConst);
+    setGenericConstMatrix(&innerConst);
+    setGenericConstMatrix(&outsideConst);
+    setGenericConstMatrix(&fishConst.genericConst);
+    setGenericPer(&sandPer);
+    setGenericPer(&genericPer);
+    setGenericPer(&seaweedPer);
+    setGenericPer(&innerPer);
+    setGenericPer(&outsidePer);
+    setGenericPer(&laserPer);
 
     skyConst.viewProjectionInverse = &viewProjectionInverse;
 
@@ -221,7 +221,7 @@ void LoadPlacement()
         }
 }
 
-Scene *loadScene(const std::string &name, std::string *opt_programIds)
+Scene *loadScene(const std::string &name, const std::string opt_programIds[2])
 {
     Scene *scene = new Scene(opt_programIds);
     scene->load(mPath, name);
@@ -438,9 +438,9 @@ int main(int argc, char **argv) {
     return 0;
 }
 
-void DrawGroup(std::multimap<std::string, std::vector<float>> &group,
-               GenericConst &constUniforms,
-               GenericPer &perUniforms)
+void DrawGroup(const std::multimap<std::string, std::vector<float>> &group,
+               const GenericConst &constUniforms,
+               GenericPer *perUniforms)
 {
     Model *currentModel = nullptr;
     int ii              = 0;
@@ -475,8 +475,8 @@ void DrawGroup(std::multimap<std::string, std::vector<float>> &group,
             matrix::mulMatrixMatrix4(worldViewProjection, world, viewProjection);
             matrix::inverse4(worldInverse, world);
             matrix::transpose4(worldInverseTraspose, worldInverse);
-            perUniforms.time = mClock + (ii++);
-            model->draw(perUniforms);
+            perUniforms->time = mClock + (ii++);
+            model->draw(*perUniforms);
         }
     }
 }
@@ -586,7 +586,7 @@ void render() {
     // Draw Scene
     if (g_sceneGroups.find("base") != g_sceneGroups.end())
     {
-        DrawGroup(g_sceneGroups["base"], genericConst, genericPer);
+        DrawGroup(g_sceneGroups["base"], genericConst, &genericPer);
     }
 
     // Draw Fishes
@@ -652,18 +652,18 @@ void render() {
     // Draw tank
     if (g_sceneGroups.find("inner") != g_sceneGroups.end())
     {
-        DrawGroup(g_sceneGroups["inner"], innerConst, innerPer);
+        DrawGroup(g_sceneGroups["inner"], innerConst, &innerPer);
     }
 
     // Draw seaweed
     if (g_sceneGroups.find("seaweed") != g_sceneGroups.end())
     {
-        DrawGroup(g_sceneGroups["seaweed"], seaweedConst, seaweedPer);
+        DrawGroup(g_sceneGroups["seaweed"], seaweedConst, &seaweedPer);
     }
 
     // Draw outside
     if (g_sceneGroups.find("outside") != g_sceneGroups.end())
     {
-        DrawGroup(g_sceneGroups["outside"], outsideConst, outsidePer);
+        DrawGroup(g_sceneGroups["outside"], outsideConst, &outsidePer);
     }
 }

@@ -82,7 +82,7 @@ void InnerModelGL::init()
 
 void InnerModelGL::draw()
 {
-    contextGL->drawElements(indicesBuffer);
+    contextGL->drawElements(*indicesBuffer);
 }
 
 void InnerModelGL::prepareForDraw() const
@@ -93,14 +93,14 @@ void InnerModelGL::prepareForDraw() const
     ProgramGL *programGL = static_cast<ProgramGL *>(mProgram);
     contextGL->bindVAO(programGL->getVAOId());
 
-    contextGL->setAttribs(positionBuffer.first, positionBuffer.second);
-    contextGL->setAttribs(normalBuffer.first, normalBuffer.second);
-    contextGL->setAttribs(texCoordBuffer.first, texCoordBuffer.second);
+    contextGL->setAttribs(*positionBuffer.first, positionBuffer.second);
+    contextGL->setAttribs(*normalBuffer.first, normalBuffer.second);
+    contextGL->setAttribs(*texCoordBuffer.first, texCoordBuffer.second);
 
-    contextGL->setAttribs(tangentBuffer.first, tangentBuffer.second);
-    contextGL->setAttribs(binormalBuffer.first, binormalBuffer.second);
+    contextGL->setAttribs(*tangentBuffer.first, tangentBuffer.second);
+    contextGL->setAttribs(*binormalBuffer.first, binormalBuffer.second);
 
-    contextGL->setIndices(indicesBuffer);
+    contextGL->setIndices(*indicesBuffer);
 
     contextGL->setUniform(viewInverseUniform.second, viewInverseUniform.first, GL_FLOAT_MAT4);
     // lightWorldPosition is optimized away on mesa because it's not used by shader
@@ -113,13 +113,13 @@ void InnerModelGL::prepareForDraw() const
     contextGL->setUniform(tankColorFudgeUniform.second, &tankColorFudgeUniform.first, GL_FLOAT);
     contextGL->setUniform(refractionFudgeUniform.second, &refractionFudgeUniform.first, GL_FLOAT);
 
-    contextGL->setTexture(diffuseTexture.first, diffuseTexture.second, 0);
-    contextGL->setTexture(normalTexture.first, normalTexture.second, 1);
-    contextGL->setTexture(reflectionTexture.first, reflectionTexture.second, 2);
-    contextGL->setTexture(skyboxTexture.first, skyboxTexture.second, 3);
+    contextGL->setTexture(*diffuseTexture.first, diffuseTexture.second, 0);
+    contextGL->setTexture(*normalTexture.first, normalTexture.second, 1);
+    contextGL->setTexture(*reflectionTexture.first, reflectionTexture.second, 2);
+    contextGL->setTexture(*skyboxTexture.first, skyboxTexture.second, 3);
 }
 
-void InnerModelGL::updatePerInstanceUniforms(WorldUniforms* worldUniforms)
+void InnerModelGL::updatePerInstanceUniforms(const WorldUniforms &worldUniforms)
 {
     contextGL->setUniform(worldUniform.second, worldUniform.first, GL_FLOAT_MAT4);
     contextGL->setUniform(worldViewProjectionUniform.second, worldViewProjectionUniform.first,

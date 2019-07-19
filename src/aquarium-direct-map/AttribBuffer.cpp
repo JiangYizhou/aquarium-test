@@ -10,7 +10,7 @@
 AttribBuffer::AttribBuffer(int numComponents,
                            const std::vector<float> &buffer,
                            int size,
-                           std::string opt_type)
+                           const std::string &opt_type)
     : type(opt_type),
     bufferFloat(buffer),
     bufferUShort(),
@@ -22,7 +22,7 @@ AttribBuffer::AttribBuffer(int numComponents,
 AttribBuffer::AttribBuffer(int numComponents,
                            const std::vector<unsigned short> &buffer,
                            int size,
-                           std::string opt_type)
+                           const std::string &opt_type)
     : type(opt_type),
     bufferFloat(),
     bufferUShort(buffer),

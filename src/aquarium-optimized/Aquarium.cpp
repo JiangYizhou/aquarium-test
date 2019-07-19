@@ -101,7 +101,7 @@ Aquarium::~Aquarium()
     delete factory;
 }
 
-BACKENDTYPE Aquarium::getBackendType(std::string& backendPath)
+BACKENDTYPE Aquarium::getBackendType(const std::string& backendPath)
 {
     if (backendPath == "opengl")
     {
@@ -435,7 +435,7 @@ void Aquarium::loadModel(const G_sceneInfo &info)
                 {
                     vec.push_back(data.GetInt());
                 }
-                buffer = context->createBuffer(numComponents, vec, true);
+                buffer = context->createBuffer(numComponents, &vec, true);
             }
             else
             {
@@ -444,7 +444,7 @@ void Aquarium::loadModel(const G_sceneInfo &info)
                 {
                     vec.push_back(data.GetFloat());
                 }
-                buffer = context->createBuffer(numComponents, vec, false);
+                buffer = context->createBuffer(numComponents, &vec, false);
             }
 
             model->bufferMap[name] = buffer;
@@ -538,11 +538,6 @@ void Aquarium::calculateFishCount()
     }
 }
 
-float Aquarium::degToRad(float degrees)
-{
-    return static_cast<float>(degrees * M_PI / 180.0);
-}
-
 float Aquarium::getElapsedTime()
 {
     // Update our time
@@ -585,7 +580,7 @@ void Aquarium::updateGlobalUniforms()
     float farPlane  = 25000.0f;
     float aspect    = static_cast<float>(context->getClientWidth()) /
                    static_cast<float>(context->getclientHeight());
-    float top    = tan(degToRad(g_fieldOfView * g_fovFudge) * 0.5f) * nearPlane;
+    float top    = tan(matrix::degToRad(g_fieldOfView * g_fovFudge) * 0.5f) * nearPlane;
     float bottom = -top;
     float left   = aspect * bottom;
     float right  = aspect * top;
@@ -724,7 +719,7 @@ void Aquarium::drawFishes()
                 ii);
             if (updateAndDrawForEachFish)
             {
-                model->updatePerInstanceUniforms(&worldUniforms);
+                model->updatePerInstanceUniforms(worldUniforms);
                 model->draw();
             }
         }
@@ -750,9 +745,10 @@ void Aquarium::drawOutside()
     updateWorldMatrixAndDraw(model);
 }
 
-void Aquarium::updateWorldProjections(const float *w)
+void Aquarium::updateWorldProjections(const std::vector<float> &w)
 {
-    memcpy(worldUniforms.world, w, 16 * sizeof(float));
+    ASSERT(w.size() == 16);
+    memcpy(worldUniforms.world, w.data(), 16 * sizeof(float));
     matrix::mulMatrixMatrix4(worldUniforms.worldViewProjection, worldUniforms.world,
                              lightWorldPositionUniform.viewProjection);
     matrix::inverse4(g.worldInverse, worldUniforms.world);
@@ -768,16 +764,16 @@ void Aquarium::updateWorldMatrixAndDraw(Model *model)
     {
         for (auto &world : model->worldmatrices)
         {
-            updateWorldProjections(world.data());
+            updateWorldProjections(world);
             if (updateAndDrawForEachFish)
             {
                 model->prepareForDraw();
-                model->updatePerInstanceUniforms(&worldUniforms);
+                model->updatePerInstanceUniforms(worldUniforms);
                 model->draw();
             }
             else
             {
-                model->updatePerInstanceUniforms(&worldUniforms);
+                model->updatePerInstanceUniforms(worldUniforms);
             }
         }
     }

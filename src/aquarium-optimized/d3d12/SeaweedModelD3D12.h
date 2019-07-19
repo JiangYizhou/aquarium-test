@@ -29,7 +29,7 @@ class SeaweedModelD3D12 : public SeaweedModel
     void prepareForDraw() const override;
     void draw() override;
 
-    void updatePerInstanceUniforms(WorldUniforms *worldUniforms) override;
+    void updatePerInstanceUniforms(const WorldUniforms &worldUniforms) override;
 
     TextureD3D12 *diffuseTexture;
     TextureD3D12 *normalTexture;
