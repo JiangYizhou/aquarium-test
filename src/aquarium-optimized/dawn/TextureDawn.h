@@ -19,8 +19,10 @@ class TextureDawn : public Texture
 {
   public:
     ~TextureDawn() override;
-    TextureDawn(ContextDawn* context, std::string name, std::string url);
-    TextureDawn(ContextDawn *context, std::string name, const std::vector<std::string> &urls);
+    TextureDawn(ContextDawn *context, const std::string &name, const std::string &url);
+    TextureDawn(ContextDawn *context,
+                const std::string &name,
+                const std::vector<std::string> &urls);
 
     const dawn::Texture &getTextureId() const { return mTexture; }
     const dawn::Sampler &getSampler() const { return mSampler; }

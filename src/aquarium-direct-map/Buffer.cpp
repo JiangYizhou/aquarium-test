@@ -11,10 +11,10 @@
 
 #include "common/AQUARIUM_ASSERT.h"
 
-Buffer::Buffer(AttribBuffer *attribBuffer, GLenum target)
+Buffer::Buffer(const AttribBuffer &attribBuffer, GLenum target)
     : mBuf(0),
-      mNumComponents(attribBuffer->getNumComponents()),
-      mNumElements(attribBuffer->getNumElements()),
+      mNumComponents(attribBuffer.getNumComponents()),
+      mNumElements(attribBuffer.getNumElements()),
       mTotalComponents(0),
       mType(0),
       mNormalize(true),
@@ -28,20 +28,20 @@ Buffer::Buffer(AttribBuffer *attribBuffer, GLenum target)
 
     mTotalComponents = mNumComponents * mNumElements;
 
-    auto bufferFloat  = attribBuffer->getBufferFloat();
-    auto bufferUShort = attribBuffer->getBufferUShort();
+    auto bufferFloat  = attribBuffer.getBufferFloat();
+    auto bufferUShort = attribBuffer.getBufferUShort();
 
-    if (attribBuffer->getType() == "Float32Array")
+    if (attribBuffer.getType() == "Float32Array")
     {
         mType      = GL_FLOAT;
         mNormalize = false;
-        glBufferData(target, sizeof(GLfloat) * bufferFloat->size(), bufferFloat->data(),
+        glBufferData(target, sizeof(GLfloat) * bufferFloat.size(), bufferFloat.data(),
                      GL_STATIC_DRAW);
     }
-    else if (attribBuffer->getType() == "Uint16Array")
+    else if (attribBuffer.getType() == "Uint16Array")
     {
         mType = GL_UNSIGNED_SHORT;
-        glBufferData(target, sizeof(GLushort) * bufferUShort->size(), bufferUShort->data(),
+        glBufferData(target, sizeof(GLushort) * bufferUShort.size(), bufferUShort.data(),
                      GL_STATIC_DRAW);
     }
     else

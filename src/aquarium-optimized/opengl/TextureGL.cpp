@@ -16,7 +16,7 @@ TextureGL::TextureGL(ContextGL *context, std::string name, std::string url)
     mFormat(GL_RGBA),
     context(context)
 {
-    context->generateTexture(&mTextureId);
+    mTextureId = context->generateTexture();
 }
 
 // initializs cube map
@@ -24,7 +24,7 @@ TextureGL::TextureGL(ContextGL *context, std::string name, const std::vector<std
     : Texture(name, urls, false), mTarget(GL_TEXTURE_CUBE_MAP), mFormat(GL_RGBA), context(context)
 {
     ASSERT(urls.size() == 6);
-    context->generateTexture(&mTextureId);
+    mTextureId = context->generateTexture();
 }
 
 void TextureGL::loadTexture()
@@ -70,5 +70,5 @@ void TextureGL::loadTexture()
 
 TextureGL::~TextureGL()
 {
-    context->deleteTexture(&mTextureId);
+    context->deleteTexture(mTextureId);
 }

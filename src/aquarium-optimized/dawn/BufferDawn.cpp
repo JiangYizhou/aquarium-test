@@ -12,7 +12,7 @@
 BufferDawn::BufferDawn(ContextDawn *context,
                        int totalCmoponents,
                        int numComponents,
-                       std::vector<float> &buffer,
+                       std::vector<float> *buffer,
                        bool isIndex)
     : mUsageBit(isIndex ? dawn::BufferUsageBit::Index : dawn::BufferUsageBit::Vertex),
       mTotoalComponents(totalCmoponents),
@@ -25,16 +25,16 @@ BufferDawn::BufferDawn(ContextDawn *context,
         int dummyCount = 4 - mTotoalComponents % 4;
         for (int i = 0; i < dummyCount; i++)
         {
-            buffer.push_back(0.0f);
+            buffer->push_back(0.0f);
         }
     }
-    mBuf = context->createBufferFromData(buffer.data(), sizeof(float) * static_cast<int>(buffer.size()), mUsageBit);
+    mBuf = context->createBufferFromData(buffer->data(), sizeof(float) * static_cast<int>(buffer->size()), mUsageBit);
 }
 
 BufferDawn::BufferDawn(ContextDawn *context,
                        int totalCmoponents,
                        int numComponents,
-                       std::vector<unsigned short> &buffer,
+                       std::vector<unsigned short> *buffer,
                        bool isIndex)
     : mUsageBit(isIndex ? dawn::BufferUsageBit::Index : dawn::BufferUsageBit::Vertex),
       mTotoalComponents(totalCmoponents),
@@ -47,10 +47,11 @@ BufferDawn::BufferDawn(ContextDawn *context,
         int dummyCount = 4 - mTotoalComponents % 4;
         for (int i = 0; i < dummyCount; i++)
         {
-            buffer.push_back(0.0f);
+            buffer->push_back(0.0f);
         }
     }
-    mBuf = context->createBufferFromData(buffer.data(), sizeof(unsigned short) * static_cast<int>(buffer.size()), mUsageBit);
+    mBuf = context->createBufferFromData(
+        buffer->data(), sizeof(unsigned short) * static_cast<int>(buffer->size()), mUsageBit);
 }
 
 BufferDawn::~BufferDawn()

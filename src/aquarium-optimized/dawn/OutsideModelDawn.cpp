@@ -145,8 +145,9 @@ void OutsideModelDawn::draw()
     pass.DrawIndexed(indicesBuffer->getTotalComponents(), 1, 0, 0, 0);
 }
 
-void OutsideModelDawn::updatePerInstanceUniforms(WorldUniforms *worldUniforms) {
-    memcpy(&worldUniformPer, worldUniforms, sizeof(WorldUniforms));
+void OutsideModelDawn::updatePerInstanceUniforms(const WorldUniforms &worldUniforms)
+{
+    memcpy(&worldUniformPer, &worldUniforms, sizeof(WorldUniforms));
 
     contextDawn->setBufferData(viewBuffer, 0, sizeof(WorldUniforms), &worldUniformPer);
 }

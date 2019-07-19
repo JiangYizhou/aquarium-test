@@ -30,7 +30,7 @@ class ProgramD3D12 : public Program
 {
   public:
     ProgramD3D12() {}
-    ProgramD3D12(ContextD3D12 *context, std::string vId, std::string fId);
+    ProgramD3D12(ContextD3D12 *context, const std::string &vId, const std::string &fId);
     ~ProgramD3D12() override;
 
     void loadProgram();

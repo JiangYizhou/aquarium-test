@@ -22,7 +22,7 @@ TextureDawn::~TextureDawn() {
     mSampler     = nullptr;
 }
 
-TextureDawn::TextureDawn(ContextDawn *context, std::string name, std::string url)
+TextureDawn::TextureDawn(ContextDawn *context, const std::string &name, const std::string &url)
     : Texture(name, url, true),
       mTextureDimension(dawn::TextureDimension::e2D),
       mTextureViewDimension(dawn::TextureViewDimension::e2D),
@@ -35,7 +35,7 @@ TextureDawn::TextureDawn(ContextDawn *context, std::string name, std::string url
 }
 
 TextureDawn::TextureDawn(ContextDawn *context,
-                         std::string name,
+                         const std::string &name,
                          const std::vector<std::string> &urls)
     : Texture(name, urls, false),
       mTextureDimension(dawn::TextureDimension::e2D),

@@ -23,8 +23,10 @@ class TextureD3D12 : public Texture
 {
   public:
     ~TextureD3D12() override;
-    TextureD3D12(ContextD3D12 *context, std::string name, std::string url);
-    TextureD3D12(ContextD3D12 *context, std::string name, const std::vector<std::string> &urls);
+    TextureD3D12(ContextD3D12 *context, const std::string &name, const std::string &url);
+    TextureD3D12(ContextD3D12 *context,
+                 const std::string &name,
+                 const std::vector<std::string> &urls);
 
     D3D12_RESOURCE_DIMENSION getTextureDimension() { return mTextureDimension; }
     D3D12_SRV_DIMENSION getTextureViewDimension() { return mTextureViewDimension; }

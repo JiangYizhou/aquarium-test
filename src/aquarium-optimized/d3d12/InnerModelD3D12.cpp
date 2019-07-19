@@ -94,7 +94,7 @@ void InnerModelD3D12::init()
                                contextD3D12->staticSamplers.data(),
                                D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT);
 
-    contextD3D12->createRootSignature(&rootSignatureDesc, m_rootSignature);
+    contextD3D12->createRootSignature(rootSignatureDesc, m_rootSignature);
 
     contextD3D12->createGraphicsPipelineState(inputElementDescs, m_rootSignature,
                                               programD3D12->getVSModule(),
@@ -125,9 +125,9 @@ void InnerModelD3D12::draw()
     commandList->DrawIndexedInstanced(indicesBuffer->getTotalComponents(), 1, 0, 0, 0);
 }
 
-void InnerModelD3D12::updatePerInstanceUniforms(WorldUniforms *worldUniforms)
+void InnerModelD3D12::updatePerInstanceUniforms(const WorldUniforms &worldUniforms)
 {
-    memcpy(&worldUniformPer, worldUniforms, sizeof(WorldUniforms));
+    memcpy(&worldUniformPer, &worldUniforms, sizeof(WorldUniforms));
 
     CD3DX12_RANGE readRange(0, 0);
     UINT8 *m_pCbvDataBegin;

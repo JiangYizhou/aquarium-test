@@ -22,12 +22,12 @@ class BufferDawn : public Buffer
     BufferDawn(ContextDawn *context,
                int totalCmoponents,
                int numComponents,
-               std::vector<float> &buffer,
+               std::vector<float> *buffer,
                bool isIndex);
     BufferDawn(ContextDawn *context,
                int totalCmoponents,
                int numComponents,
-               std::vector<unsigned short> &buffer,
+               std::vector<unsigned short> *buffer,
                bool isIndex);
     ~BufferDawn() override;
 

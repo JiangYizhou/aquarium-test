@@ -286,36 +286,36 @@ void ContextDawn::initAvailableToggleBitset(BACKENDTYPE backendType)
     mAvailableToggleBitset.set(static_cast<size_t>(TOGGLE::ENABLEFULLSCREENMODE));
 }
 
-Texture *ContextDawn::createTexture(std::string name, std::string url)
+Texture *ContextDawn::createTexture(const std::string &name, const std::string &url)
 {
     Texture *texture = new TextureDawn(this, name, url);
     texture->loadTexture();
     return texture;
 }
 
-Texture *ContextDawn::createTexture(std::string name, const std::vector<std::string> &urls)
+Texture *ContextDawn::createTexture(const std::string &name, const std::vector<std::string> &urls)
 {
     Texture *texture = new TextureDawn(this, name, urls);
     texture->loadTexture();
     return texture;
 }
 
-dawn::Texture ContextDawn::createTexture(const dawn::TextureDescriptor & descriptor) const
+dawn::Texture ContextDawn::createTexture(const dawn::TextureDescriptor &descriptor) const
 {
     return device.CreateTexture(&descriptor);
 }
 
-dawn::Sampler ContextDawn::createSampler(const dawn::SamplerDescriptor & descriptor) const
+dawn::Sampler ContextDawn::createSampler(const dawn::SamplerDescriptor &descriptor) const
 {
     return device.CreateSampler(&descriptor);
 }
 
-dawn::Buffer ContextDawn::createBufferFromData(const void * pixels, int size, dawn::BufferUsageBit usage) const
+dawn::Buffer ContextDawn::createBufferFromData(const void *pixels, int size, dawn::BufferUsageBit usage) const
 {
     return utils::CreateBufferFromData(device, pixels, size, usage);
 }
 
-dawn::BufferCopyView ContextDawn::createBufferCopyView(const dawn::Buffer& buffer,
+dawn::BufferCopyView ContextDawn::createBufferCopyView(const dawn::Buffer &buffer,
     uint32_t offset,
     uint32_t rowPitch,
     uint32_t imageHeight) const {
@@ -365,7 +365,7 @@ dawn::PipelineLayout ContextDawn::MakeBasicPipelineLayout(
 dawn::RenderPipeline ContextDawn::createRenderPipeline(
     dawn::PipelineLayout pipelineLayout,
     ProgramDawn *programDawn,
-    dawn::VertexInputDescriptor &vertexInputDescriptor,
+    const dawn::VertexInputDescriptor &vertexInputDescriptor,
     bool enableBlend) const
 {
     const dawn::ShaderModule &vsModule = programDawn->getVSModule();
@@ -502,19 +502,20 @@ void ContextDawn::updateWorldlUniforms(Aquarium* aquarium)
     setBufferData(lightWorldPositionBuffer, 0, sizeof(LightWorldPositionUniform), &aquarium->lightWorldPositionUniform);
 }
 
-Buffer *ContextDawn::createBuffer(int numComponents, std::vector<float> &buf, bool isIndex)
+Buffer *ContextDawn::createBuffer(int numComponents, std::vector<float> *buf, bool isIndex)
 {
-    Buffer *buffer = new BufferDawn(this, static_cast<int>(buf.size()), numComponents, buf, isIndex);
+    Buffer *buffer = new BufferDawn(this, static_cast<int>(buf->size()), numComponents, buf, isIndex);
     return buffer;
 }
 
-Buffer *ContextDawn::createBuffer(int numComponents, std::vector<unsigned short> &buf, bool isIndex)
+Buffer *ContextDawn::createBuffer(int numComponents, std::vector<unsigned short> *buf, bool isIndex)
 {
-    Buffer *buffer = new BufferDawn(this, static_cast<int>(buf.size()), numComponents, buf, isIndex);
+    Buffer *buffer =
+        new BufferDawn(this, static_cast<int>(buf->size()), numComponents, buf, isIndex);
     return buffer;
 }
 
-Program *ContextDawn::createProgram(std::string vId, std::string fId)
+Program *ContextDawn::createProgram(const std::string &vId, const std::string &fId)
 {
     ProgramDawn* program = new ProgramDawn(this, vId, fId);
     program->loadProgram();

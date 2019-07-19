@@ -51,40 +51,40 @@ class ContextGL : public Context
     void enableBlend(bool flag) const;
 
     Model *createModel(Aquarium *aquarium, MODELGROUP type, MODELNAME name, bool blend) override;
-    int getUniformLocation(unsigned int programId, std::string name) const;
-    int getAttribLocation(unsigned int programId, std::string name) const;
+    int getUniformLocation(unsigned int programId, const std::string &name) const;
+    int getAttribLocation(unsigned int programId, const std::string & name) const;
     void setUniform(int index, const float *v, int type) const;
-    void setTexture(const TextureGL *texture, int index, int unit) const;
-    void setAttribs(BufferGL *bufferGL, int index) const;
-    void setIndices(BufferGL *bufferGL) const;
-    void drawElements(BufferGL *buffer) const;
+    void setTexture(const TextureGL &texture, int index, int unit) const;
+    void setAttribs(const BufferGL &bufferGL, int index) const;
+    void setIndices(const BufferGL &bufferGL) const;
+    void drawElements(const BufferGL &buffer) const;
 
-    Buffer *createBuffer(int numComponents, std::vector<float> &buffer, bool isIndex) override;
+    Buffer *createBuffer(int numComponents, std::vector<float> *buffer, bool isIndex) override;
     Buffer *createBuffer(int numComponents,
-                         std::vector<unsigned short> &buffer,
+                         std::vector<unsigned short> *buffer,
                          bool isIndex) override;
-    void generateBuffer(unsigned int *buf);
-    void deleteBuffer(unsigned int *buf);
+    unsigned int generateBuffer();
+    void deleteBuffer(unsigned int buf);
     void bindBuffer(unsigned int target, unsigned int buf);
     void uploadBuffer(unsigned int target, const std::vector<float> &buf);
     void uploadBuffer(unsigned int target, const std::vector<unsigned short> &buf);
 
-    Program *createProgram(std::string vId, std::string fId) override;
-    void generateProgram(unsigned int *program);
+    Program *createProgram(const std::string &vId, const std::string &fId) override;
+    unsigned int generateProgram();
     void setProgram(unsigned int program);
-    void deleteProgram(unsigned int *program);
+    void deleteProgram(unsigned int program);
     bool compileProgram(unsigned int programId,
                         const std::string &VertexShaderCode,
                         const std::string &FragmentShaderCode);
     void bindVAO(unsigned int vao) const;
-    void generateVAO(unsigned int *mVAO);
-    void deleteVAO(unsigned int *mVAO);
+    unsigned int generateVAO();
+    void deleteVAO(unsigned int vao);
 
-    Texture *createTexture(std::string name, std::string url) override;
-    Texture *createTexture(std::string name, const std::vector<std::string> &urls) override;
-    void generateTexture(unsigned int *texture);
+    Texture *createTexture(const std::string &name, const std::string &url) override;
+    Texture *createTexture(const std::string &name, const std::vector<std::string> &urls) override;
+    unsigned int generateTexture();
     void bindTexture(unsigned int target, unsigned int texture);
-    void deleteTexture(unsigned int *texture);
+    void deleteTexture(unsigned int texture);
     void uploadTexture(unsigned int target,
                        unsigned int format,
                        int width,

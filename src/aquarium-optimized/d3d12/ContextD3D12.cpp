@@ -579,23 +579,23 @@ Model *ContextD3D12::createModel(Aquarium *aquarium, MODELGROUP type, MODELNAME 
     return model;
 }
 
-Buffer *ContextD3D12::createBuffer(int numComponents, std::vector<float> &buf, bool isIndex)
+Buffer *ContextD3D12::createBuffer(int numComponents, std::vector<float> *buf, bool isIndex)
 {
     Buffer *buffer =
-        new BufferD3D12(this, static_cast<int>(buf.size()), numComponents, buf, isIndex);
+        new BufferD3D12(this, static_cast<int>(buf->size()), numComponents, *buf, isIndex);
     return buffer;
 }
 
 Buffer *ContextD3D12::createBuffer(int numComponents,
-                                   std::vector<unsigned short> &buf,
+                                   std::vector<unsigned short> *buf,
                                    bool isIndex)
 {
     Buffer *buffer =
-        new BufferD3D12(this, static_cast<int>(buf.size()), numComponents, buf, isIndex);
+        new BufferD3D12(this, static_cast<int>(buf->size()), numComponents, *buf, isIndex);
     return buffer;
 }
 
-Program *ContextD3D12::createProgram(std::string vId, std::string fId)
+Program *ContextD3D12::createProgram(const std::string &vId, const std::string &fId)
 {
     ProgramD3D12 *program = new ProgramD3D12(this, vId, fId);
     program->loadProgram();
@@ -603,14 +603,14 @@ Program *ContextD3D12::createProgram(std::string vId, std::string fId)
     return program;
 }
 
-Texture *ContextD3D12::createTexture(std::string name, std::string url)
+Texture *ContextD3D12::createTexture(const std::string &name, const std::string &url)
 {
     Texture *texture = new TextureD3D12(this, name, url);
     texture->loadTexture();
     return texture;
 }
 
-Texture *ContextD3D12::createTexture(std::string name, const std::vector<std::string> &urls)
+Texture *ContextD3D12::createTexture(const std::string &name, const std::vector<std::string> &urls)
 {
     Texture *texture = new TextureD3D12(this, name, urls);
     texture->loadTexture();
@@ -714,12 +714,12 @@ ComPtr<ID3DBlob> ContextD3D12::createShaderModule(const std::string &type,
 }
 
 void ContextD3D12::createCommittedResource(const D3D12_HEAP_PROPERTIES &properties,
-                                           const D3D12_RESOURCE_DESC &textureDesc,
+                                           const D3D12_RESOURCE_DESC &desc,
                                            D3D12_RESOURCE_STATES state,
-                                           ComPtr<ID3D12Resource> &m_texture)
+                                           ComPtr<ID3D12Resource> &resource)
 {
-    if (FAILED(m_device->CreateCommittedResource(&properties, D3D12_HEAP_FLAG_NONE, &textureDesc,
-                                                 state, nullptr, IID_PPV_ARGS(&m_texture))))
+    if (FAILED(m_device->CreateCommittedResource(&properties, D3D12_HEAP_FLAG_NONE, &desc,
+                                                 state, nullptr, IID_PPV_ARGS(&resource))))
     {
         std::cout << "failed to create Resource" << std::endl;
     }
@@ -735,13 +735,6 @@ void ContextD3D12::updateSubresources(ID3D12GraphicsCommandList *pCmdList,
 {
     UpdateSubresources(pCmdList, pDestinationResource, pIntermediate, IntermediateOffset,
                        FirstSubresource, NumSubresources, pSrcData);
-}
-
-void ContextD3D12::createShaderResourceView(ID3D12Resource *pResource,
-                                            const D3D12_SHADER_RESOURCE_VIEW_DESC *pDesc,
-                                            D3D12_CPU_DESCRIPTOR_HANDLE DestDescriptor)
-{
-    m_device->CreateShaderResourceView(pResource, pDesc, DestDescriptor);
 }
 
 void ContextD3D12::executeCommandLists(UINT NumCommandLists,
@@ -871,13 +864,13 @@ ComPtr<ID3D12Resource> ContextD3D12::createUploadBuffer(const void *initData, UI
 }
 
 void ContextD3D12::createRootSignature(
-    const D3D12_VERSIONED_ROOT_SIGNATURE_DESC *pRootSignatureDesc,
+    const D3D12_VERSIONED_ROOT_SIGNATURE_DESC &pRootSignatureDesc,
     ComPtr<ID3D12RootSignature> &m_rootSignature) const
 {
     ComPtr<ID3DBlob> signature = nullptr;
     ComPtr<ID3DBlob> error     = nullptr;
     ThrowIfFailed(
-        D3DX12SerializeVersionedRootSignature(pRootSignatureDesc, rootSignature.HighestVersion,
+        D3DX12SerializeVersionedRootSignature(&pRootSignatureDesc, rootSignature.HighestVersion,
                                               signature.GetAddressOf(), error.GetAddressOf()));
     if (error != nullptr)
     {
@@ -889,9 +882,9 @@ void ContextD3D12::createRootSignature(
 }
 
 void ContextD3D12::createTexture(const D3D12_RESOURCE_DESC &textureDesc,
-                                 OUT ComPtr<ID3D12Resource> &m_texture,
-                                 OUT ComPtr<ID3D12Resource> &textureUploadHeap,
-                                 std::vector<UINT8 *> &texture,
+                                 const std::vector<UINT8 *> &texture,
+                                 ComPtr<ID3D12Resource> &m_texture,
+                                 ComPtr<ID3D12Resource> &textureUploadHeap,
                                  int TextureWidth,
                                  int TextureHeight,
                                  int TexturePixelSize,
@@ -1011,15 +1004,9 @@ void ContextD3D12::createGraphicsPipelineState(
     ThrowIfFailed(m_device->CreateGraphicsPipelineState(&psoDesc, IID_PPV_ARGS(&pipelineState)));
 }
 
-void ContextD3D12::createSampler(D3D12_SAMPLER_DESC *pDesc,
-                                 ComPtr<ID3D12DescriptorHeap> &samplerHeap) const
-{
-    m_device->CreateSampler(pDesc, samplerHeap->GetCPUDescriptorHandleForHeapStart());
-}
-
 void ContextD3D12::buildSrvDescriptor(const ComPtr<ID3D12Resource> &resource,
                                       const D3D12_SHADER_RESOURCE_VIEW_DESC &srvDesc,
-                                      OUT D3D12_GPU_DESCRIPTOR_HANDLE *hGpuDescriptor)
+                                      D3D12_GPU_DESCRIPTOR_HANDLE *hGpuDescriptor)
 {
     m_device->CreateShaderResourceView(resource.Get(), &srvDesc, cbvsrvCPUHandle);
     cbvsrvCPUHandle.Offset(m_cbvsrvDescriptorSize);
@@ -1029,7 +1016,7 @@ void ContextD3D12::buildSrvDescriptor(const ComPtr<ID3D12Resource> &resource,
 }
 
 void ContextD3D12::buildCbvDescriptor(const D3D12_CONSTANT_BUFFER_VIEW_DESC &cbvDesc,
-                                      OUT D3D12_GPU_DESCRIPTOR_HANDLE *hGpuDescriptor)
+                                      D3D12_GPU_DESCRIPTOR_HANDLE *hGpuDescriptor)
 {
     m_device->CreateConstantBufferView(&cbvDesc, cbvsrvCPUHandle);
     cbvsrvCPUHandle.Offset(m_cbvsrvDescriptorSize);

@@ -23,7 +23,7 @@ class SeaweedModelGL : public SeaweedModel
                    MODELNAME name,
                    bool blend);
     void prepareForDraw() const override;
-    void updatePerInstanceUniforms(WorldUniforms *worldUniforms) override;
+    void updatePerInstanceUniforms(const WorldUniforms &worldUniforms) override;
     void init() override;
     void draw() override;
 
@@ -54,7 +54,7 @@ class SeaweedModelGL : public SeaweedModel
     std::pair<BufferGL *, int> normalBuffer;
     std::pair<BufferGL *, int> texCoordBuffer;
 
-    BufferGL * indicesBuffer;
+    BufferGL *indicesBuffer;
 
   private:
     const ContextGL *contextGL;

@@ -144,7 +144,7 @@ void FishModelInstancedDrawD3D12::init()
                                contextD3D12->staticSamplers.data(),
                                D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT);
 
-    contextD3D12->createRootSignature(&rootSignatureDesc, m_rootSignature);
+    contextD3D12->createRootSignature(rootSignatureDesc, m_rootSignature);
 
     contextD3D12->createGraphicsPipelineState(inputElementDescs, m_rootSignature,
                                               programD3D12->getVSModule(),
@@ -182,7 +182,7 @@ void FishModelInstancedDrawD3D12::draw()
     commandList->DrawIndexedInstanced(indicesBuffer->getTotalComponents(), instance, 0, 0, 0);
 }
 
-void FishModelInstancedDrawD3D12::updatePerInstanceUniforms(WorldUniforms *worldUniforms) {}
+void FishModelInstancedDrawD3D12::updatePerInstanceUniforms(const WorldUniforms &worldUniforms) {}
 
 void FishModelInstancedDrawD3D12::updateFishPerUniforms(float x,
                                                         float y,

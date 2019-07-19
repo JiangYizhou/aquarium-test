@@ -321,23 +321,25 @@ EGLBoolean ContextGL::FindEGLConfig(EGLDisplay dpy, const EGLint *attrib_list, E
 }
 #endif
 
-Texture *ContextGL::createTexture(std::string name, std::string url)
+Texture *ContextGL::createTexture(const std::string &name, const std::string &url)
 {
     TextureGL *texture = new TextureGL(this, name, url);
     texture->loadTexture();
     return texture;
 }
 
-Texture *ContextGL::createTexture(std::string name, const std::vector<std::string> &urls)
+Texture *ContextGL::createTexture(const std::string &name, const std::vector<std::string> &urls)
 {
     TextureGL *texture = new TextureGL(this, name, urls);
     texture->loadTexture();
     return texture;
 }
 
-void ContextGL::generateTexture(unsigned int *texture)
+unsigned int ContextGL::generateTexture()
 {
-    glGenTextures(1, texture);
+    unsigned int texture;
+    glGenTextures(1, &texture);
+    return texture;
 }
 
 void ContextGL::bindTexture(unsigned int target, unsigned int textureId)
@@ -345,9 +347,9 @@ void ContextGL::bindTexture(unsigned int target, unsigned int textureId)
     glBindTexture(target, textureId);
 }
 
-void ContextGL::deleteTexture(unsigned int *texture)
+void ContextGL::deleteTexture(unsigned int texture)
 {
-    glDeleteTextures(1, texture);
+    glDeleteTextures(1, &texture);
 }
 
 void ContextGL::uploadTexture(unsigned int target,
@@ -388,24 +390,24 @@ void ContextGL::initAvailableToggleBitset(BACKENDTYPE backendType)
     mAvailableToggleBitset.set(static_cast<size_t>(TOGGLE::ENABLEFULLSCREENMODE));
 }
 
-Buffer *ContextGL::createBuffer(int numComponents, std::vector<float> &buf, bool isIndex)
+Buffer *ContextGL::createBuffer(int numComponents, std::vector<float> *buf, bool isIndex)
 {
-    BufferGL *buffer = new BufferGL(this, static_cast<int>(buf.size()), numComponents, isIndex, GL_FLOAT, false);
-    buffer->loadBuffer(buf);
+    BufferGL *buffer = new BufferGL(this, static_cast<int>(buf->size()), numComponents, isIndex, GL_FLOAT, false);
+    buffer->loadBuffer(*buf);
 
     return buffer;
 }
 
-Buffer *ContextGL::createBuffer(int numComponents, std::vector<unsigned short> &buf, bool isIndex)
+Buffer *ContextGL::createBuffer(int numComponents, std::vector<unsigned short> *buf, bool isIndex)
 {
-    BufferGL *buffer =
-        new BufferGL(this, static_cast<int>(buf.size()), numComponents, isIndex, GL_UNSIGNED_SHORT, true);
-    buffer->loadBuffer(buf);
+    BufferGL *buffer = new BufferGL(this, static_cast<int>(buf->size()), numComponents, isIndex,
+                                    GL_UNSIGNED_SHORT, true);
+    buffer->loadBuffer(*buf);
 
     return buffer;
 }
 
-Program *ContextGL::createProgram(std::string vId, std::string fId)
+Program *ContextGL::createProgram(const std::string &vId, const std::string &fId)
 {
     ProgramGL *program = new ProgramGL(this, vId, fId);
     program->loadProgram();
@@ -494,14 +496,14 @@ void ContextGL::destoryImgUI()
     ImGui::DestroyContext();
 }
 
-int ContextGL::getUniformLocation(unsigned int programId, std::string name) const
+int ContextGL::getUniformLocation(unsigned int programId, const std::string &name) const
 {
     GLint index = glGetUniformLocation(programId, name.c_str());
     ASSERT(glGetError() == GL_NO_ERROR);
     return index;
 }
 
-int ContextGL::getAttribLocation(unsigned int programId, std::string name) const
+int ContextGL::getAttribLocation(unsigned int programId, const std::string &name) const
 {
     GLint index = glGetAttribLocation(programId, name.c_str());
     ASSERT(glGetError() == GL_NO_ERROR);
@@ -520,10 +522,10 @@ void ContextGL::enableBlend(bool flag) const
     }
 }
 
-void ContextGL::drawElements(BufferGL *buffer) const
+void ContextGL::drawElements(const BufferGL &buffer) const
 {
-    GLint totalComponents = buffer->getTotalComponents();
-    GLenum type           = buffer->getType();
+    GLint totalComponents = buffer.getTotalComponents();
+    GLenum type           = buffer.getType();
     glDrawElements(GL_TRIANGLES, totalComponents, type, 0);
 
     ASSERT(glGetError() == GL_NO_ERROR);
@@ -605,36 +607,38 @@ void ContextGL::setUniform(int index, const float *v, int type) const
     ASSERT(glGetError() == GL_NO_ERROR);
 }
 
-void ContextGL::setTexture(const TextureGL *texture, int index, int unit) const
+void ContextGL::setTexture(const TextureGL &texture, int index, int unit) const
 {
     ASSERT(index != -1);
     glUniform1i(index, unit);
     glActiveTexture(GL_TEXTURE0 + unit);
-    glBindTexture(texture->getTarget(), texture->getTextureId());
+    glBindTexture(texture.getTarget(), texture.getTextureId());
 
     ASSERT(glGetError() == GL_NO_ERROR);
 }
 
-void ContextGL::setAttribs(BufferGL *bufferGL, int index) const
+void ContextGL::setAttribs(const BufferGL &bufferGL, int index) const
 {
     ASSERT(index != -1);
-    glBindBuffer(bufferGL->getTarget(), bufferGL->getBuffer());
+    glBindBuffer(bufferGL.getTarget(), bufferGL.getBuffer());
 
     glEnableVertexAttribArray(index);
-    glVertexAttribPointer(index, bufferGL->getNumComponents(), bufferGL->getType(),
-                          bufferGL->getNormalize(), bufferGL->getStride(), bufferGL->getOffset());
+    glVertexAttribPointer(index, bufferGL.getNumComponents(), bufferGL.getType(),
+                          bufferGL.getNormalize(), bufferGL.getStride(), bufferGL.getOffset());
 
     ASSERT(glGetError() == GL_NO_ERROR);
 }
 
-void ContextGL::setIndices(BufferGL *bufferGL) const
+void ContextGL::setIndices(const BufferGL &bufferGL) const
 {
-    glBindBuffer(bufferGL->getTarget(), bufferGL->getBuffer());
+    glBindBuffer(bufferGL.getTarget(), bufferGL.getBuffer());
 }
 
-void ContextGL::generateVAO(unsigned int *mVAO)
+unsigned int ContextGL::generateVAO()
 {
-    glGenVertexArrays(1, mVAO);
+    unsigned int vao;
+    glGenVertexArrays(1, &vao);
+    return vao;
 }
 
 void ContextGL::bindVAO(unsigned int vao) const
@@ -642,19 +646,21 @@ void ContextGL::bindVAO(unsigned int vao) const
     glBindVertexArray(vao);
 }
 
-void ContextGL::deleteVAO(unsigned int *mVAO)
+void ContextGL::deleteVAO(unsigned int mVAO)
 {
-    glDeleteVertexArrays(1, mVAO);
+    glDeleteVertexArrays(1, &mVAO);
 }
 
-void ContextGL::generateBuffer(unsigned int *buf)
+unsigned int ContextGL::generateBuffer()
 {
-    glGenBuffers(1, buf);
+    unsigned int buf;
+    glGenBuffers(1, &buf);
+    return buf;
 }
 
-void ContextGL::deleteBuffer(unsigned int *buf)
+void ContextGL::deleteBuffer(unsigned int buf)
 {
-    glDeleteBuffers(1, buf);
+    glDeleteBuffers(1, &buf);
 }
 
 void ContextGL::bindBuffer(unsigned int target, unsigned int buf)
@@ -676,9 +682,9 @@ void ContextGL::uploadBuffer(unsigned int target, const std::vector<unsigned sho
     ASSERT(glGetError() == GL_NO_ERROR);
 }
 
-void ContextGL::generateProgram(unsigned int *program)
+unsigned int ContextGL::generateProgram()
 {
-    *program = glCreateProgram();
+    return glCreateProgram();
 }
 
 void ContextGL::setProgram(unsigned int program)
@@ -686,9 +692,9 @@ void ContextGL::setProgram(unsigned int program)
     glUseProgram(program);
 }
 
-void ContextGL::deleteProgram(unsigned int *program)
+void ContextGL::deleteProgram(unsigned int program)
 {
-    glDeleteProgram(*program);
+    glDeleteProgram(program);
 }
 
 bool ContextGL::compileProgram(unsigned int programId,

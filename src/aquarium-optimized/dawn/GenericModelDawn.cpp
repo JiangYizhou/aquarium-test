@@ -234,9 +234,9 @@ void GenericModelDawn::draw()
     instance = 0;
 }
 
-void GenericModelDawn::updatePerInstanceUniforms(WorldUniforms *worldUniforms)
+void GenericModelDawn::updatePerInstanceUniforms(const WorldUniforms &worldUniforms)
 {
-    worldUniformPer.WorldUniforms[instance] = *worldUniforms;
+    worldUniformPer.WorldUniforms[instance] = worldUniforms;
 
     instance++;
 }

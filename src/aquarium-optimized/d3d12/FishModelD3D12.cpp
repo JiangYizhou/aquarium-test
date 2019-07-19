@@ -135,7 +135,7 @@ void FishModelD3D12::init()
                                contextD3D12->staticSamplers.data(),
                                D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT);
 
-    contextD3D12->createRootSignature(&rootSignatureDesc, m_rootSignature);
+    contextD3D12->createRootSignature(rootSignatureDesc, m_rootSignature);
 
     contextD3D12->createGraphicsPipelineState(inputElementDescs, m_rootSignature,
                                               programD3D12->getVSModule(),
@@ -177,7 +177,7 @@ void FishModelD3D12::draw()
     }
 }
 
-void FishModelD3D12::updatePerInstanceUniforms(WorldUniforms *worldUniforms) {}
+void FishModelD3D12::updatePerInstanceUniforms(const WorldUniforms &worldUniforms) {}
 
 void FishModelD3D12::updateFishPerUniforms(float x,
                                            float y,

@@ -30,7 +30,7 @@ class GenericModelDawn : public Model
     void prepareForDraw() const override;
     void draw() override;
 
-    void updatePerInstanceUniforms(WorldUniforms *worldUniforms) override;
+    void updatePerInstanceUniforms(const WorldUniforms &worldUniforms) override;
 
     TextureDawn *diffuseTexture;
     TextureDawn *normalTexture;

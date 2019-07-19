@@ -18,7 +18,7 @@
 #include "stb_image.h"
 #include "stb_image_resize.h"
 
-Texture::Texture(std::string name, const std::string &url, bool flip)
+Texture::Texture(const std::string &name, const std::string &url, bool flip)
     : mUrls(),
     mWidth(0),
     mHeight(0),

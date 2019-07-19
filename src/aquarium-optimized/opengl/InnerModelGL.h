@@ -19,7 +19,7 @@ class InnerModelGL : public Model
   public:
     InnerModelGL(const ContextGL *context, Aquarium *aquarium, MODELGROUP type, MODELNAME name, bool blend);
     void prepareForDraw() const override;
-    void updatePerInstanceUniforms(WorldUniforms *WorldUniforms) override;
+    void updatePerInstanceUniforms(const WorldUniforms &WorldUniforms) override;
     void init() override;
     void draw() override;
 
@@ -52,7 +52,7 @@ class InnerModelGL : public Model
     std::pair<BufferGL *, int> tangentBuffer;
     std::pair<BufferGL *, int> binormalBuffer;
 
-    BufferGL * indicesBuffer;
+    BufferGL *indicesBuffer;
 
   private:
     const ContextGL *contextGL;

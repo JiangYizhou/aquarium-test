@@ -21,7 +21,7 @@ class Scene {
 public:
   Scene() {}
   ~Scene();
-  Scene(std::string *opt_programIds);
+  Scene(const std::string opt_programIds[2]);
 
   void load(const std::string &path, const std::string &name);
   const std::vector<Model *> &getModels() const { return models; }
@@ -31,11 +31,11 @@ public:
 private:
   void setupSkybox(const std::string &path);
 
-  std::string *programIds;
+  std::string programIds[2];
   std::string url;
   std::vector<Model *> models;
   std::unordered_map<std::string, Texture *> textureMap;
-  std::unordered_map<std::string, AttribBuffer *> arrayMap;
+  std::unordered_map<std::string, const AttribBuffer *> arrayMap;
 };
 
 #endif // !SCENE_H

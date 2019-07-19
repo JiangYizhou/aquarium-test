@@ -99,7 +99,7 @@ void FishModelGL::init()
 
 void FishModelGL::draw()
 {
-    contextGL->drawElements(indicesBuffer);
+    contextGL->drawElements(*indicesBuffer);
 }
 
 void FishModelGL::prepareForDraw() const
@@ -110,14 +110,14 @@ void FishModelGL::prepareForDraw() const
     ProgramGL *programGL = static_cast<ProgramGL *>(mProgram);
     contextGL->bindVAO(programGL->getVAOId());
 
-    contextGL->setAttribs(positionBuffer.first, positionBuffer.second);
-    contextGL->setAttribs(normalBuffer.first, normalBuffer.second);
-    contextGL->setAttribs(texCoordBuffer.first, texCoordBuffer.second);
+    contextGL->setAttribs(*positionBuffer.first, positionBuffer.second);
+    contextGL->setAttribs(*normalBuffer.first, normalBuffer.second);
+    contextGL->setAttribs(*texCoordBuffer.first, texCoordBuffer.second);
 
-    contextGL->setAttribs(tangentBuffer.first, tangentBuffer.second);
-    contextGL->setAttribs(binormalBuffer.first, binormalBuffer.second);
+    contextGL->setAttribs(*tangentBuffer.first, tangentBuffer.second);
+    contextGL->setAttribs(*binormalBuffer.first, binormalBuffer.second);
 
-    contextGL->setIndices(indicesBuffer);
+    contextGL->setIndices(*indicesBuffer);
 
     contextGL->setUniform(viewInverseUniform.second, viewInverseUniform.first, GL_FLOAT_MAT4);
     contextGL->setUniform(lightWorldPosUniform.second, lightWorldPosUniform.first, GL_FLOAT_VEC3);
@@ -138,16 +138,16 @@ void FishModelGL::prepareForDraw() const
 
     // Fish models includes small, medium and big. Some of them contains reflection and skybox
     // texture, but some doesn't.
-    contextGL->setTexture(diffuseTexture.first, diffuseTexture.second, 0);
-    contextGL->setTexture(normalTexture.first, normalTexture.second, 1);
+    contextGL->setTexture(*diffuseTexture.first, diffuseTexture.second, 0);
+    contextGL->setTexture(*normalTexture.first, normalTexture.second, 1);
     if (skyboxTexture.second != -1 && reflectionTexture.second != -1)
     {
-        contextGL->setTexture(reflectionTexture.first, reflectionTexture.second, 2);
-        contextGL->setTexture(skyboxTexture.first, skyboxTexture.second, 3);
+        contextGL->setTexture(*reflectionTexture.first, reflectionTexture.second, 2);
+        contextGL->setTexture(*skyboxTexture.first, skyboxTexture.second, 3);
     }
 }
 
-void FishModelGL::updatePerInstanceUniforms(WorldUniforms *WorldUniforms)
+void FishModelGL::updatePerInstanceUniforms(const WorldUniforms &WorldUniforms)
 {
     contextGL->setUniform(scaleUniform.second, &scaleUniform.first, GL_FLOAT);
     contextGL->setUniform(timeUniform.second, &timeUniform.first, GL_FLOAT);

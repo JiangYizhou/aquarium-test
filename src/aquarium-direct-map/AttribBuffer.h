@@ -15,18 +15,18 @@ class AttribBuffer
 {
 public:
   AttribBuffer() {}
-  AttribBuffer(int numComponents, const std::vector<float> &buffer, int size, std::string opt_type);
+  AttribBuffer(int numComponents, const std::vector<float> &buffer, int size, const std::string &opt_type);
   AttribBuffer(int numComponents,
                const std::vector<unsigned short> &buffer,
                int size,
-               std::string opt_type);
+               const std::string &opt_type);
 
-  int getNumComponents() { return numComponents; }
-  int getNumElements() { return numElements; }
+  int getNumComponents() const { return numComponents; }
+  int getNumElements() const { return numElements; }
 
-  std::vector<float> *getBufferFloat() { return &bufferFloat; }
-  std::vector<unsigned short> *getBufferUShort() { return &bufferUShort; }
-  std::string getType() { return type; }
+  const std::vector<float> &getBufferFloat() const { return bufferFloat; }
+  const std::vector<unsigned short> &getBufferUShort() const { return bufferUShort; }
+  const std::string &getType() const { return type; }
 
 private:
   std::string type;

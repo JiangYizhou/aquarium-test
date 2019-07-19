@@ -4,7 +4,7 @@
 #include "ContextD3D12.h"
 #include "ProgramD3D12.h"
 
-ProgramD3D12::ProgramD3D12(ContextD3D12 *context, std::string vId, std::string fId)
+ProgramD3D12::ProgramD3D12(ContextD3D12 *context, const std::string &vId, const std::string &fId)
     : Program(vId, fId), vertexShader(nullptr), pixelShader(nullptr), context(context)
 {
 }

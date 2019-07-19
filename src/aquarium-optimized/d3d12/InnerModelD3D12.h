@@ -28,7 +28,7 @@ class InnerModelD3D12 : public Model
     void init() override;
     void prepareForDraw() const override;
     void draw() override;
-    void updatePerInstanceUniforms(WorldUniforms *WorldUniforms) override;
+    void updatePerInstanceUniforms(const WorldUniforms &WorldUniforms) override;
 
     struct InnerUniforms
     {

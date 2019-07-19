@@ -17,7 +17,7 @@ class Buffer
 {
 public:
   Buffer() {}
-  Buffer(AttribBuffer *array, GLenum target);
+  Buffer(const AttribBuffer &array, GLenum target);
   ~Buffer();
 
   GLuint getBuffer() const { return mBuf; }

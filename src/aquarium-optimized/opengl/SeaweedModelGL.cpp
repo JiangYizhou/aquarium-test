@@ -70,7 +70,7 @@ void SeaweedModelGL::init()
 
 void SeaweedModelGL::draw()
 {
-    contextGL->drawElements(indicesBuffer);
+    contextGL->drawElements(*indicesBuffer);
 }
 
 void SeaweedModelGL::prepareForDraw() const
@@ -81,11 +81,11 @@ void SeaweedModelGL::prepareForDraw() const
     ProgramGL *programGL = static_cast<ProgramGL *>(mProgram);
     contextGL->bindVAO(programGL->getVAOId());
 
-    contextGL->setAttribs(positionBuffer.first, positionBuffer.second);
-    contextGL->setAttribs(normalBuffer.first, normalBuffer.second);
-    contextGL->setAttribs(texCoordBuffer.first, texCoordBuffer.second);
+    contextGL->setAttribs(*positionBuffer.first, positionBuffer.second);
+    contextGL->setAttribs(*normalBuffer.first, normalBuffer.second);
+    contextGL->setAttribs(*texCoordBuffer.first, texCoordBuffer.second);
 
-    contextGL->setIndices(indicesBuffer);
+    contextGL->setIndices(*indicesBuffer);
 
     contextGL->setUniform(viewInverseUniform.second, viewInverseUniform.first, GL_FLOAT_MAT4);
     contextGL->setUniform(lightWorldPosUniform.second, lightWorldPosUniform.first, GL_FLOAT_VEC3);
@@ -100,10 +100,10 @@ void SeaweedModelGL::prepareForDraw() const
     contextGL->setUniform(fogColorUniform.second, fogColorUniform.first, GL_FLOAT_VEC4);
     contextGL->setUniform(viewProjectionUniform.second, viewProjectionUniform.first, GL_FLOAT_MAT4);
 
-    contextGL->setTexture(diffuseTexture.first, diffuseTexture.second, 0);
+    contextGL->setTexture(*diffuseTexture.first, diffuseTexture.second, 0);
 }
 
-void SeaweedModelGL::updatePerInstanceUniforms(WorldUniforms *worldUniforms)
+void SeaweedModelGL::updatePerInstanceUniforms(const WorldUniforms &worldUniforms)
 {
     contextGL->setUniform(worldUniform.second, worldUniform.first, GL_FLOAT_MAT4);
     contextGL->setUniform(timeUniform.second, &timeUniform.first, GL_FLOAT);

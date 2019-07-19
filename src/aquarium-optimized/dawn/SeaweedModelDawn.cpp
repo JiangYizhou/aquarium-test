@@ -131,9 +131,9 @@ void SeaweedModelDawn::draw()
     instance = 0;
 }
 
-void SeaweedModelDawn::updatePerInstanceUniforms(WorldUniforms *worldUniforms)
+void SeaweedModelDawn::updatePerInstanceUniforms(const WorldUniforms &worldUniforms)
 {
-    worldUniformPer.worldUniforms[instance] = *worldUniforms;
+    worldUniformPer.worldUniforms[instance] = worldUniforms;
     seaweedPer.time[instance]             = mAquarium->g.mclock + instance;
 
     instance++;

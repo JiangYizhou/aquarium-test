@@ -6,7 +6,7 @@
 
 TextureD3D12::~TextureD3D12() {}
 
-TextureD3D12::TextureD3D12(ContextD3D12 *context, std::string name, std::string url)
+TextureD3D12::TextureD3D12(ContextD3D12 *context, const std::string &name, const std::string &url)
     : Texture(name, url, true),
       mTextureDimension(D3D12_RESOURCE_DIMENSION_TEXTURE2D),
       mTextureViewDimension(D3D12_SRV_DIMENSION_TEXTURE2D),
@@ -17,7 +17,7 @@ TextureD3D12::TextureD3D12(ContextD3D12 *context, std::string name, std::string 
 }
 
 TextureD3D12::TextureD3D12(ContextD3D12 *context,
-                           std::string name,
+                           const std::string &name,
                            const std::vector<std::string> &urls)
     : Texture(name, urls, false),
       mTextureDimension(D3D12_RESOURCE_DIMENSION_TEXTURE2D),
@@ -45,7 +45,7 @@ void TextureD3D12::loadTexture()
         textureDesc.SampleDesc.Quality  = 0;
         textureDesc.Dimension           = mTextureDimension;
 
-        context->createTexture(textureDesc, mTexture, mTextureUploadHeap, mPixelVec, mWidth,
+        context->createTexture(textureDesc, mPixelVec, mTexture, mTextureUploadHeap, mWidth,
                                mHeight, 4u, textureDesc.MipLevels, textureDesc.DepthOrArraySize);
     }
     else
@@ -64,7 +64,7 @@ void TextureD3D12::loadTexture()
         textureDesc.SampleDesc.Quality = 0;
         textureDesc.Dimension          = mTextureDimension;
 
-        context->createTexture(textureDesc, mTexture, mTextureUploadHeap, mResizedVec, mWidth,
+        context->createTexture(textureDesc, mResizedVec, mTexture, mTextureUploadHeap, mWidth,
                                mHeight, 4u, textureDesc.MipLevels, textureDesc.DepthOrArraySize);
     }
 }
