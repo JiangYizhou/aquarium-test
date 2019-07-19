@@ -10,7 +10,9 @@
 #include "imgui.h"
 #include "utils/DawnHelpers.h"
 
-IMGUI_IMPL_API bool ImGui_ImplDawn_Init(ContextDawn *context, dawn::TextureFormat rtv_format);
+IMGUI_IMPL_API bool ImGui_ImplDawn_Init(ContextDawn *context,
+                                        dawn::TextureFormat rtv_format,
+                                        bool enableMSAA);
 IMGUI_IMPL_API void ImGui_ImplDawn_Shutdown();
 IMGUI_IMPL_API void ImGui_ImplDawn_NewFrame();
 IMGUI_IMPL_API void ImGui_ImplDawn_RenderDrawData(ImDrawData *draw_data);

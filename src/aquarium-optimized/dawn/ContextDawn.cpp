@@ -229,7 +229,7 @@ bool ContextDawn::initialize(
     // Because imgui doesn't have dawn backend, we rewrite the functions by dawn API in
     // imgui_impl_dawn.cpp and imgui_impl_dawn.h
     ImGui_ImplGlfw_InitForOpenGL(mWindow, true);
-    ImGui_ImplDawn_Init(this, mPreferredSwapChainFormat);
+    ImGui_ImplDawn_Init(this, mPreferredSwapChainFormat, mEnableMSAA);
 
     return true;
 }
