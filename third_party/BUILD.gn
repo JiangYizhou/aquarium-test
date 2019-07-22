@@ -178,11 +178,22 @@ source_set("imgui") {
     "imgui/imgui_widgets.cpp",
     "imgui/examples/imgui_impl_glfw.h",
     "imgui/examples/imgui_impl_glfw.cpp",
+    "imgui/examples/imgui_impl_opengl3.h",
+    "imgui/examples/imgui_impl_opengl3.cpp",
   ]
+
+  if(is_win)
+  {
+    sources += [
+    "imgui/examples/imgui_impl_dx12.h",
+    "imgui/examples/imgui_impl_dx12.cpp",
+    ]
+  }
 
   cflags_cc = [
     "-Wno-string-conversion",
     "-Wno-unused-result",
     "-Wno-microsoft-enum-forward-reference",
   ]
+  defines = [ "IMGUI_IMPL_OPENGL_LOADER_GLAD" ]
 }
