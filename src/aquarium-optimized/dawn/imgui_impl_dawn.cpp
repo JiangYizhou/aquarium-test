@@ -8,7 +8,6 @@
 #include "utils/ComboRenderPipelineDescriptor.h"
 
 // Dawn data
-dawn::Device mDevice(nullptr);
 dawn::RenderPipeline mPipeline(nullptr);
 dawn::BindGroup mBindGroup(nullptr);
 dawn::TextureFormat mFormat(dawn::TextureFormat::RGBA8Unorm);
@@ -29,8 +28,8 @@ ContextDawn *mContextDawn(nullptr);
 int mIndexBufferSize  = 0;
 int mVertexBufferSize = 0;
 bool mEnableMSAA      = false;
-ImDrawVert mVertexData[3000];
-ImDrawIdx mIndexData[3000];
+ImDrawVert mVertexData[5000];
+ImDrawIdx mIndexData[5000];
 
 struct VERTEX_CONSTANT_BUFFER
 {
@@ -92,7 +91,7 @@ void ImGui_ImplDawn_RenderDrawData(ImDrawData *draw_data)
         descriptor.size  = mVertexBufferSize * sizeof(ImDrawVert);
         descriptor.usage = dawn::BufferUsageBit::Vertex | dawn::BufferUsageBit::CopyDst;
 
-        mVertexBuffer = mDevice.CreateBuffer(&descriptor);
+        mVertexBuffer = mContextDawn->mDevice.CreateBuffer(&descriptor);
     }
 
     if (mIndexBuffer.Get() == nullptr || mIndexBufferSize < draw_data->TotalIdxCount)
@@ -105,7 +104,7 @@ void ImGui_ImplDawn_RenderDrawData(ImDrawData *draw_data)
         descriptor.size  = mIndexBufferSize * sizeof(ImDrawIdx);
         descriptor.usage = dawn::BufferUsageBit::Index | dawn::BufferUsageBit::CopyDst;
 
-        mIndexBuffer = mDevice.CreateBuffer(&descriptor);
+        mIndexBuffer = mContextDawn->mDevice.CreateBuffer(&descriptor);
     }
 
     // Upload vertex/index data into a single contiguous GPU buffer
@@ -127,8 +126,11 @@ void ImGui_ImplDawn_RenderDrawData(ImDrawData *draw_data)
     vtx_dst = vtx_dst % 4 == 0 ? vtx_dst : vtx_dst + 4 - vtx_dst % 4;
     idx_dst = idx_dst % 4 == 0 ? idx_dst : idx_dst + 4 - idx_dst % 4;
 
-    mContextDawn->setBufferData(mVertexBuffer, 0, vtx_dst, mVertexData);
-    mContextDawn->setBufferData(mIndexBuffer, 0, idx_dst, mIndexData);
+    if (vtx_dst != 0 && idx_dst != 0)
+    {
+        mContextDawn->setBufferData(mVertexBuffer, 0, vtx_dst, mVertexData);
+        mContextDawn->setBufferData(mIndexBuffer, 0, idx_dst, mIndexData);
+    }
 
     const dawn::RenderPassEncoder &pass = mContextDawn->getRenderPass();
 
@@ -234,7 +236,7 @@ static void ImGui_ImplDawn_CreateFontsTexture()
 
 bool ImGui_ImplDawn_CreateDeviceObjects()
 {
-    if (!mDevice)
+    if (!mContextDawn->mDevice)
         return false;
 
     utils::ComboVertexInputDescriptor mVertexInputDescriptor;
@@ -302,7 +304,7 @@ bool ImGui_ImplDawn_CreateDeviceObjects()
     rasterizationState.depthBiasClamp      = 0.0;
 
     // create graphics mPipeline
-    utils::ComboRenderPipelineDescriptor mPipelineDescriptor(mDevice);
+    utils::ComboRenderPipelineDescriptor mPipelineDescriptor(mContextDawn->mDevice);
     mPipelineDescriptor.layout                    = mPipelineLayout;
     mPipelineDescriptor.cVertexStage.module       = mVsModule;
     mPipelineDescriptor.cFragmentStage.module     = mFsModule;
@@ -317,7 +319,7 @@ bool ImGui_ImplDawn_CreateDeviceObjects()
     mPipelineDescriptor.sampleCount        = mEnableMSAA ? 4 : 1;
     mPipelineDescriptor.rasterizationState = &rasterizationState;
 
-    mPipeline = mDevice.CreateRenderPipeline(&mPipelineDescriptor);
+    mPipeline = mContextDawn->mDevice.CreateRenderPipeline(&mPipelineDescriptor);
 
     ImGui_ImplDawn_CreateFontsTexture();
 
@@ -327,7 +329,7 @@ bool ImGui_ImplDawn_CreateDeviceObjects()
     descriptor.usage = dawn::BufferUsageBit::CopyDst | dawn::BufferUsageBit::Uniform |
                        dawn::BufferUsageBit::Uniform;
 
-    mConstantBuffer = mDevice.CreateBuffer(&descriptor);
+    mConstantBuffer = mContextDawn->mDevice.CreateBuffer(&descriptor);
 
     mBindGroup = mContextDawn->makeBindGroup(
         layout, {{0, mConstantBuffer, 0, sizeof(VERTEX_CONSTANT_BUFFER)},
@@ -346,14 +348,13 @@ bool ImGui_ImplDawn_Init(ContextDawn *context, dawn::TextureFormat rtv_format, b
         ImGuiBackendFlags_RendererHasVtxOffset;  // We can honor the ImDrawCmd::VtxOffset field,
                                                  // allowing for large meshes.
 
-    mDevice     = context->getDevice();
     mFormat     = rtv_format;
     mContextDawn = context;
 
     mIndexBuffer      = NULL;
     mVertexBuffer     = NULL;
-    mIndexBufferSize  = 10000;
-    mVertexBufferSize = 5000;
+    mIndexBufferSize  = 3000;
+    mVertexBufferSize = 3000;
     mEnableMSAA       = enableMSAA;
 
     return true;
@@ -374,6 +375,7 @@ void ImGui_ImplDawn_Shutdown()
     mTexture      = nullptr;
     mSampler      = nullptr;
     mConstantBuffer = nullptr;
+    mTextureView     = nullptr;
 }
 
 void ImGui_ImplDawn_NewFrame()
