@@ -97,6 +97,8 @@ class ContextDawn : public Context
     dawn::BindGroupLayout groupLayoutWorld;
     dawn::BindGroup bindGroupWorld;
 
+    dawn::Device mDevice;
+
   private:
     bool GetHardwareAdapter(
         std::unique_ptr<dawn_native::Instance> &instance,
@@ -123,8 +125,6 @@ class ContextDawn : public Context
     dawn::Buffer mLightWorldPositionBuffer;
     dawn::Buffer mLightBuffer;
     dawn::Buffer mFogBuffer;
-
-    dawn::Device mDevice;
 
     bool mEnableMSAA;
     std::string mRenderer;
