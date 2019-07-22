@@ -178,6 +178,12 @@ bool Aquarium::init(int argc, char **argv)
         }
     }
 
+    if (mContext == nullptr)
+    {
+        std::cout << "Failed to create context." << std::endl;
+        return false;
+    }
+
     std::bitset<static_cast<size_t>(TOGGLE::TOGGLEMAX)> availableToggleBitset =
         mContext->getAvailableToggleBitset();
     if (availableToggleBitset.test(static_cast<size_t>(TOGGLE::UPATEANDDRAWFOREACHMODEL)))
