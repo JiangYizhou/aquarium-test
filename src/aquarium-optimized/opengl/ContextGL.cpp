@@ -67,7 +67,7 @@ bool ContextGL::initialize(BACKENDTYPE backend,
 #ifdef __APPLE__
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
-    mGLSLVersion = "#version 430";
+    mGLSLVersion = "#version 410";
 #elif _WIN32 || __linux__
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 5);
@@ -76,7 +76,6 @@ bool ContextGL::initialize(BACKENDTYPE backend,
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
     glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
-    mGLSLVersion = "#version 450";
 #endif
 
     GLFWmonitor *pMonitor   = glfwGetPrimaryMonitor();
