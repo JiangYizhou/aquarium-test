@@ -217,7 +217,11 @@ bool ContextDawn::initialize(
 
     mSceneDepthStencilView = createDepthStencilView();
 
-#ifdef WIN32
+// Skipping Imgui on dawn_vulkan backend
+#ifdef __linux__
+    return true;
+#endif
+
     // Setup Dear ImGui context
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
@@ -231,7 +235,6 @@ bool ContextDawn::initialize(
     // imgui_impl_dawn.cpp and imgui_impl_dawn.h
     ImGui_ImplGlfw_InitForOpenGL(mWindow, true);
     ImGui_ImplDawn_Init(this, mPreferredSwapChainFormat, mEnableMSAA);
-#endif
 
     return true;
 }
@@ -581,7 +584,7 @@ void ContextDawn::showFPS(const FPSTimer &fpsTimer)
 {
     // TODO(yizhou): Dawn doesn't support recreating swap chain if framebuffer size is changed. This will cause 
     // 'AcquireNextImage' returns an error code on linux vulkan backend. The error is 'VK_ERROR_OUT_OF_DATE_KHR'.
-#ifndef WIN32
+#ifdef __linux__
     return;
 #endif
 
