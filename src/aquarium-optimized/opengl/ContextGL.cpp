@@ -101,8 +101,6 @@ bool ContextGL::initialize(BACKENDTYPE backend,
         return false;
     }
 
-    // Get the resolution of screen
-    glfwGetFramebufferSize(mWindow, &mClientWidth, &mClientHeight);
     setWindowTitle("Aquarium");
 
 #ifndef GL_GLES_PROTOTYPES 
@@ -238,8 +236,6 @@ bool ContextGL::initialize(BACKENDTYPE backend,
     size_t index = renderer.find("/");
     mRenderer    = renderer.substr(0, index);
     std::cout << mRenderer << std::endl;
-
-    glViewport(0, 0, mClientWidth, mClientHeight);
 
     return true;
 }
@@ -448,6 +444,8 @@ void ContextGL::Terminate()
 
 void ContextGL::showWindow()
 {
+    glfwGetFramebufferSize(mWindow, &mClientWidth, &mClientHeight);
+    glViewport(0, 0, mClientWidth, mClientHeight);
     glfwShowWindow(mWindow);
 }
 
