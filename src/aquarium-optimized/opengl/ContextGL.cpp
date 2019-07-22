@@ -55,7 +55,7 @@ bool ContextGL::initialize(BACKENDTYPE backend,
     // TODO(yizhou) : Enable msaa in angle. Render into a multisample Texture and then blit to a
     // none multisample texture.
     glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
-    mResourceHelper = new ResourceHelper("opengl", std::string("100"));
+    mResourceHelper = new ResourceHelper(std::string("angle"), std::string("100"));
 #else
     if (toggleBitset.test(static_cast<size_t>(TOGGLE::ENABLEMSAAx4)))
     {
@@ -106,7 +106,7 @@ bool ContextGL::initialize(BACKENDTYPE backend,
     glfwWindowHint(GLFW_DECORATED, GL_FALSE);
     glfwMakeContextCurrent(mWindow);
 #else
-    mGLSLVersion = "#version 300 es";
+    mGLSLVersion = "#version 100";
 
     std::vector<EGLAttrib> display_attribs;
 
@@ -461,11 +461,7 @@ void ContextGL::showFPS(const FPSTimer &fpsTimer)
         std::ostringstream rendererStream;
         std::string backend = mResourceHelper->getBackendName();
         for (auto & c: backend ) c = toupper(c);
-#ifdef EGL_EGL_PROTOTYPES
-        rendererStream << mRenderer;
-#else
         rendererStream << mRenderer << " " << backend << " " << mResourceHelper->getShaderVersion();
-#endif
         std::string renderer = rendererStream.str();
         ImGui::Text(renderer.c_str());
 
