@@ -70,6 +70,8 @@ executable("aquarium") {
       "src/aquarium-optimized/opengl/SeaweedModelGL.h",
       "src/aquarium-optimized/opengl/TextureGL.cpp",
       "src/aquarium-optimized/opengl/TextureGL.h",
+      "src/aquarium-optimized/opengl/imgui_impl_opengl3.h",
+      "src/aquarium-optimized/opengl/imgui_impl_opengl3.cpp",
     ]
   }
 
@@ -79,7 +81,9 @@ executable("aquarium") {
     enable_dawn = false
     enable_d3d12 = false
 
-    defines += [ "EGL_EGL_PROTOTYPES" ]
+    defines += [ "EGL_EGL_PROTOTYPES",
+    "IMGUI_IMPL_OPENGL_LOADER_CUSTOM",
+    "IMGUI_IMPL_OPENGL_ES3", ]
 
     include_dirs += [
       "third_party/angle/include",
@@ -96,6 +100,7 @@ executable("aquarium") {
     deps += [ "third_party:glad" ]
 
     include_dirs += [ "third_party/glad/include" ]
+    defines += [ "IMGUI_IMPL_OPENGL_LOADER_GLAD", ]
   }
 
   if (enable_dawn) {
@@ -182,6 +187,8 @@ executable("aquarium") {
       "src/aquarium-optimized/d3d12/SeaweedModelD3D12.h",
       "src/aquarium-optimized/d3d12/TextureD3D12.cpp",
       "src/aquarium-optimized/d3d12/TextureD3D12.h",
+      "src/aquarium-optimized/d3d12/imgui_impl_dx12.h",
+      "src/aquarium-optimized/d3d12/imgui_impl_dx12.cpp",
     ]
   }
 
@@ -189,6 +196,7 @@ executable("aquarium") {
     "-Wno-string-conversion",
     "-Wno-unused-result",
     "-Wno-format-security",
+    "-Wno-microsoft-enum-forward-reference",
   ]
 }
 
