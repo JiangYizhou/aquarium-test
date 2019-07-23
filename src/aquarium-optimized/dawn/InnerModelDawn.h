@@ -69,4 +69,3 @@ class InnerModelDawn : public Model
 };
 
 #endif // !INNERMODELDAWN_H
-#pragma once

@@ -198,27 +198,27 @@ void LoadPlacement()
         g_sceneInfoByName[info.name] = info;
     }
 
-        for (rapidjson::SizeType i = 0; i < objects.Size(); ++i)
+    for (rapidjson::SizeType i = 0; i < objects.Size(); ++i)
+    {
+        const rapidjson::Value &name        = objects[i]["name"];
+        const rapidjson::Value &worldMatrix = objects[i]["worldMatrix"];
+        ASSERT(worldMatrix.IsArray() && worldMatrix.Size() == 16);
+
+        std::string groupName = g_sceneInfoByName[name.GetString()].group;
+        if (groupName == "")
         {
-            const rapidjson::Value &name        = objects[i]["name"];
-            const rapidjson::Value &worldMatrix = objects[i]["worldMatrix"];
-            ASSERT(worldMatrix.IsArray() && worldMatrix.Size() == 16);
-
-            std::string groupName = g_sceneInfoByName[name.GetString()].group;
-            if (groupName == "")
-            {
-                groupName = "base";
-            }
-
-            std::multimap<std::string, std::vector<float>> &group = g_sceneGroups[groupName];
-
-            std::vector<float> matrix;
-            for (rapidjson::SizeType j = 0; j < worldMatrix.Size(); ++j)
-            {
-                matrix.push_back(worldMatrix[j].GetFloat());
-            }
-            group.insert(make_pair(name.GetString(), matrix));
+            groupName = "base";
         }
+
+        std::multimap<std::string, std::vector<float>> &group = g_sceneGroups[groupName];
+
+        std::vector<float> matrix;
+        for (rapidjson::SizeType j = 0; j < worldMatrix.Size(); ++j)
+        {
+            matrix.push_back(worldMatrix[j].GetFloat());
+        }
+        group.insert(make_pair(name.GetString(), matrix));
+    }
 }
 
 Scene *loadScene(const std::string &name, const std::string opt_programIds[2])

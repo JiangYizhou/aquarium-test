@@ -69,11 +69,9 @@ class GenericModelD3D12 : public Model
     ComPtr<ID3D12Resource> mLightFactorUploadBuffer;
 
     std::vector<D3D12_INPUT_ELEMENT_DESC> mInputElementDescs;
-
     D3D12_VERTEX_BUFFER_VIEW mVertexBufferView[5];
 
     ComPtr<ID3D12RootSignature> mRootSignature;
-
     ComPtr<ID3D12PipelineState> mPipelineState;
 
     ContextD3D12 *mContextD3D12;

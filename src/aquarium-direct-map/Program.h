@@ -5,8 +5,8 @@
 //
 // Program.h: Defines Program Class.
 
-#ifndef SHADERLOADER_H
-#define SHADERLOADER_H
+#ifndef PROGRAM_H
+#define PROGRAM_H
 
 #include <string>
 #include <unordered_map>

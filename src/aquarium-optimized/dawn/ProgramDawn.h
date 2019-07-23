@@ -7,13 +7,10 @@
 // Load shaders from folder shaders/dawn.
 
 #pragma once
-#ifndef PROGRAMGL_H
-#define PROGRAMGL_H 1
+#ifndef PROGRAMDAWN_H
+#define PROGRAMDAWN_H 1
 
 #include "../Program.h"
-
-#ifndef SHADERLOADER_H
-#define SHADERLOADER_H
 
 #include <string>
 #include <unordered_map>
@@ -45,4 +42,3 @@ public:
 
 #endif
 
-#endif // !PROGRAMGL_H
