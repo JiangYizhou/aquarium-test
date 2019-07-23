@@ -93,11 +93,9 @@ class FishModelInstancedDrawD3D12 : public FishModel
     ComPtr<ID3D12Resource> mFishVertexUploadBuffer;
 
     std::vector<D3D12_INPUT_ELEMENT_DESC> mInputElementDescs;
-
     D3D12_VERTEX_BUFFER_VIEW mVertexBufferView[6];
 
     ComPtr<ID3D12RootSignature> mRootSignature;
-
     ComPtr<ID3D12PipelineState> mPipelineState;
 
     int instance;

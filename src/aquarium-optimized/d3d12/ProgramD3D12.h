@@ -4,15 +4,11 @@
 // found in the LICENSE file.
 //
 // ProgramD3D.h: Defines Program wrapper of D3D.
-// Load shaders from folder shaders/D3D.
+// Load shaders from folder shaders/d3d12.
 
 #pragma once
-#ifndef PROGRAMD3D_H
-#define PROGRAMD3D_H 1
-
-
-#ifndef SHADERLOADER_H
-#define SHADERLOADER_H
+#ifndef PROGRAMD3D12_H
+#define PROGRAMD3D12_H 1
 
 #include <string>
 #include <unordered_map>
@@ -46,4 +42,3 @@ class ProgramD3D12 : public Program
 
 #endif
 
-#endif  // !PROGRAMGL_H

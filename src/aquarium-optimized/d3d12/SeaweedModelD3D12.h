@@ -77,11 +77,9 @@ class SeaweedModelD3D12 : public SeaweedModel
     ComPtr<ID3D12Resource> mLightFactorUploadBuffer;
 
     std::vector<D3D12_INPUT_ELEMENT_DESC> mInputElementDescs;
-
     D3D12_VERTEX_BUFFER_VIEW mVertexBufferView[3];
 
     ComPtr<ID3D12RootSignature> mRootSignature;
-
     ComPtr<ID3D12PipelineState> mPipelineState;
 
     ContextD3D12 *mContextD3D12;

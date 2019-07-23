@@ -12,9 +12,6 @@
 #ifndef PROGRAMGL_H
 #define PROGRAMGL_H 1
 
-#ifndef SHADERLOADER_H
-#define SHADERLOADER_H
-
 #include <string>
 #include <unordered_map>
 
@@ -46,4 +43,3 @@ public:
 
 #endif
 
-#endif // !PROGRAMGL_H
