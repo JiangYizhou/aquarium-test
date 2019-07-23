@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2019 The WebGLNativePorts Project Authors. All rights reserved.
+# Copyright (c) 2019 The Native Aquarium Project Authors. All rights reserved.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 #
@@ -32,14 +32,12 @@ third_party/dawn
 third_party/glfw
 third_party/glslang
 third_party/googletest
-third_party/jsoncpp
 third_party/llvm-build
 third_party/rapidjson
 third_party/spirv-headers
 third_party/spirv-tools
 third_party/stb
 third_party/imgui
-third_party/jsoncpp
 
 buildtools/
 out/

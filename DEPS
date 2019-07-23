@@ -69,12 +69,6 @@ deps = {
   'third_party/spirv-headers': {
     'url': '{chromium_git}/external/github.com/KhronosGroup/SPIRV-Headers@{spirv_headers_revision}',
   },
-  'third_party/jsoncpp': {
-    'url': '{chromium_git}/chromium/src/third_party/jsoncpp@fd0ac8ce63a47e99b71a58f1489136fbb19c9137',
-   },
-  'third_party/jsoncpp/source': {
-    'url' : '{chromium_git}/external/github.com/open-source-parsers/jsoncpp@f572e8e42e22cfcf5ab0aea26574f408943edfa4',
-   },
   'third_party/imgui': {
     'url': '{imgui_git}/imgui.git@{imgui_revision}',
   },
