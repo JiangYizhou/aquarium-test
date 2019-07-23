@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2019 The WebGLNativePorts Project Authors. All rights reserved.
+// Copyright (c) 2019 The Native Aquarium Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -13,7 +13,7 @@
 #include <vector>
 
 #include "stdafx.h"
-// using namespace DirectX;
+
 using Microsoft::WRL::ComPtr;
 
 #include "../Buffer.h"
