@@ -1,3 +1,9 @@
+//
+// Copyright (c) 2019 The Native Aquarium Project Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+//
+
 #include "BufferD3D12.h"
 #include "ContextD3D12.h"
 

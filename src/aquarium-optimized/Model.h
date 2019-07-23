@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2018 The WebGLNativePorts Project Authors. All rights reserved.
+// Copyright (c) 2019 The Native Aquarium Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -7,7 +7,6 @@
 // Contains programs, textures and buffers info of models.
 // Apply program for its model. Update uniforms, textures
 // and buffers for each frame.
-
 
 #ifndef MODEL_H
 #define MODEL_H 1
