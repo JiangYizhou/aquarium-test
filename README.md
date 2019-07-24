@@ -180,19 +180,19 @@ Native Aquarium is a native implementation of [WebGL Aquarium](https://github.co
 Configure [depot_tools](http://dev.chromium.org/developers/how-tos/install-depot-tools) on all platforms.
 
 ## Windows Requirement
+The OpenGL version is required to > 4.5 on Windows.
 Windows sdk version is required to be over
 [10.0.17134.0](https://developer.microsoft.com/en-us/windows/downloads/windows-10-sdk) to support D3D12 backend.
 Visual Studio 2017 is recommand if you want to debug into the code.
-The OpenGL version is required to > 4.5 on Windows.
 ## Linux Requirement
 The OpenGL version is required to > 4.5 on Linux. To run vulkan of Dawn, please install vulkan driver on ubuntu.
-If you are using Intel gpu or amd gpu, you should install the following lib:
+If you are using Intel gpu or amd gpu, you should install the following library:
 ```sh
 sudo apt-get install mesa-vulkan-drivers
 ```
 If you are using Nvidia gpu, you should check if the driver support vulkan.
 ## MacOS Requirement
-The OpenGL version is required to > 4.1 on MacOS. To run Dawn/Metal backend, please check if your MACOS support metal.
+The OpenGL version is required to > 4.1 on MacOS. To run Dawn/Metal backend, please check if your MacOS support metal.
 ```sh
 ps aux | grep -i "metal"
 ```
