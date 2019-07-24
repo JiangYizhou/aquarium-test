@@ -4,13 +4,13 @@ Aquarium is a native implementation of [WebGL Aquarium](https://github.com/WebGL
 # Progress
 <table>
   <tr align=center>
-    <td><strong><h2>OS</td>
-    <td><strong><h2>Backend</td>
-    <td><strong><h2>Supported</td>
-    <td><strong><h2>MSAA</td>
-    <td><strong><h2>Dynamic Buffer Offset</td>
-    <td><strong><h2>Instanced Draw</td>
-    <td><strong><h2>Dynamically choose GPU</td>
+    <td><strong><h3>OS</td>
+    <td><strong><h3>Backend</td>
+    <td><strong><h3>Supported</td>
+    <td><strong><h3>MSAA</td>
+    <td><strong><h3>Dynamic Buffer Offset</td>
+    <td><strong><h3>Instanced Draw</td>
+    <td><strong><h3>Dynamically choose GPU</td>
   </tr>
   <tr align=left >
     <td><strong>Linux</td>
