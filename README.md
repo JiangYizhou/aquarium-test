@@ -1,3 +1,4 @@
+<style>.supported-row{color:green;}</style>
 #  Native Aquarium
 Native Aquarium is a native implementation of [WebGL Aquarium](https://github.com/WebGLSamples/WebGLSamples.github.io). The goal of this project is to compare the performance of WebGL version to its native counterparts, such as OpenGL, D3D, Vulkan, Metal, ANGLE and Dawn.
 
@@ -12,7 +13,7 @@ Native Aquarium is a native implementation of [WebGL Aquarium](https://github.co
     <td><strong>Instanced Draw</td>
     <td><strong>Dynamically choose GPU</td>
   </tr>
-  <tr align=left style="background-color: green">
+  <tr align=left class="supported-row">
     <td>Linux</td>
     <td>OpenGL</td>
     <td>Y</td>
@@ -21,7 +22,7 @@ Native Aquarium is a native implementation of [WebGL Aquarium](https://github.co
     <td>N</td>
     <td>Not supported</td>
   </tr>
-  <tr align=left  style="background-color: green">
+  <tr align=left class="supported-row">
     <td>MacOS</td>
     <td>OpenGL</td>
     <td>Y</td>
@@ -30,7 +31,7 @@ Native Aquarium is a native implementation of [WebGL Aquarium](https://github.co
     <td>N</td>
     <td>Not supported</td>
   </tr>
-  <tr align=left  style="background-color: green">
+  <tr align=left class="supported-row">
     <td>MacOS</td>
     <td>Dawn/Metal</td>
     <td>Y</td>
@@ -39,7 +40,7 @@ Native Aquarium is a native implementation of [WebGL Aquarium](https://github.co
     <td>Y</td>
     <td>Y</td>
   </tr>
-  <tr align=left  style="background-color: green">
+  <tr align=left class="supported-row">
     <td>Windows</td>
     <td>OpenGL</td>
     <td>Y</td>
@@ -48,7 +49,7 @@ Native Aquarium is a native implementation of [WebGL Aquarium](https://github.co
     <td>N</td>
     <td>Not supported</td>
   </tr>
-  <tr align=left  style="background-color: green">
+  <tr align=left class="supported-row">
     <td>Windows</td>
     <td>ANGLE/D3D11</td>
     <td>Y</td>
@@ -57,7 +58,7 @@ Native Aquarium is a native implementation of [WebGL Aquarium](https://github.co
     <td>N</td>
     <td>Not supported</td>
   </tr>
-  <tr align=left  style="background-color: green">
+  <tr align=left class="supported-row">
     <td>Windows</td>
     <td>Dawn/D3D12</td>
     <td>Y</td>
@@ -66,7 +67,7 @@ Native Aquarium is a native implementation of [WebGL Aquarium](https://github.co
     <td>Y</td>
     <td>Y</td>
   </tr>
-  <tr align=left  style="background-color: green">
+  <tr align=left class="supported-row">
     <td>Windows</td>
     <td>Dawn/Vulkan</td>
     <td>Y</td>
@@ -75,7 +76,7 @@ Native Aquarium is a native implementation of [WebGL Aquarium](https://github.co
     <td>Y</td>
     <td>Y</td>
   </tr>
-  <tr align=left style="background-color: green">
+  <tr align=left  class="supported-row">
     <td>Windows</td>
     <td>D3D12</td>
     <td>Y</td>
