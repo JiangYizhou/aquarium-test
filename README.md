@@ -1,4 +1,3 @@
-<style>.supported-row{color:green;}</style>
 #  Native Aquarium
 Native Aquarium is a native implementation of [WebGL Aquarium](https://github.com/WebGLSamples/WebGLSamples.github.io). The goal of this project is to compare the performance of WebGL version to its native counterparts, such as OpenGL, D3D, Vulkan, Metal, ANGLE and Dawn.
 
@@ -13,8 +12,8 @@ Native Aquarium is a native implementation of [WebGL Aquarium](https://github.co
     <td><strong>Instanced Draw</td>
     <td><strong>Dynamically choose GPU</td>
   </tr>
-  <tr align=left class="supported-row">
-    <td>Linux</td>
+  <tr align=left >
+    <td><span style="color:red">Linux</span></td>
     <td>OpenGL</td>
     <td>Y</td>
     <td>Y</td>
