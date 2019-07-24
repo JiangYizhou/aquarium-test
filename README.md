@@ -1,88 +1,88 @@
-#  Native Aquarium
-Native Aquarium is a native implementation of [WebGL Aquarium](https://github.com/WebGLSamples/WebGLSamples.github.io). The goal of this project is to compare the performance of WebGL version to its native counterparts, such as OpenGL, D3D, Vulkan, Metal, ANGLE and Dawn.
+# Aquarium
+Aquarium is a native implementation of [WebGL Aquarium](https://github.com/WebGLSamples/WebGLSamples.github.io). The goal of this project is to compare the performance of WebGL version to its native counterparts, such as OpenGL, D3D, Vulkan, Metal, ANGLE and Dawn.
 
 # Progress
 <table>
   <tr align=center>
-    <td><strong>OS</td>
-    <td><strong>Backend</td>
-    <td><strong>Supported</td>
-    <td><strong>MSAA</td>
-    <td><strong>Dynamic Buffer Offset</td>
-    <td><strong>Instanced Draw</td>
-    <td><strong>Dynamically choose GPU</td>
+    <td><strong><h2>OS</td>
+    <td><strong><h2>Backend</td>
+    <td><strong><h2>Supported</td>
+    <td><strong><h2>MSAA</td>
+    <td><strong><h2>Dynamic Buffer Offset</td>
+    <td><strong><h2>Instanced Draw</td>
+    <td><strong><h2>Dynamically choose GPU</td>
   </tr>
   <tr align=left >
-    <td><span style="color:red">Linux</span></td>
-    <td>OpenGL</td>
-    <td>Y</td>
-    <td>Y</td>
-    <td>Not supported</td>
-    <td>N</td>
-    <td>Not supported</td>
+    <td><strong>Linux</td>
+    <td><strong>OpenGL</td>
+    <td><strong>Y</td>
+    <td><strong>Y</td>
+    <td><strong>Not supported</td>
+    <td><strong>N</td>
+    <td><strong>Not supported</td>
   </tr>
   <tr align=left class="supported-row">
-    <td>MacOS</td>
-    <td>OpenGL</td>
-    <td>Y</td>
-    <td>Y</td>
-    <td>Not supported</td>
-    <td>N</td>
-    <td>Not supported</td>
+    <td><strong>MacOS</td>
+    <td><strong>OpenGL</td>
+    <td><strong>Y</td>
+    <td><strong>Y</td>
+    <td><strong>Not supported</td>
+    <td><strong>N</td>
+    <td><strong>Not supported</td>
   </tr>
   <tr align=left class="supported-row">
-    <td>MacOS</td>
-    <td>Dawn/Metal</td>
-    <td>Y</td>
-    <td>Y</td>
-    <td>Y</td>
-    <td>Y</td>
-    <td>Y</td>
+    <td><strong>MacOS</td>
+    <td><strong>Dawn/Metal</td>
+    <td><strong>Y</td>
+    <td><strong>Y</td>
+    <td><strong>Y</td>
+    <td><strong>Y</td>
+    <td><strong>Y</td>
   </tr>
   <tr align=left class="supported-row">
-    <td>Windows</td>
-    <td>OpenGL</td>
-    <td>Y</td>
-    <td>Y</td>
-    <td>Not supported</td>
-    <td>N</td>
-    <td>Not supported</td>
+    <td><strong>Windows</td>
+    <td><strong>OpenGL</td>
+    <td><strong>Y</td>
+    <td><strong>Y</td>
+    <td><strong>Not supported</td>
+    <td><strong>N</td>
+    <td><strong>Not supported</td>
   </tr>
   <tr align=left class="supported-row">
-    <td>Windows</td>
-    <td>ANGLE/D3D11</td>
-    <td>Y</td>
-    <td>N</td>
-    <td>Not supported</td>
-    <td>N</td>
-    <td>Not supported</td>
+    <td><strong>Windows</td>
+    <td><strong>ANGLE/D3D11</td>
+    <td><strong>Y</td>
+    <td><strong>N</td>
+    <td><strong>Not supported</td>
+    <td><strong>N</td>
+    <td><strong>Not supported</td>
   </tr>
   <tr align=left class="supported-row">
-    <td>Windows</td>
-    <td>Dawn/D3D12</td>
-    <td>Y</td>
-    <td>Y</td>
-    <td>N</td>
-    <td>Y</td>
-    <td>Y</td>
+    <td><strong>Windows</td>
+    <td><strong>Dawn/D3D12</td>
+    <td><strong>Y</td>
+    <td><strong>Y</td>
+    <td><strong>N</td>
+    <td><strong>Y</td>
+    <td><strong>Y</td>
   </tr>
   <tr align=left class="supported-row">
-    <td>Windows</td>
-    <td>Dawn/Vulkan</td>
-    <td>Y</td>
-    <td>Y</td>
-    <td>Y</td>
-    <td>Y</td>
-    <td>Y</td>
+    <td><strong>Windows</td>
+    <td><strong>Dawn/Vulkan</td>
+    <td><strong>Y</td>
+    <td><strong>Y</td>
+    <td><strong>Y</td>
+    <td><strong>Y</td>
+    <td><strong>Y</td>
   </tr>
   <tr align=left  class="supported-row">
-    <td>Windows</td>
-    <td>D3D12</td>
-    <td>Y</td>
-    <td>Y</td>
-    <td>Y</td>
-    <td>Y</td>
-    <td>Y</td>
+    <td><strong>Windows</td>
+    <td><strong>D3D12</td>
+    <td><strong>Y</td>
+    <td><strong>Y</td>
+    <td><strong>Y</td>
+    <td><strong>Y</td>
+    <td><strong>Y</td>
   </tr>
   <tr align=left>
     <td>Linux</td>
