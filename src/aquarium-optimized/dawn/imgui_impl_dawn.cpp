@@ -28,8 +28,8 @@ ContextDawn *mContextDawn(nullptr);
 int mIndexBufferSize  = 0;
 int mVertexBufferSize = 0;
 bool mEnableMSAA      = false;
-ImDrawVert mVertexData[5000];
-ImDrawIdx mIndexData[5000];
+ImDrawVert mVertexData[40000];
+ImDrawIdx mIndexData[10000];
 
 struct VERTEX_CONSTANT_BUFFER
 {
