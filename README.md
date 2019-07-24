@@ -7,63 +7,195 @@ Native Aquarium is a native implementation of [WebGL Aquarium](https://github.co
     <td><strong>OS</td>
     <td><strong>Backend</td>
     <td><strong>Supported</td>
+    <td><strong>MSAA</td>
+    <td><strong>Dynamic Buffer Offset</td>
+    <td><strong>Instanced Draw</td>
+    <td><strong>Dynamically choose GPU</td>
   </tr>
-  <tr align=left>
+  <tr align=left style="background-color: green">
     <td>Linux</td>
     <td>OpenGL</td>
     <td>Y</td>
-  </tr>
-  <tr align=left>
-    <td>macOS</td>
-    <td>OpenGL</td>
     <td>Y</td>
-  </tr>
-  <tr align=left>
-    <td>Windows</td>
-    <td>OpenGL</td>
-    <td>Y</td>
-  </tr>
-  <tr align=left>
-    <td>Windows</td>
-    <td>ANGLE</td>
-    <td>Y</td>
-  </tr>
-  <tr align=left>
-    <td>Linux</td>
-    <td>Dawn</td>
+    <td>Not supported</td>
     <td>N</td>
+    <td>Not supported</td>
   </tr>
-  <tr align=left>
-    <td>macOS</td>
-    <td>Dawn</td>
+  <tr align=left  style="background-color: green">
+    <td>MacOS</td>
+    <td>OpenGL</td>
+    <td>Y</td>
+    <td>Y</td>
+    <td>Not supported</td>
+    <td>N</td>
+    <td>Not supported</td>
+  </tr>
+  <tr align=left  style="background-color: green">
+    <td>MacOS</td>
+    <td>Dawn/Metal</td>
+    <td>Y</td>
+    <td>Y</td>
+    <td>Y</td>
+    <td>Y</td>
     <td>Y</td>
   </tr>
-  <tr align=left>
+  <tr align=left  style="background-color: green">
     <td>Windows</td>
-    <td>Dawn</td>
+    <td>OpenGL</td>
+    <td>Y</td>
+    <td>Y</td>
+    <td>Not supported</td>
+    <td>N</td>
+    <td>Not supported</td>
+  </tr>
+  <tr align=left  style="background-color: green">
+    <td>Windows</td>
+    <td>ANGLE/D3D11</td>
+    <td>Y</td>
+    <td>N</td>
+    <td>Not supported</td>
+    <td>N</td>
+    <td>Not supported</td>
+  </tr>
+  <tr align=left  style="background-color: green">
+    <td>Windows</td>
+    <td>Dawn/D3D12</td>
+    <td>Y</td>
+    <td>Y</td>
+    <td>N</td>
+    <td>Y</td>
     <td>Y</td>
   </tr>
-  <tr align=left>
+  <tr align=left  style="background-color: green">
+    <td>Windows</td>
+    <td>Dawn/Vulkan</td>
+    <td>Y</td>
+    <td>Y</td>
+    <td>Y</td>
+    <td>Y</td>
+    <td>Y</td>
+  </tr>
+  <tr align=left style="background-color: green">
     <td>Windows</td>
     <td>D3D12</td>
     <td>Y</td>
+    <td>Y</td>
+    <td>Y</td>
+    <td>Y</td>
+    <td>Y</td>
   </tr>
   <tr align=left>
-    <td>*</td>
-    <td>Vulkan</td>
+    <td>Linux</td>
+    <td>ANGLE/OpenGL</td>
+    <td>N</td>
+    <td>N</td>
+    <td>Not supported</td>
+    <td>N</td>
+    <td>Not supported</td>
+  </tr>
+  <tr align=left>
+    <td>Linux</td>
+    <td>ANGLE/Vulkan</td>
+    <td>N</td>
+    <td>N</td>
+    <td>N</td>
+    <td>N</td>
     <td>N</td>
   </tr>
   <tr align=left>
-    <td>*</td>
+    <td>Linux</td>
+    <td>Dawn/Vulkan</td>
+    <td>N</td>
+    <td>Y</td>
+    <td>Y</td>
+    <td>Y</td>
+    <td>Y</td>
+  </tr>
+  <tr align=left>
+    <td>Linux</td>
+    <td>Vulkan</td>
+    <td>N</td>
+    <td>N</td>
+    <td>N</td>
+    <td>N</td>
+    <td>N</td>
+  </tr>
+  <tr align=left>
+    <td>MacOS</td>
+    <td>ANGLE/OpenGL</td>
+    <td>N</td>
+    <td>N</td>
+    <td>Not supported</td>
+    <td>N</td>
+    <td>Not supported</td>
+  </tr>
+  <tr align=left>
+    <td>MacOS</td>
     <td>Metal</td>
+    <td>N</td>
+    <td>N</td>
+    <td>N</td>
+    <td>N</td>
+    <td>N</td>
+  </tr>
+  <tr align=left>
+    <td>Windows</td>
+    <td>ANGLE/OpenGL</td>
+    <td>N</td>
+    <td>N</td>
+    <td>Not supported</td>
+    <td>N</td>
+    <td>Not supported</td>
+  </tr>
+  <tr align=left>
+    <td>Windows</td>
+    <td>ANGLE/Vulkan</td>
+    <td>N</td>
+    <td>N</td>
+    <td>N</td>
+    <td>N</td>
+    <td>N</td>
+  </tr>
+  <tr align=left>
+    <td>Windows</td>
+    <td>D3D11</td>
+    <td>N</td>
+    <td>N</td>
+    <td>Not supported</td>
+    <td>N</td>
+    <td>Not supported</td>
+  </tr>
+  <tr align=left>
+    <td>Windows</td>
+    <td>Vulkan</td>
+    <td>N</td>
+    <td>N</td>
+    <td>N</td>
+    <td>N</td>
     <td>N</td>
   </tr>
 </table>
 
-# Required Tools
+# Required Tools and Configurations
 Configure [depot_tools](http://dev.chromium.org/developers/how-tos/install-depot-tools) on all platforms.
-Windows sdk version is required to be over [10.0.17134.0](https://developer.microsoft.com/en-us/windows/downloads/windows-10-sdk) to support D3D12 backend.
-The OpenGL version is required to > 4.5 on Windows and Linux  and > 4.1 on MacOS.
+
+## Windows Requirement
+Windows sdk version is required to be over
+[10.0.17134.0](https://developer.microsoft.com/en-us/windows/downloads/windows-10-sdk) to support D3D12 backend.
+Visual Studio 2017 is recommand if you want to debug into the code.
+The OpenGL version is required to > 4.5 on Windows.
+## Linux Requirement
+The OpenGL version is required to > 4.5 on Linux. To run vulkan of Dawn, please install vulkan driver on ubuntu.
+If you are using Intel gpu or amd gpu, you should install the following lib:
+```sh
+sudo apt-get install mesa-vulkan-drivers
+```
+If you are using Nvidia gpu, you should check if the driver support vulkan.
+## MacOS Requirement
+The OpenGL version is required to > 4.1 on MacOS. To run Dawn/Metal backend, please check if your MACOS support metal.
+```sh
+ps aux | grep -i "metal"
+```
 
 ## Build Aquarium by GN (OpenGL, D3D12, DAWN)
 
