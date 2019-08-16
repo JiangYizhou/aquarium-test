@@ -21,6 +21,7 @@
 #include "SeaweedModelGL.h"
 #include "TextureGL.h"
 
+#ifndef __EMSCRIPTEN__
 #include "imgui.h"
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_opengl3.h"
@@ -28,6 +29,7 @@
 #ifdef EGL_EGL_PROTOTYPES
 #define GLFW_EXPOSE_NATIVE_WIN32
 #include <GLFW/glfw3native.h>
+#endif
 #endif
 
 ContextGL::ContextGL(BACKENDTYPE backendType) : mWindow(nullptr)
@@ -51,11 +53,11 @@ bool ContextGL::initialize(BACKENDTYPE backend,
         return false;
     }
 
-#ifdef GL_GLEXT_PROTOTYPES
+#if defined(GL_GLEXT_PROTOTYPES) || defined(__EMSCRIPTEN__)
     // TODO(yizhou) : Enable msaa in angle. Render into a multisample Texture and then blit to a
     // none multisample texture.
     glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
-    mResourceHelper = new ResourceHelper(std::string("angle"), std::string("100"));
+    mResourceHelper = new ResourceHelper(std::string("opengl"), std::string("100"));
 #else
     if (toggleBitset.test(static_cast<size_t>(TOGGLE::ENABLEMSAAx4)))
     {
@@ -79,6 +81,12 @@ bool ContextGL::initialize(BACKENDTYPE backend,
     mGLSLVersion = "#version 450";
 #endif
 
+#ifdef __EMSCRIPTEN__
+    // TODO(yizhou): get size of canvas
+    mClientWidth            = 1024;
+    mClientHeight           = 1024;
+    mWindow = glfwCreateWindow(mClientWidth, mClientHeight, "Aquarium", nullptr, nullptr);
+#else
     GLFWmonitor *pMonitor   = glfwGetPrimaryMonitor();
     const GLFWvidmode *mode = glfwGetVideoMode(pMonitor);
     mClientWidth            = mode->width;
@@ -93,7 +101,7 @@ bool ContextGL::initialize(BACKENDTYPE backend,
     {
         mWindow = glfwCreateWindow(mClientWidth, mClientHeight, "Aquarium", nullptr, nullptr);
     }
-
+#endif
     if (mWindow == nullptr)
     {
         std::cout << "Failed to open GLFW window." << std::endl;
@@ -103,10 +111,10 @@ bool ContextGL::initialize(BACKENDTYPE backend,
 
     setWindowTitle("Aquarium");
 
-#ifndef GL_GLES_PROTOTYPES 
+#if defined(ENABLE_OPENGL_BACKEND)  || defined(__EMSCRIPTEN__)
     glfwWindowHint(GLFW_DECORATED, GL_FALSE);
     glfwMakeContextCurrent(mWindow);
-#else
+#else // ANGLE backend
     mGLSLVersion = "#version 100";
 
     std::vector<EGLAttrib> display_attribs;
@@ -210,12 +218,11 @@ bool ContextGL::initialize(BACKENDTYPE backend,
 
     eglSwapInterval(mDisplay, 0);
 
-#endif
+#endif //     #ifdef GL_GLES_PROTOTYPES
 
     // Set the window full screen
     // glfwSetWindowPos(window, 0, 0);
-
-    #ifndef EGL_EGL_PROTOTYPES
+    #ifdef ENABLE_OPENGL_BACKEND
     if (!gladLoadGL())
     {
         std::cout << "Something went wrong!" << std::endl;
@@ -223,6 +230,7 @@ bool ContextGL::initialize(BACKENDTYPE backend,
     }
     #endif
 
+    #ifndef __EMSCRIPTEN__
     // Setup Dear ImGui context
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
@@ -231,12 +239,12 @@ bool ContextGL::initialize(BACKENDTYPE backend,
     // Setup Platform/Renderer bindings
     ImGui_ImplGlfw_InitForOpenGL(mWindow, true);
     ImGui_ImplOpenGL3_Init(mGLSLVersion.c_str());
+    #endif
 
     std::string renderer((const char *)glGetString(GL_RENDERER));
     size_t index = renderer.find("/");
     mRenderer    = renderer.substr(0, index);
     std::cout << mRenderer << std::endl;
-
     return true;
 }
 
@@ -451,6 +459,7 @@ void ContextGL::showWindow()
 
 void ContextGL::showFPS(const FPSTimer &fpsTimer)
 {
+    #ifndef __EMSCRIPTEN__
     // Start the Dear ImGui frame
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplGlfw_NewFrame();
@@ -484,14 +493,18 @@ void ContextGL::showFPS(const FPSTimer &fpsTimer)
     // Rendering
     ImGui::Render();
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
+    #endif
 }
 
 void ContextGL::destoryImgUI()
 {
+    #ifndef __EMSCRIPTEN__
     // Cleanup
     ImGui_ImplOpenGL3_Shutdown();
     ImGui_ImplGlfw_Shutdown();
     ImGui::DestroyContext();
+    #endif
 }
 
 int ContextGL::getUniformLocation(unsigned int programId, const std::string &name) const

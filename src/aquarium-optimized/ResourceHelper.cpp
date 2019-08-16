@@ -40,6 +40,15 @@ ResourceHelper::ResourceHelper(const std::string &mBackendName, const std::strin
     mPath = std::string(temp);
 #endif
 
+#ifdef __EMSCRIPTEN__
+    std::ostringstream placementStream;
+    placementStream << resourceFolder << slash << "PropPlacement.js";
+    mPropPlacementPath = placementStream.str();
+
+    std::ostringstream imageStream;
+    imageStream << resourceFolder << slash;
+    mImagePath = imageStream.str();
+#elif
     size_t nPos = mPath.find_last_of(slash);
     std::ostringstream pathStream;
     pathStream << mPath.substr(0, nPos) << slash << ".." << slash << ".." << slash;
@@ -52,6 +61,7 @@ ResourceHelper::ResourceHelper(const std::string &mBackendName, const std::strin
     std::ostringstream imageStream;
     imageStream << mPath << resourceFolder << slash;
     mImagePath = imageStream.str();
+#endif
 }
 
 void ResourceHelper::getSkyBoxUrls(std::vector<std::string> *skyUrls) const

@@ -431,6 +431,7 @@ class Aquarium
     ~Aquarium();
     bool init(int argc, char **argv);
     void display();
+    void render();
     Texture *getSkybox() { return mTextureMap["skybox"]; }
 
     std::bitset<static_cast<size_t>(TOGGLE::TOGGLEMAX)> toggleBitset;
@@ -440,9 +441,10 @@ class Aquarium
     FogUniforms fogUniforms;
     Global g;
     int fishCount[5];
+    Context *mContext;
 
   private:
-    void render();
+
     void loadReource();
     void loadPlacement();
     void loadModels();
@@ -464,7 +466,6 @@ class Aquarium
     std::unordered_map<std::string, Texture *> mTextureMap;
     std::unordered_map<std::string, Program *> mProgramMap;
     Model *mAquariumModels[MODELNAME::MODELMAX];
-    Context *mContext;
     FPSTimer mFpsTimer;  // object to measure frames per second;
     int mFishCount;
     BACKENDTYPE mBackendType;
